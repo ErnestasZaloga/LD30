@@ -2,21 +2,22 @@ package com.ld30.game.Model;
 
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Assets;
-import com.ld30.game.Model.Tiles.Tile;
 
 public class GameWorld {
 
 	private Assets assets;
-	private Tile[][] tiles = new Tile[16][16];
+	private Map map = new Map();
 	private Array<MoveableEntity> entities = new Array<MoveableEntity>();
 	private Array<City> cities = new Array<City>();
 	
 	public GameWorld(Assets assets) {
 		this.assets = assets;
+		map.setTileWidth(assets.grass.getRegionWidth());
+		map.setTileHeight(assets.grass.getRegionHeight());
 	}
 	
 	public void begin() {
-		tiles = WorldGenerator.generateMap(assets);
+		map.setTiles(WorldGenerator.generateMap(assets));
 	}
 	
 	public void update(float delta) {
@@ -39,12 +40,8 @@ public class GameWorld {
 		this.cities = cities;
 	}
 
-	public Tile[][] getTiles() {
-		return tiles;
-	}
-
-	public void setTiles(Tile[][] tiles) {
-		this.tiles = tiles;
+	public Map getMap() {
+		return map;
 	}
 	
 }

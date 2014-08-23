@@ -20,7 +20,7 @@ public class WorldRenderer {
 	
 	public void render() {
 		batch.begin();
-		Tile[][] tiles = gameWorld.getTiles();
+		Tile[][] tiles = gameWorld.getMap().getTiles();
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles[0].length; y++) {
 				batch.draw(tiles[x][y].getTexture(), tiles[x][y].getX(), tiles[x][y].getY());
