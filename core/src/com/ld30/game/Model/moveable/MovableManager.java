@@ -9,6 +9,7 @@ import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.utils.AStar;
+import com.ld30.game.utils.Log;
 
 public class MovableManager {
 
@@ -84,8 +85,8 @@ public class MovableManager {
 						nextY = humanoid.getDestinationY();
 					}
 					else {
-						nextX = humanoid.getWalkPath().get(0);
-						nextY = humanoid.getWalkPath().get(1);
+						nextX = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 2);
+						nextY = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 1);
 					}
 					
 					final Tile nextTile = map.getTile(nextX, nextY);
