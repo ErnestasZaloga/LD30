@@ -11,6 +11,7 @@ public class WorldRenderer {
 	
 	private final SpriteBatch batch;
 	private GameWorld gameWorld;
+
 	
 	public WorldRenderer(SpriteBatch batch,
 						 GameWorld gameWorld) {
@@ -45,5 +46,5 @@ public class WorldRenderer {
 		
 		batch.end();
 	}
-
+	
 }
