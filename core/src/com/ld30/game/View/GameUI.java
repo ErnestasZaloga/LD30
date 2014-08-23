@@ -67,11 +67,14 @@ public class GameUI {
 			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
 			actor.addListener(new InputListener() {
 				@Override
-				public boolean mouseMoved (InputEvent event, float x, float y) {
+				public boolean mouseMoved(InputEvent event, float x, float y) {
 					if(x >= actor.getX() && x <= actor.getRight()) {
 						if(y >= actor.getY() && y <= actor.getTop()) {
+							if(bg.hasParent())
 							stage.addActor(bg);
 						}
+					} else {
+						bg.remove();
 					}
 					
 					return false;
