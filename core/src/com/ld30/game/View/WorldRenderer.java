@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Model.GameWorld;
 import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.moveable.Humanoid;
 
 public class WorldRenderer {
 	
@@ -31,8 +32,15 @@ public class WorldRenderer {
 		final Array<MoveableEntity> entities = gameWorld.getEntities();
 		for (int x = 0; x < entities.size; x += 1) {
 			final MoveableEntity entity = entities.get(x);
-			batch.draw(entity.getTexture(), entities.get(x).getX(), entities.get(x).getY());
-			//batch.draw(entity.getTexture(), entities.get(x).getX(), entities.get(x).getY());
+			batch.draw(entity.getTexture(), entity.getX(), entity.getY());
+			
+			if (entity instanceof Humanoid) {
+				Humanoid humanoid = (Humanoid) entity;
+				batch.draw(
+						entity.getTexture(), 
+						gameWorld.getMap().getTileWidth() * humanoid.getDestinationX(),
+						gameWorld.getMap().getTileHeight() * humanoid.getDestinationY());
+			}
 		}
 		
 		batch.end();

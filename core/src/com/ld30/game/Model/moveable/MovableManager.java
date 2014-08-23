@@ -1,6 +1,5 @@
 package com.ld30.game.Model.moveable;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -41,12 +40,13 @@ public class MovableManager {
 					continue;
 				}
 				
-				final int currentPositionX = MathUtils.roundPositive(map.getWidth() * (humanoid.getX() / Gdx.graphics.getWidth()));
-				final int currentPositionY = MathUtils.roundPositive(map.getHeight() * (humanoid.getY() / Gdx.graphics.getHeight()));
+				final int currentPositionX = (int)(map.getWidth() * (humanoid.getX() / (map.getWidth() * map.getTileWidth())));
+				final int currentPositionY = (int)(map.getHeight() * (humanoid.getY() / (map.getHeight() * map.getTileHeight())));
 				
 				if (currentPositionX != humanoid.getLastPositionX() ||
 					currentPositionY != humanoid.getLastPositonY()) {
 					
+					Log.trace(this, "New path from", currentPositionX, currentPositionY);
 					humanoid.getWalkPath().clear();
 					humanoid.getWalkPath().addAll(
 							astar.getPath(
@@ -76,8 +76,6 @@ public class MovableManager {
 					tmpVector.setAngle(angle);
 					humanoid.setX(humanoid.getX() + tmpVector.x);
 					humanoid.setY(humanoid.getY() + tmpVector.y);
-					
-					Log.trace(this, "Moving", tmpVector.x, tmpVector.y);
 				}
 				else {
 					humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
