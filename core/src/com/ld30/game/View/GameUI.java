@@ -24,20 +24,24 @@ public class GameUI {
 	private final float width;
 	private final float height;
 	
-	public GameUI(final GameWorld gameWorld, final Array<City> cities, final Assets assets) {
+	public GameUI(final GameWorld gameWorld, 
+				  final Array<City> cities, 
+				  final Assets assets, 
+				  final SpriteBatch batch) {
+		
 		this.gameWorld = gameWorld;
 		
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 		
-		stage = new Stage(new StretchViewport(width, height));
+		stage = new Stage(new StretchViewport(width, height), batch);
 		
 		cityUIs = new Array<CityUI>(cities.size);
 		for(int i = 0, n = cities.size; i < n; i++) {
 			City city = cities.get(i);
 			CityUI group = new CityUI(city, assets);
 			
-			group.setSize(city.getWidth(), 50); //FIXME hardcode
+			group.setSize(city.getWidth() + 250, 150); //FIXME hardcode
 			cityUIs.add(group);
 			stage.addActor(group);
 			group.setPosition(city.getX(), city.getY());
@@ -58,11 +62,10 @@ public class GameUI {
 			ui.setPosition(city.getX(), city.getY()); //TODO improve...
 		}
 		topUI.update();*/
-		
+		//Gdx.gl.glClearColor(1, 1, 1, 1); //FIXME REMOVE!!!!!!!!!!!!!!!!!!!
+		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act();
-		batch.begin();
 		stage.draw();
-		batch.end();
 	}
 	
 	private class TopUI extends Group {
@@ -96,7 +99,7 @@ public class GameUI {
 			
 			skin = assets.UISkin;
 			
-			UIBackground = new Image();
+			UIBackground = new Image(assets.road);
 			addActor(UIBackground);
 			
 			food = new Image(assets.water);
