@@ -78,6 +78,16 @@ public class AStar {
 			if (y > 0) addNode(node, x, y - 1, 10, validator);
 		}
 		
+		int diffX = Math.abs(targetX - startX);
+		int diffY = Math.abs(targetY - startY);
+		
+		if (path.size == 0 && diffX > 1 && diffY > 1) {
+			return path;
+		}
+		
+		//path.insert(0, targetX);
+		//path.insert(0, targetY);
+		
 		return path;
 	}
 
