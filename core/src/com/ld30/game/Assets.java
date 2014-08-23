@@ -15,10 +15,13 @@ public class Assets {
 	private final Texture cityTexture;
 	private final Texture moveableTexture;
 	private final Texture waterTexture;
+	private final Texture shallowWaterTexture;
 	private final Texture roadTexture;
 	
 	public final TextureRegion grass;
 	public final TextureRegion water;
+	public final TextureRegion shallowWater;
+	
 	public final TextureRegion road;
 	public final TextureRegion moveable;
 	public final TextureRegion city;
@@ -60,6 +63,14 @@ public class Assets {
 		waterTexture = new Texture(pixmap);
 		pixmap.dispose();
 		water = new TextureRegion(waterTexture);
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.CYAN);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		shallowWaterTexture = new Texture(pixmap);
+		pixmap.dispose();
+		shallowWater = new TextureRegion(shallowWaterTexture);
 		
 		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.YELLOW);
