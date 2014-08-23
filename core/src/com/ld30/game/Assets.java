@@ -1,11 +1,15 @@
 package com.ld30.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Assets {
+	
+	public final Skin UISkin;
 
 	private final Texture tileTexture;
 	private final Texture cityTexture;
@@ -20,6 +24,8 @@ public class Assets {
 	public final TextureRegion city;
 	
 	public Assets () {
+		UISkin = new Skin(Gdx.files.internal("assets/UISkin/uiskin.json"));
+		
 		Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.GREEN);
 		pixmap.fillRectangle(0, 0, 32, 32);

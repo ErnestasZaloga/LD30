@@ -101,7 +101,7 @@ public class City extends Entity {
 				food += workerCount;
 			} else if(type == GameWorld.Center.IRON) {
 				metal += workerCount;
-			} else {
+			} else if(type == GameWorld.Center.WOOD){
 				wood += workerCount;
 			}
 		}
