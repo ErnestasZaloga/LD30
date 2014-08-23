@@ -17,6 +17,10 @@ public class GameWorld {
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
 	
+	public enum Center {
+		WOOD, FOOD, IRON, NONE
+	}
+	
 	public GameWorld(Assets assets) {
 		this.assets = assets;
 		map.setTileWidth(assets.grass.getRegionWidth());

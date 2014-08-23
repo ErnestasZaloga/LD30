@@ -1,23 +1,31 @@
 package com.ld30.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Assets {
+	
+	public final Skin UISkin;
 
 	private final Texture tileTexture;
 	private final Texture cityTexture;
 	private final Texture moveableTexture;
 	private final Texture waterTexture;
+	private final Texture roadTexture;
 	
 	public final TextureRegion grass;
-	public final TextureRegion water ;
+	public final TextureRegion water;
+	public final TextureRegion road;
 	public final TextureRegion moveable;
 	public final TextureRegion city;
 	
 	public Assets () {
+		UISkin = new Skin(Gdx.files.internal("UISkin/uiskin.json"));
+		
 		Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.GREEN);
 		pixmap.fillRectangle(0, 0, 32, 32);
@@ -50,6 +58,14 @@ public class Assets {
 		waterTexture = new Texture(pixmap);
 		pixmap.dispose();
 		water = new TextureRegion(waterTexture);
+		
+		pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.YELLOW);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		roadTexture = new Texture(pixmap);
+		pixmap.dispose();
+		road = new TextureRegion(roadTexture);
 	}
 	
 	public void dispose () {
