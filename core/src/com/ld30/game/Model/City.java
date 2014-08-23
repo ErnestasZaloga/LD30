@@ -3,7 +3,12 @@ package com.ld30.game.Model;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class City extends Entity {
-	private final int type; // food metal or wood
+	
+	public static enum Type{
+		FOOD, METAL, WOOD;
+	}
+	private final Type type;
+	
 	private int food, metal, wood;
 	private int soldierCount, workerCount;
 	private float life;
@@ -11,7 +16,7 @@ public class City extends Entity {
 	private TextureRegion region;
 	private float x, y, width, height;
 	
-	public City(TextureRegion region, float x, float y, int type) {
+	public City(TextureRegion region, float x, float y, City.Type type) {
 		this.type = type;
 		
 		setTexture(region);
