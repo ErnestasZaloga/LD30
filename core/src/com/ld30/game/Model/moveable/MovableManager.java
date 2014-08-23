@@ -40,6 +40,9 @@ public class MovableManager {
 					continue;
 				}
 				
+				final float humanoidX = humanoid.getX();
+				final float humanoidY = humanoid.getY();
+				
 				final int currentPositionX = (int)(map.getWidth() * (humanoid.getX() / (map.getWidth() * map.getTileWidth())));
 				final int currentPositionY = (int)(map.getHeight() * (humanoid.getY() / (map.getHeight() * map.getTileHeight())));
 				
@@ -79,6 +82,7 @@ public class MovableManager {
 				}
 				else {
 					humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
+					humanoid.getWalkPath().clear();
 					humanoid.getWalkPath().addAll(
 							astar.getPath(
 									currentPositionX, 
