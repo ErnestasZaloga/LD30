@@ -3,7 +3,7 @@ package com.ld30.game.View;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Model.GameWorld;
-import com.ld30.game.Model.Tiles.Grass;
+import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Tile;
 
 public class WorldRenderer {
@@ -26,6 +26,15 @@ public class WorldRenderer {
 				batch.draw(tiles[x][y].getTexture(), tiles[x][y].getX(), tiles[x][y].getY());
 			}
 		}
+		
+		
+		final Array<MoveableEntity> entities = gameWorld.getEntities();
+		for (int x = 0; x < entities.size; x += 1) {
+			final MoveableEntity entity = entities.get(x);
+			batch.draw(entity.getTexture(), entities.get(x).getX(), entities.get(x).getY());
+			//batch.draw(entity.getTexture(), entities.get(x).getX(), entities.get(x).getY());
+		}
+		
 		batch.end();
 	}
 

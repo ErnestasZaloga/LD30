@@ -13,14 +13,14 @@ public class AStar {
 		public boolean isValid (int x, int y);
 	}
 	
-	private final int width, height;
-	private final BinaryHeap<PathNode> open;
-	private final PathNode[] nodes;
+	private int width, height;
+	private BinaryHeap<PathNode> open;
+	private PathNode[] nodes;
 	int runID;
 	private final IntArray path = new IntArray();
 	private int targetX, targetY;
 
-	public AStar (int width, int height) {
+	public void setSize (final int width, final int height) {
 		this.width = width;
 		this.height = height;
 		open = new BinaryHeap<PathNode>(width * 4, false);

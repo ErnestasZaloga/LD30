@@ -1,7 +1,5 @@
 package com.ld30.game.Model;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
 import com.ld30.game.Model.Tiles.Tile;
 
 public class Map {
@@ -42,9 +40,11 @@ public class Map {
 		return tiles[x][y];
 	}
 	
-	public Tile getTileFromScreenCoords (final float x, 
-										 final float y) {
-		
-		return tiles[MathUtils.roundPositive(width * (x / Gdx.graphics.getWidth()))][MathUtils.roundPositive(height * (y / Gdx.graphics.getHeight()))];
+	public int getWidth () {
+		return width;
+	}
+	
+	public int getHeight () {
+		return height;
 	}
 }
