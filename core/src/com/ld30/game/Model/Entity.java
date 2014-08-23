@@ -7,6 +7,7 @@ public abstract class Entity {
 	
 	private TextureRegion texture;
 	private float x, y;
+	private float width, height;
 	
 	public Entity() {
 		
@@ -35,5 +36,22 @@ public abstract class Entity {
 	public void setY(float y) {
 		this.y = y;
 	}
+	
+	public float getWidth() {
+		return width;
+	}
+
+	public void setWidth(float width) {
+		this.width = width;
+	}
+
+	public float getHeight() {
+		return height;
+	}
+
+	public void setHeight(float height) {
+		this.height = height;
+	}
+
 	
 }
