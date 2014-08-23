@@ -78,11 +78,6 @@ public class AStar {
 			if (y > 0) addNode(node, x, y - 1, 10, validator);
 		}
 		
-		if (startX != targetX || startY != targetY) {
-			path.add(targetX);
-			path.add(targetY);
-		}
-		
 		return path;
 	}
 

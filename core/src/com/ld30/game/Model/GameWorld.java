@@ -38,7 +38,7 @@ public class GameWorld {
 		worker.setLastPosition(0, 0);
 		worker.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
 		worker.setPixelsPerSecond(64);
-		worker.setState(Humanoid.State.WALKING);
+		movableManager.move(worker);
 		
 		entities.add(worker);
 	}
