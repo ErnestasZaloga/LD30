@@ -8,6 +8,7 @@ public class Grass extends Tile {
 		setX(x);
 		setY(y);
 		setTexture(texture);
+		setWalkable(true);
 	}
 	
 }

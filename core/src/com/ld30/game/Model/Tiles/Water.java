@@ -8,6 +8,7 @@ public class Water extends Tile {
 		setX(x);
 		setY(y);
 		setTexture(texture);
+		setWalkable(false);
 	}
 
 }
