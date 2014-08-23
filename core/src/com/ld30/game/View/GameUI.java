@@ -40,6 +40,7 @@ public class GameUI {
 		for(int i = 0, n = cities.size; i < n; i++) {
 			City city = cities.get(i);
 			CityUI group = new CityUI(city, assets);
+			group.setTransform(false);
 			
 			group.setSize(city.getWidth() + 250, 150); //FIXME hardcode
 			cityUIs.add(group);
@@ -49,6 +50,7 @@ public class GameUI {
 		}
 		
 		topUI = new TopUI(cities, assets);
+		topUI.setTransform(false);
 		stage.addActor(topUI);
 		
 	}
@@ -66,6 +68,26 @@ public class GameUI {
 		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act();
 		stage.draw();
+	}
+	
+	private class CityButtonGroup extends Group {
+		private final Image UIBackground;
+		private final Skin skin;
+		
+		private final Label trainSoldiers;
+		private final Label trainWorkers;
+		
+		public CityButtonGroup(final City city, final Assets assets) {
+			skin = assets.UISkin;
+			
+			UIBackground = new Image(assets.road);
+			addActor(UIBackground);
+			
+			trainSoldiers = new Label("TRAIN SOLDIER", skin);
+			trainWorkers = new Label("TRAIN WORKER", skin);
+			
+			
+		}
 	}
 	
 	private class TopUI extends Group {
