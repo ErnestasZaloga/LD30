@@ -14,9 +14,12 @@ public class City extends Entity {
 	private static final int SOLDIER_METAL_COST = 40;
 	private static final int SOLDIER_WOOD_COST = 15;
 	
-	/*public static enum Type{
-		FOOD, METAL, WOOD;
-	}*/
+	private int cityFoodCost = 120;
+	private int cityWoodCost = 230;
+	private int cityMetalCost = 70;
+	
+	private int maxPopulation = 10;
+
 	private final GameWorld.Center type;
 	
 	private int food, metal, wood;
@@ -36,24 +39,47 @@ public class City extends Entity {
 		
 	}
 	
+	public void upgradeCity() {
+		if(canBuy(cityFoodCost, cityMetalCost, cityWoodCost)) {
+			maxPopulation *= 2;
+			
+			food -= cityFoodCost;
+			metal -= cityMetalCost;
+			wood -= cityWoodCost;
+			
+			cityFoodCost *= 3;
+			cityMetalCost *= 4;
+			cityWoodCost *= 2;
+		}
+	}
+	
 	public void makeWorker() {
-		if(WORKER_FOOD_COST <= food) {
-			if(WORKER_WOOD_COST <= wood) {
-				if(WORKER_METAL_COST <= metal) {
-					workerCount++;
-				}
-			}
+		if(canBuy(WORKER_FOOD_COST, WORKER_METAL_COST, WORKER_WOOD_COST)) {
+			workerCount++;
+			food -= WORKER_FOOD_COST;
+			metal -= WORKER_METAL_COST;
+			wood -= WORKER_WOOD_COST;
 		}
 	}
 	
 	public void makeSoldier() {
-		if(SOLDIER_METAL_COST <= metal) {
-			if(SOLDIER_FOOD_COST <= food) {
-				if(SOLDIER_WOOD_COST <= wood) {
-					soldierCount++;
+		if(canBuy(SOLDIER_FOOD_COST, SOLDIER_METAL_COST, SOLDIER_WOOD_COST)) {
+			soldierCount++;
+			food -= SOLDIER_FOOD_COST;
+			metal -= SOLDIER_METAL_COST;
+			wood -= SOLDIER_WOOD_COST;
+		}
+	}
+	
+	private boolean canBuy(float foodCost, float metalCost, float woodCost) {
+		if(foodCost <= food) {
+			if(metalCost <= metal) {
+				if(woodCost <= wood) {
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 	
 	private float resourceTime;
