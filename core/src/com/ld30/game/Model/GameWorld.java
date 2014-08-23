@@ -12,8 +12,8 @@ public class GameWorld {
 	
 	public GameWorld(Assets assets) {
 		this.assets = assets;
-		map.setTileWidth(assets.tile.getRegionWidth());
-		map.setTileHeight(assets.tile.getRegionHeight());
+		map.setTileWidth(assets.grass.getRegionWidth());
+		map.setTileHeight(assets.grass.getRegionHeight());
 	}
 	
 	public void begin() {
