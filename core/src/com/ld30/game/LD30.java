@@ -13,6 +13,7 @@ public class LD30 extends Game {
 	public void create () {
 		Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode());
 		batch = new SpriteBatch(1000);
+		//Vyto pushas
 	}
 
 	@Override
