@@ -3,7 +3,8 @@ package com.ld30.game.View;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Model.GameWorld;
-import com.ld30.game.Model.Tile;
+import com.ld30.game.Model.Tiles.Grass;
+import com.ld30.game.Model.Tiles.Tile;
 
 public class WorldRenderer {
 	
@@ -19,9 +20,11 @@ public class WorldRenderer {
 	
 	public void render() {
 		batch.begin();
-		Array<Tile> tiles = gameWorld.getTiles();
-		for (Tile tile : tiles) {
-			batch.draw(tile.getTexture(), tile.getX(), tile.getY());
+		Tile[][] tiles = gameWorld.getTiles();
+		for(int x = 0; x < tiles.length; x++) {
+			for(int y = 0; y < tiles[0].length; y++) {
+				batch.draw(tiles[x][y].getTexture(), tiles[x][y].getX(), tiles[x][y].getY());
+			}
 		}
 		batch.end();
 	}
