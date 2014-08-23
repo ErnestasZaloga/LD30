@@ -20,7 +20,7 @@ public class WorldGenerator {
 		}
 		//Make a river
 		//int riverStart = (int) Math.floor(Math.random()*tiles[0].length+1);
-		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*tiles[0].length+1));
+		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*tiles[0].length));
 		Tile t = new Water(assets.water, 32*riverStart.x, 32*riverStart.y);
 		tiles[(int)riverStart.x][(int)riverStart.y] = t;
 		
