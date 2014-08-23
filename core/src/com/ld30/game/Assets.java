@@ -10,8 +10,10 @@ public class Assets {
 	private final Texture tileTexture;
 	private final Texture cityTexture;
 	private final Texture moveableTexture;
+	private final Texture waterTexture;
 	
-	public final TextureRegion tile;
+	public final TextureRegion grass;
+	public final TextureRegion water ;
 	public final TextureRegion moveable;
 	public final TextureRegion city;
 	
@@ -23,7 +25,7 @@ public class Assets {
 		tileTexture = new Texture(pixmap);
 		pixmap.dispose();
 		
-		tile = new TextureRegion(tileTexture);
+		grass = new TextureRegion(tileTexture);
 		
 		pixmap = new Pixmap(32 * 10, 32 * 10, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
@@ -40,6 +42,14 @@ public class Assets {
 		moveableTexture = new Texture(pixmap);
 		pixmap.dispose();
 		moveable = new TextureRegion(moveableTexture);
+		
+		pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.BLUE);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		waterTexture = new Texture(pixmap);
+		pixmap.dispose();
+		water = new TextureRegion(waterTexture);
 	}
 	
 	public void dispose () {
