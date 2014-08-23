@@ -7,21 +7,35 @@ import com.ld30.game.Model.GameWorld;
 import com.ld30.game.Model.Map;
 import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.utils.AStar;
-import com.ld30.game.utils.Log;
 
 public class MovableManager {
 
+	private Map map;
 	private GameWorld gameWorld;
 	private AStar.Validator workerAStarValidation = new AStar.Validator() {
 		@Override
 		public boolean isValid(int x, int y) {
-			return true;
+			return !(map.getTiles()[x][y] instanceof Water);
 		}
 	};
 	
 	public MovableManager (final GameWorld gameWorld) {
 		this.gameWorld = gameWorld;
+		this.map = gameWorld.getMap();
+	}
+	
+	public void move (final Worker worker) {
+		worker.setState(Humanoid.State.WALKING);
+		worker.getWalkPath().clear();
+		worker.getWalkPath().addAll(
+				gameWorld.getAStar().getPath(
+						0, 
+						0, 
+						worker.getDestinationX(), 
+						worker.getDestinationY(), 
+						workerAStarValidation));
 	}
 	
 	Vector2 tmpVector = new Vector2();
@@ -40,16 +54,15 @@ public class MovableManager {
 					continue;
 				}
 				
-				final float humanoidX = humanoid.getX();
-				final float humanoidY = humanoid.getY();
+				final float humanoidX = humanoid.getX() + humanoid.getWidth() / 2f;
+				final float humanoidY = humanoid.getY() + humanoid.getHeight() / 2f;
 				
-				final int currentPositionX = (int)(map.getWidth() * (humanoid.getX() / (map.getWidth() * map.getTileWidth())));
-				final int currentPositionY = (int)(map.getHeight() * (humanoid.getY() / (map.getHeight() * map.getTileHeight())));
+				final int currentPositionX = (int)(map.getWidth() * (humanoidX / (map.getWidth() * map.getTileWidth())));
+				final int currentPositionY = (int)(map.getHeight() * (humanoidY / (map.getHeight() * map.getTileHeight())));
 				
 				if (currentPositionX != humanoid.getLastPositionX() ||
 					currentPositionY != humanoid.getLastPositonY()) {
 					
-					Log.trace(this, "New path from", currentPositionX, currentPositionY);
 					humanoid.getWalkPath().clear();
 					humanoid.getWalkPath().addAll(
 							astar.getPath(
@@ -62,15 +75,23 @@ public class MovableManager {
 					humanoid.setLastPosition(currentPositionX, currentPositionY);
 				}
 				
-				if (humanoid.getWalkPath().size > 0) {
-					final int nextX = humanoid.getWalkPath().get(0);
-					final int nextY = humanoid.getWalkPath().get(1);
+				if (humanoid.getWalkPath().size != 0) {
+					int nextX = 0;
+					int nextY = 0;
+
+					if (humanoid.getWalkPath().size == 0) {
+						nextX = humanoid.getDestinationX();
+						nextY = humanoid.getDestinationY();
+					}
+					else {
+						nextX = humanoid.getWalkPath().get(0);
+						nextY = humanoid.getWalkPath().get(1);
+					}
 					
-					final Tile currentTile = map.getTile(currentPositionX, currentPositionY);
 					final Tile nextTile = map.getTile(nextX, nextY);
 					
-					tmpVector.x = nextTile.getX() - currentTile.getX();
-					tmpVector.y = nextTile.getY() - currentTile.getY();
+					tmpVector.x = (nextTile.getX() + nextTile.getWidth() / 2f) - (humanoidX);
+					tmpVector.y = (nextTile.getY() + nextTile.getHeight() / 2f) - (humanoidY);
 					
 					final float angle = tmpVector.angle();
 					tmpVector.x = humanoid.getPixelsPerSecond() * (delta / 1f);

@@ -36,10 +36,12 @@ public class WorldRenderer {
 			
 			if (entity instanceof Humanoid) {
 				Humanoid humanoid = (Humanoid) entity;
-				batch.draw(
-						entity.getTexture(), 
-						gameWorld.getMap().getTileWidth() * humanoid.getDestinationX(),
-						gameWorld.getMap().getTileHeight() * humanoid.getDestinationY());
+				
+				for (int i = 0; i < humanoid.getWalkPath().size; i += 2) {
+					batch.draw(entity.getTexture(), 
+							gameWorld.getMap().getTileWidth() * humanoid.getWalkPath().get(i),
+							gameWorld.getMap().getTileHeight() * humanoid.getWalkPath().get(i + 1));
+				}
 			}
 		}
 		
