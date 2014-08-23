@@ -9,7 +9,19 @@ import com.ld30.game.Model.Tiles.Water;
 
 public class WorldGenerator {
 	
-	public static Tile[][] generateMap(Assets assets, float tWH) {
+	public static class GeneratedWorld {
+		public final Tile[][] tiles;
+		public final Tile[] centers;
+		
+		public GeneratedWorld (final Tile[][] tiles, 
+							   final Tile[] centers) {
+			
+			this.tiles = tiles;
+			this.centers = centers;
+		}
+	}
+	
+	public static GeneratedWorld generateMap(Assets assets, float tWH) {
 		int mapWidth = 64;
 		int mapHeight = 64;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
@@ -36,6 +48,14 @@ public class WorldGenerator {
 		
 		float currentX = riverStart.x;
 		float currentY = riverStart.y;
+		if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+			tiles[(int)currentX][(int)currentY-1] = t;
+		}
+		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+			tiles[(int)currentX][(int)currentY+1] = t;
+		}
 		while(currentX != riverEnd.x || currentY != riverEnd.y) {
 			if(currentX < riverEnd.x) {
 				currentX++;
@@ -66,23 +86,29 @@ public class WorldGenerator {
 		 * Create city centres
 		 */
 		Road woodCityCentre, ironCityCentre, foodCityCentre;
-		float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)));
-		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3));
+		float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+1;
+		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		foodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		foodCityCentre.setCenter(GameWorld.Center.FOOD);
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
-		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2;
-		randomY = (float) Math.floor(Math.random()*(tiles[0].length/3));
+		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
+		randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		ironCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		ironCityCentre.setCenter(GameWorld.Center.IRON);
 		tiles[(int)randomX][(int)randomY] = ironCityCentre;
 		
-		randomX = (float) Math.floor(Math.random()*tiles.length);
-		randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2;
+		randomX = (float) Math.floor(Math.random()*(tiles.length-2))+1;
+		randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2-1;
 		woodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		woodCityCentre.setCenter(GameWorld.Center.WOOD);
 		tiles[(int)randomX][(int)randomY] = woodCityCentre;
+		
+		final Tile[] centers = new Tile[] {
+				woodCityCentre,
+				ironCityCentre,
+				foodCityCentre
+		};
 		
 		/*
 		 * Create roads between city centres
@@ -220,7 +246,7 @@ public class WorldGenerator {
 			}
 		}
 		
-		return tiles;
+		return new GeneratedWorld(tiles, centers);
 	}
 	
 }
