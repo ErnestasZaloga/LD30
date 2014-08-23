@@ -30,7 +30,7 @@ public class GameWorld {
 	}
 	
 	public void begin() {
-		map.setTiles(WorldGenerator.generateMap(assets));
+		map.setTiles(WorldGenerator.generateMap(assets, map.getTileWidth()));
 		astar.setSize(map.getWidth(), map.getHeight());
 		
 		Worker worker = new Worker ();

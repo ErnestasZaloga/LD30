@@ -9,7 +9,7 @@ import com.ld30.game.Model.Tiles.Water;
 
 public class WorldGenerator {
 	
-	public static Tile[][] generateMap(Assets assets) {
+	public static Tile[][] generateMap(Assets assets, float tWH) {
 		Tile[][] tiles = new Tile[16][16];
 		
 		/*
@@ -17,7 +17,7 @@ public class WorldGenerator {
 		 */
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles[0].length; y++) {
-				Tile t = new Grass(assets.grass, x*32, y*32);
+				Tile t = new Grass(assets.grass, x*tWH, y*tWH);
 				tiles[x][y] = t;
 			}
 		}
@@ -26,10 +26,10 @@ public class WorldGenerator {
 		 * Create a river
 		 */
 		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*tiles[0].length));
-		Water r1 = new Water(assets.water, 32*riverStart.x, 32*riverStart.y);
+		Water r1 = new Water(assets.water, tWH*riverStart.x, tWH*riverStart.y);
 		tiles[(int)riverStart.x][(int)riverStart.y] = r1;
 		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*tiles[0].length));
-		Water r2 = new Water(assets.water, 32*riverEnd.x, 32*riverEnd.y);
+		Water r2 = new Water(assets.water, tWH*riverEnd.x, tWH*riverEnd.y);
 		tiles[(int)riverEnd.x][(int)riverEnd.y] = r2;
 		
 		float currentX = riverStart.x;
@@ -47,7 +47,7 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
-			Water tile = new Water(assets.water, 32*currentX, 32*currentY);
+			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 		}
 		
@@ -57,19 +57,19 @@ public class WorldGenerator {
 		Road woodCityCentre, ironCityCentre, foodCityCentre;
 		float randomX = (float) Math.floor(Math.random()*tiles.length);
 		float randomY = (float) Math.floor(Math.random()*tiles[0].length);
-		foodCityCentre = new Road(assets.road, randomX*32, randomY*32);
+		foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
 		foodCityCentre.setCenter(GameWorld.Center.FOOD);
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*tiles.length);
 		randomY = (float) Math.floor(Math.random()*tiles[0].length);
-		ironCityCentre = new Road(assets.road, randomX*32, randomY*32);
+		ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
 		ironCityCentre.setCenter(GameWorld.Center.IRON);
 		tiles[(int)randomX][(int)randomY] = ironCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*tiles.length);
 		randomY = (float) Math.floor(Math.random()*tiles[0].length);
-		woodCityCentre = new Road(assets.road, randomX*32, randomY*32);
+		woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
 		woodCityCentre.setCenter(GameWorld.Center.WOOD);
 		tiles[(int)randomX][(int)randomY] = woodCityCentre;
 		
@@ -77,10 +77,10 @@ public class WorldGenerator {
 		 * Create roads between city centres
 		 */
 		//From food centre to iron
-		currentX = foodCityCentre.getX()/32;
-		currentY = foodCityCentre.getY()/32;
-		float targetX = ironCityCentre.getX()/32;
-		float targetY = ironCityCentre.getY()/32;
+		currentX = foodCityCentre.getX()/tWH;
+		currentY = foodCityCentre.getY()/tWH;
+		float targetX = ironCityCentre.getX()/tWH;
+		float targetY = ironCityCentre.getY()/tWH;
 		while(currentX != targetX || currentY != targetY) {
 			if(currentX < targetX) {
 				currentX++;
@@ -94,15 +94,15 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
-			Road tile = new Road(assets.road, 32*currentX, 32*currentY);
+			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			tile.setCenter(GameWorld.Center.NONE);
 		}
 		//From iron city centre to wood
-		currentX = ironCityCentre.getX()/32;
-		currentY = ironCityCentre.getY()/32;
-		targetX = woodCityCentre.getX()/32;
-		targetY = woodCityCentre.getY()/32;
+		currentX = ironCityCentre.getX()/tWH;
+		currentY = ironCityCentre.getY()/tWH;
+		targetX = woodCityCentre.getX()/tWH;
+		targetY = woodCityCentre.getY()/tWH;
 		while(currentX != targetX || currentY != targetY) {
 			if(currentX < targetX) {
 				currentX++;
@@ -116,15 +116,15 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
-			Road tile = new Road(assets.road, 32*currentX, 32*currentY);
+			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			tile.setCenter(GameWorld.Center.NONE);
 		}
 		//From wood city centre to food
-		currentX = woodCityCentre.getX()/32;
-		currentY = woodCityCentre.getY()/32;
-		targetX = foodCityCentre.getX()/32;
-		targetY = foodCityCentre.getY()/32;
+		currentX = woodCityCentre.getX()/tWH;
+		currentY = woodCityCentre.getY()/tWH;
+		targetX = foodCityCentre.getX()/tWH;
+		targetY = foodCityCentre.getY()/tWH;
 		while(currentX != targetX || currentY != targetY) {
 			if(currentX < targetX) {
 				currentX++;
@@ -138,7 +138,7 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
-			Road tile = new Road(assets.road, 32*currentX, 32*currentY);
+			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			tile.setCenter(GameWorld.Center.NONE);
 		}

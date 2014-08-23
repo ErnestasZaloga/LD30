@@ -23,19 +23,21 @@ public class Assets {
 	public final TextureRegion moveable;
 	public final TextureRegion city;
 	
+	private final int tileWH = 8;
+	
 	public Assets () {
 		UISkin = new Skin(Gdx.files.internal("UISkin/uiskin.json"));
 		
-		Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		Pixmap pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.GREEN);
-		pixmap.fillRectangle(0, 0, 32, 32);
+		pixmap.fillRectangle(0, 0, tileWH, tileWH);
 		
 		tileTexture = new Texture(pixmap);
 		pixmap.dispose();
 		
 		grass = new TextureRegion(tileTexture);
 		
-		pixmap = new Pixmap(32 * 10, 32 * 10, Pixmap.Format.RGBA8888);
+		pixmap = new Pixmap(tileWH * 10, tileWH * 10, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
 		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
 		
@@ -43,7 +45,7 @@ public class Assets {
 		pixmap.dispose();
 		city = new TextureRegion(cityTexture);
 		
-		pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.RED);
 		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
 		
@@ -51,7 +53,7 @@ public class Assets {
 		pixmap.dispose();
 		moveable = new TextureRegion(moveableTexture);
 		
-		pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.BLUE);
 		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
 		
@@ -59,7 +61,7 @@ public class Assets {
 		pixmap.dispose();
 		water = new TextureRegion(waterTexture);
 		
-		pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.YELLOW);
 		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
 		
