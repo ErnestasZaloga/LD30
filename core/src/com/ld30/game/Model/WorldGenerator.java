@@ -76,6 +76,72 @@ public class WorldGenerator {
 		/*
 		 * Create roads between city centres
 		 */
+		//From food centre to iron
+		currentX = foodCityCentre.getX()/32;
+		currentY = foodCityCentre.getY()/32;
+		float targetX = ironCityCentre.getX()/32;
+		float targetY = ironCityCentre.getY()/32;
+		while(currentX != targetX || currentY != targetY) {
+			if(currentX < targetX) {
+				currentX++;
+			} else if(currentX > targetX) {
+				currentX--;
+			}
+			
+			if(currentY < targetY) {
+				currentY++;
+			} else if(currentY > targetY) {
+				currentY--;
+			}
+			
+			Road tile = new Road(assets.road, 32*currentX, 32*currentY);
+			tiles[(int)currentX][(int)currentY] = tile;
+			tile.setCenter(GameWorld.Center.NONE);
+		}
+		//From iron city centre to wood
+		currentX = ironCityCentre.getX()/32;
+		currentY = ironCityCentre.getY()/32;
+		targetX = woodCityCentre.getX()/32;
+		targetY = woodCityCentre.getY()/32;
+		while(currentX != targetX || currentY != targetY) {
+			if(currentX < targetX) {
+				currentX++;
+			} else if(currentX > targetX) {
+				currentX--;
+			}
+			
+			if(currentY < targetY) {
+				currentY++;
+			} else if(currentY > targetY) {
+				currentY--;
+			}
+			
+			Road tile = new Road(assets.road, 32*currentX, 32*currentY);
+			tiles[(int)currentX][(int)currentY] = tile;
+			tile.setCenter(GameWorld.Center.NONE);
+		}
+		//From wood city centre to food
+		currentX = woodCityCentre.getX()/32;
+		currentY = woodCityCentre.getY()/32;
+		targetX = foodCityCentre.getX()/32;
+		targetY = foodCityCentre.getY()/32;
+		while(currentX != targetX || currentY != targetY) {
+			if(currentX < targetX) {
+				currentX++;
+			} else if(currentX > targetX) {
+				currentX--;
+			}
+			
+			if(currentY < targetY) {
+				currentY++;
+			} else if(currentY > targetY) {
+				currentY--;
+			}
+			
+			Road tile = new Road(assets.road, 32*currentX, 32*currentY);
+			tiles[(int)currentX][(int)currentY] = tile;
+			tile.setCenter(GameWorld.Center.NONE);
+		}
 		
 		return tiles;
 	}
