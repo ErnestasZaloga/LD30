@@ -10,6 +10,10 @@ public class GameWorld {
 	private Array<MoveableEntity> entities = new Array<MoveableEntity>();
 	private Array<City> cities = new Array<City>();
 	
+	public enum Center {
+		WOOD, FOOD, IRON, NONE
+	}
+	
 	public GameWorld(Assets assets) {
 		this.assets = assets;
 		map.setTileWidth(assets.grass.getRegionWidth());

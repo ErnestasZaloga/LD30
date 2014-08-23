@@ -1,9 +1,7 @@
 package com.ld30.game.View;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Model.GameWorld;
-import com.ld30.game.Model.Tiles.Grass;
 import com.ld30.game.Model.Tiles.Tile;
 
 public class WorldRenderer {
