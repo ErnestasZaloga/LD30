@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -20,7 +19,7 @@ public class GameUI {
 	private final Stage stage;
 	private final GameWorld gameWorld;
 	
-	private Array<CityUI> cityGroups;
+	private Array<CityUI> cityUIs;
 	
 	private final float width;
 	private final float height;
@@ -35,11 +34,13 @@ public class GameUI {
 		
 		stage = new Stage(new StretchViewport(width, height));
 		
-		cityGroups = new Array<CityUI>(cities.size);
+		cityUIs = new Array<CityUI>(cities.size);
 		for(int i = 0, n = cities.size; i < n; i++) {
-			CityUI group = new CityUI(cities.get(i), font, assets);
+			City city = cities.get(i);
+			CityUI group = new CityUI(city, font, assets);
 			
-			cityGroups.add(group);
+			group.setSize(city.getWidth(), 32); //FIXME hardcode
+			cityUIs.add(group);
 			stage.addActor(group);
 			
 			
@@ -49,9 +50,14 @@ public class GameUI {
 	
 	public void updateAndRender(SpriteBatch batch) {
 		
+		//Update
+		for(CityUI ui : cityUIs) {
+			ui.update();
+			City city = ui.city;
+			ui.setPosition(city.getX(), city.getY()); //TODO improve...
+		}
 		
-		
-		
+		//Render
 		stage.act();
 		batch.begin();
 		stage.draw();
@@ -86,6 +92,17 @@ public class GameUI {
 			foodNumber = new Label("", skin);
 			metalNumber = new Label("", skin);
 			woodNumber = new Label("", skin);
+		}
+		
+		public void update() {
+			
+		}
+		
+		@Override
+		public void setSize(float width, float height) {
+			super.setSize(width, height);
+			
+			
 		}
 	}
 }
