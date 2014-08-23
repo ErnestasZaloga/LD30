@@ -24,7 +24,7 @@ public class Assets {
 	public final TextureRegion city;
 	
 	public Assets () {
-		UISkin = new Skin(Gdx.files.internal("assets/UISkin/uiskin.json"));
+		UISkin = new Skin(Gdx.files.internal("UISkin/uiskin.json"));
 		
 		Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.GREEN);
