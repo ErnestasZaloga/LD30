@@ -10,7 +10,9 @@ import com.ld30.game.Model.Tiles.Water;
 public class WorldGenerator {
 	
 	public static Tile[][] generateMap(Assets assets, float tWH) {
-		Tile[][] tiles = new Tile[16][16];
+		int mapWidth = 64;
+		int mapHeight = 64;
+		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
 		 * Fill tile array with grass
@@ -49,27 +51,36 @@ public class WorldGenerator {
 			
 			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
+			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+				Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+				tiles[(int)currentX][(int)currentY-1] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+				Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+				tiles[(int)currentX][(int)currentY+1] = t;
+			}
+			
 		}
 		
 		/*
 		 * Create city centres
 		 */
 		Road woodCityCentre, ironCityCentre, foodCityCentre;
-		float randomX = (float) Math.floor(Math.random()*tiles.length);
-		float randomY = (float) Math.floor(Math.random()*tiles[0].length);
-		foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+		float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)));
+		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3));
+		foodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		foodCityCentre.setCenter(GameWorld.Center.FOOD);
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
-		randomX = (float) Math.floor(Math.random()*tiles.length);
-		randomY = (float) Math.floor(Math.random()*tiles[0].length);
-		ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2;
+		randomY = (float) Math.floor(Math.random()*(tiles[0].length/3));
+		ironCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		ironCityCentre.setCenter(GameWorld.Center.IRON);
 		tiles[(int)randomX][(int)randomY] = ironCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*tiles.length);
-		randomY = (float) Math.floor(Math.random()*tiles[0].length);
-		woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+		randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2;
+		woodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		woodCityCentre.setCenter(GameWorld.Center.WOOD);
 		tiles[(int)randomX][(int)randomY] = woodCityCentre;
 		
@@ -94,9 +105,31 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
+			if(currentX == targetX && currentY == targetY) continue;
+			
 			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX-1][(int)currentY] = t;
+			}
+			if(tiles[(int)currentX+1][(int)currentY] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*(currentX+1), tWH*currentY);
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX+1][(int)currentY] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*currentX, tWH*(currentY-1));
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX][(int)currentY-1] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*currentX, tWH*(currentY+1));
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX][(int)currentY+1] = t;
+			}
 		}
 		//From iron city centre to wood
 		currentX = ironCityCentre.getX()/tWH;
@@ -116,9 +149,31 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
+			if(currentX == targetX && currentY == targetY) continue;
+			
 			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX-1][(int)currentY] = t;
+			}
+			if(tiles[(int)currentX+1][(int)currentY] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*(currentX+1), tWH*currentY);
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX+1][(int)currentY] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*currentX, tWH*(currentY-1));
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX][(int)currentY-1] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*currentX, tWH*(currentY+1));
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX][(int)currentY+1] = t;
+			}
 		}
 		//From wood city centre to food
 		currentX = woodCityCentre.getX()/tWH;
@@ -138,9 +193,31 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
+			if(currentX == targetX && currentY == targetY) continue;
+			
 			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX-1][(int)currentY] = t;
+			}
+			if(tiles[(int)currentX+1][(int)currentY] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*(currentX+1), tWH*currentY);
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX+1][(int)currentY] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*currentX, tWH*(currentY-1));
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX][(int)currentY-1] = t;
+			}
+			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+				Road t = new Road(assets.road, tWH*currentX, tWH*(currentY+1));
+				t.setCenter(GameWorld.Center.NONE);
+				tiles[(int)currentX][(int)currentY+1] = t;
+			}
 		}
 		
 		return tiles;

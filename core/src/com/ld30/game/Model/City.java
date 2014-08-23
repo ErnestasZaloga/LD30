@@ -54,7 +54,8 @@ public class City extends Entity {
 	}
 	
 	public void makeWorker() {
-		if(canBuy(WORKER_FOOD_COST, WORKER_METAL_COST, WORKER_WOOD_COST)) {
+		if(workerCount + soldierCount < maxPopulation 
+		   && canBuy(WORKER_FOOD_COST, WORKER_METAL_COST, WORKER_WOOD_COST)) {
 			workerCount++;
 			food -= WORKER_FOOD_COST;
 			metal -= WORKER_METAL_COST;
@@ -63,7 +64,8 @@ public class City extends Entity {
 	}
 	
 	public void makeSoldier() {
-		if(canBuy(SOLDIER_FOOD_COST, SOLDIER_METAL_COST, SOLDIER_WOOD_COST)) {
+		if(workerCount + soldierCount < maxPopulation 
+		   && canBuy(SOLDIER_FOOD_COST, SOLDIER_METAL_COST, SOLDIER_WOOD_COST)) {
 			soldierCount++;
 			food -= SOLDIER_FOOD_COST;
 			metal -= SOLDIER_METAL_COST;
@@ -116,27 +118,27 @@ public class City extends Entity {
 		}
 	}
 
-	public int getFood() {
+	public int getFoodCount() {
 		return food;
 	}
 
-	public void setFood(int food) {
+	public void setFoodCount(int food) {
 		this.food = food;
 	}
 
-	public int getMetal() {
+	public int getMetalCount() {
 		return metal;
 	}
 
-	public void setMetal(int metal) {
+	public void setMetalCount(int metal) {
 		this.metal = metal;
 	}
 
-	public int getWood() {
+	public int getWoodCount() {
 		return wood;
 	}
 
-	public void setWood(int wood) {
+	public void setWoodCount(int wood) {
 		this.wood = wood;
 	}
 
