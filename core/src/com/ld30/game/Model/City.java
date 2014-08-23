@@ -19,11 +19,8 @@ public class City extends Entity {
 	private int cityMetalCost = 70;
 	
 	private int maxPopulation = 10;
-	
-	public static enum Type{
-		FOOD, METAL, WOOD;
-	}
-	private final Type type;
+
+	private final GameWorld.Center type;
 	
 	private int food, metal, wood;
 	private int soldierCount, workerCount;
@@ -31,7 +28,7 @@ public class City extends Entity {
 	private TextureRegion region;
 	private float x, y, width, height;
 	
-	public City(TextureRegion region, float x, float y, Type type) {
+	public City(TextureRegion region, float x, float y, GameWorld.Center type) {
 		this.type = type;
 		
 		setTexture(region);
@@ -100,9 +97,9 @@ public class City extends Entity {
 			if(wood > 0)
 				wood--;*/
 			
-			if(type == Type.FOOD) {
+			if(type == GameWorld.Center.FOOD) {
 				food += workerCount;
-			} else if(type == Type.METAL) {
+			} else if(type == GameWorld.Center.IRON) {
 				metal += workerCount;
 			} else {
 				wood += workerCount;
