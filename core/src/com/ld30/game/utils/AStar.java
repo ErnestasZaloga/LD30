@@ -8,6 +8,11 @@ import com.badlogic.gdx.utils.IntArray;
 
 /** @author Nathan Sweet */
 public class AStar {
+	
+	public static interface Validator {
+		public boolean isValid (int x, int y);
+	}
+	
 	private final int width, height;
 	private final BinaryHeap<PathNode> open;
 	private final PathNode[] nodes;
@@ -23,7 +28,7 @@ public class AStar {
 	}
 
 	/** Returns x,y pairs that are the path from the target to the start. */
-	public IntArray getPath (int startX, int startY, int targetX, int targetY) {
+	public IntArray getPath (int startX, int startY, int targetX, int targetY, Validator validator) {
 		this.targetX = targetX;
 		this.targetY = targetY;
 
@@ -60,23 +65,23 @@ public class AStar {
 			int x = node.x;
 			int y = node.y;
 			if (x < lastColumn) {
-				addNode(node, x + 1, y, 10);
-				if (y < lastRow) addNode(node, x + 1, y + 1, 14); // Diagonals cost more, roughly equivalent to sqrt(2).
-				if (y > 0) addNode(node, x + 1, y - 1, 14);
+				addNode(node, x + 1, y, 10, validator);
+				if (y < lastRow) addNode(node, x + 1, y + 1, 14, validator); // Diagonals cost more, roughly equivalent to sqrt(2).
+				if (y > 0) addNode(node, x + 1, y - 1, 14, validator);
 			}
 			if (x > 0) {
-				addNode(node, x - 1, y, 10);
-				if (y < lastRow) addNode(node, x - 1, y + 1, 14);
-				if (y > 0) addNode(node, x - 1, y - 1, 14);
+				addNode(node, x - 1, y, 10, validator);
+				if (y < lastRow) addNode(node, x - 1, y + 1, 14, validator);
+				if (y > 0) addNode(node, x - 1, y - 1, 14, validator);
 			}
-			if (y < lastRow) addNode(node, x, y + 1, 10);
-			if (y > 0) addNode(node, x, y - 1, 10);
+			if (y < lastRow) addNode(node, x, y + 1, 10, validator);
+			if (y > 0) addNode(node, x, y - 1, 10, validator);
 		}
 		return path;
 	}
 
-	private void addNode (PathNode parent, int x, int y, int cost) {
-		if (!isValid(x, y)) return;
+	private void addNode (PathNode parent, int x, int y, int cost, Validator validator) {
+		if (!validator.isValid(x, y)) return;
 
 		int pathCost = parent.pathCost + cost;
 		float score = pathCost + Math.abs(x - targetX) + Math.abs(y - targetY);
@@ -103,10 +108,6 @@ public class AStar {
 			node.parent = parent;
 			node.pathCost = pathCost;
 		}
-	}
-
-	protected boolean isValid (int x, int y) {
-		return true;
 	}
 
 	public int getWidth () {
