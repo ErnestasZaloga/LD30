@@ -9,7 +9,19 @@ import com.ld30.game.Model.Tiles.Water;
 
 public class WorldGenerator {
 	
-	public static Tile[][] generateMap(Assets assets, float tWH) {
+	public static class GeneratedWorld {
+		public final Tile[][] tiles;
+		public final Tile[] centers;
+		
+		public GeneratedWorld (final Tile[][] tiles, 
+							   final Tile[] centers) {
+			
+			this.tiles = tiles;
+			this.centers = centers;
+		}
+	}
+	
+	public static GeneratedWorld generateMap(Assets assets, float tWH) {
 		int mapWidth = 64;
 		int mapHeight = 64;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
@@ -91,6 +103,12 @@ public class WorldGenerator {
 		woodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		woodCityCentre.setCenter(GameWorld.Center.WOOD);
 		tiles[(int)randomX][(int)randomY] = woodCityCentre;
+		
+		final Tile[] centers = new Tile[] {
+				woodCityCentre,
+				ironCityCentre,
+				foodCityCentre
+		};
 		
 		/*
 		 * Create roads between city centres
@@ -228,7 +246,7 @@ public class WorldGenerator {
 			}
 		}
 		
-		return tiles;
+		return new GeneratedWorld(tiles, centers);
 	}
 	
 }

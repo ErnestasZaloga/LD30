@@ -108,8 +108,6 @@ public class MovableManager {
 									humanoid.getDestinationY(), 
 									workerAStarValidation));
 				}
-				
-				Log.trace(this, "dst", humanoid.getDestinationX(), humanoid.getDestinationY());
 			}
 		}
 	} 

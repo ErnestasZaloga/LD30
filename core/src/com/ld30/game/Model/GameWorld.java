@@ -3,7 +3,7 @@ package com.ld30.game.Model;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Assets;
-import com.ld30.game.Model.moveable.Humanoid;
+import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
 import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.utils.AStar;
@@ -30,7 +30,8 @@ public class GameWorld {
 	}
 	
 	public void begin() {
-		map.setTiles(WorldGenerator.generateMap(assets, map.getTileWidth()));
+		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth());
+		map.setTiles(generatedWorld.tiles);
 		astar.setSize(map.getWidth(), map.getHeight());
 		
 		Worker worker = new Worker ();
