@@ -9,6 +9,7 @@ public class Assets {
 
 	private final Texture tileTexture;
 	private final Texture cityTexture;
+	private final Texture moveableTexture;
 	
 	public final TextureRegion tile;
 	public final TextureRegion moveable;
@@ -30,14 +31,21 @@ public class Assets {
 		
 		cityTexture = new Texture(pixmap);
 		pixmap.dispose();
-		
 		city = new TextureRegion(cityTexture);
-		moveable = tile;
+		
+		pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.RED);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		moveableTexture = new Texture(pixmap);
+		pixmap.dispose();
+		moveable = new TextureRegion(moveableTexture);
 	}
 	
 	public void dispose () {
 		tileTexture.dispose();
 		cityTexture.dispose();
+		moveableTexture.dispose();
 	}
 	
 }
