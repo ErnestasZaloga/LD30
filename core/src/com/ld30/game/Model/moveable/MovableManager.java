@@ -29,14 +29,14 @@ public class MovableManager {
 	
 	public void move (final Worker worker) {
 		worker.setState(Humanoid.State.WALKING);
-		worker.getWalkPath().clear();
+		/*worker.getWalkPath().clear();
 		worker.getWalkPath().addAll(
 				gameWorld.getAStar().getPath(
 						0, 
 						0, 
 						worker.getDestinationX(), 
 						worker.getDestinationY(), 
-						workerAStarValidation));
+						workerAStarValidation));*/
 	}
 	
 	Vector2 tmpVector = new Vector2();
@@ -76,19 +76,13 @@ public class MovableManager {
 					humanoid.setLastPosition(currentPositionX, currentPositionY);
 				}
 				
-				if (humanoid.getWalkPath().size != 0) {
-					int nextX = 0;
-					int nextY = 0;
-
-					if (humanoid.getWalkPath().size == 0) {
-						nextX = humanoid.getDestinationX();
-						nextY = humanoid.getDestinationY();
-					}
-					else {
-						nextX = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 2);
-						nextY = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 1);
-					}
+				if (humanoid.getWalkPath().size != 0 && 
+					!((currentPositionX == humanoid.getDestinationX()) && 
+					(currentPositionY == humanoid.getDestinationY()))) {
 					
+					int nextX = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 2);
+					int nextY = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 1);
+
 					final Tile nextTile = map.getTile(nextX, nextY);
 					
 					tmpVector.x = (nextTile.getX() + nextTile.getWidth() / 2f) - (humanoidX);
@@ -103,6 +97,7 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
+					Log.trace(this, "No options left generating new path", humanoid.getWalkPath().size);
 					humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
 					humanoid.getWalkPath().clear();
 					humanoid.getWalkPath().addAll(
@@ -113,6 +108,8 @@ public class MovableManager {
 									humanoid.getDestinationY(), 
 									workerAStarValidation));
 				}
+				
+				Log.trace(this, "dst", humanoid.getDestinationX(), humanoid.getDestinationY());
 			}
 		}
 	} 
