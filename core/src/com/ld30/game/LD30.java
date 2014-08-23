@@ -14,6 +14,7 @@ public class LD30 extends Game {
 		Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode());
 		batch = new SpriteBatch(1000);
 		//Vyto pushas
+		//Pauliaus pushas
 	}
 
 	@Override
