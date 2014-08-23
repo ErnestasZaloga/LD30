@@ -49,7 +49,7 @@ public class MovableManager {
 				if (currentPositionX != humanoid.getLastPositionX() ||
 					currentPositionY != humanoid.getLastPositonY()) {
 					
-					Log.trace(this, "New path from", currentPositionX, currentPositionY);
+					//Log.trace(this, "New path from", currentPositionX, currentPositionY);
 					humanoid.getWalkPath().clear();
 					humanoid.getWalkPath().addAll(
 							astar.getPath(
