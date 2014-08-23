@@ -3,6 +3,7 @@ package com.ld30.game.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.ld30.game.Assets;
 import com.ld30.game.Model.GameWorld;
 import com.ld30.game.View.WorldRenderer;
 
@@ -13,10 +14,10 @@ public class GameScreen implements Screen {
 	GameWorld gameWorld;
 	WorldRenderer renderer;
 	
-	public GameScreen(SpriteBatch batch) {
+	public GameScreen(SpriteBatch batch, Assets assets) {
 		this.batch = batch;
-		gameWorld = new GameWorld();
-		renderer = new WorldRenderer(gameWorld);
+		gameWorld = new GameWorld(assets);
+		renderer = new WorldRenderer(batch, gameWorld);
 	}
 
 	@Override
@@ -32,12 +33,12 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		
+		gameWorld.begin();
 	}
 
 	@Override
 	public void hide() {
-		
+		// TODO: gameWorld end
 	}
 
 	@Override
