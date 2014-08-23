@@ -3,6 +3,16 @@ package com.ld30.game.Model;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class City extends Entity {
+	private static final float PEOPLE_DIE_TIME = 3f;
+	private static final float RESOURCE_TICK_TIME = 1f;
+	
+	private static final int WORKER_FOOD_COST = 20;
+	private static final int WORKER_METAL_COST = 5;
+	private static final int WORKER_WOOD_COST = 10;
+	
+	private static final int SOLDIER_FOOD_COST = 25;
+	private static final int SOLDIER_METAL_COST = 40;
+	private static final int SOLDIER_WOOD_COST = 15;
 	
 	public static enum Type{
 		FOOD, METAL, WOOD;
@@ -11,12 +21,11 @@ public class City extends Entity {
 	
 	private int food, metal, wood;
 	private int soldierCount, workerCount;
-	private float life;
 	
 	private TextureRegion region;
 	private float x, y, width, height;
 	
-	public City(TextureRegion region, float x, float y, City.Type type) {
+	public City(TextureRegion region, float x, float y, Type type) {
 		this.type = type;
 		
 		setTexture(region);
@@ -25,15 +34,60 @@ public class City extends Entity {
 		setWidth(region.getRegionWidth());
 		setHeight(region.getRegionHeight());
 		
-		life = 100;
 	}
-
-	public float getLife() {
-		return life;
+	
+	public void makeWorker() {
+		if(WORKER_FOOD_COST <= food) {
+			if(WORKER_WOOD_COST <= wood) {
+				if(WORKER_METAL_COST <= metal) {
+					workerCount++;
+				}
+			}
+		}
 	}
-
-	public void setLife(float life) {
-		this.life = life;
+	
+	public void makeSoldier() {
+		if(SOLDIER_METAL_COST <= metal) {
+			if(SOLDIER_FOOD_COST <= food) {
+				if(SOLDIER_WOOD_COST <= wood) {
+					soldierCount++;
+				}
+			}
+		}
+	}
+	
+	private float resourceTime;
+	private float foodTime;
+	public void update(float delta) {
+		resourceTime += delta;
+		
+		if(resourceTime >= RESOURCE_TICK_TIME) {
+			resourceTime = 0;
+			
+			/*if(food > 0)
+				food--;
+			if(metal > 0)
+				metal--;
+			if(wood > 0)
+				wood--;*/
+			
+			if(type == Type.FOOD) {
+				food += workerCount;
+			} else if(type == Type.METAL) {
+				metal += workerCount;
+			} else {
+				wood += workerCount;
+			}
+		}
+		if(food <= 0) {
+			foodTime += delta;
+			if(foodTime >= PEOPLE_DIE_TIME) {
+				if(workerCount > 0)
+					workerCount--;
+				if(soldierCount > 0)
+					soldierCount--;
+			}
+		}
 	}
 
 	public int getFood() {
