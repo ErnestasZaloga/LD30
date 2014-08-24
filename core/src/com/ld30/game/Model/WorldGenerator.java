@@ -49,7 +49,7 @@ public class WorldGenerator {
 		float currentX = riverStart.x;
 		float currentY = riverStart.y;
 		
-		float currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO nigga what?
+		float currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
 		float currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
 		
 		if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
@@ -73,7 +73,7 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
-			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO nigga what?
+			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
 			currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
 			
 			
