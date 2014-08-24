@@ -131,7 +131,7 @@ public class GameUI {
 			final City city = cities.get(i);
 			CityUI cityUI = new CityUI(city, assets);
 			cityUI.setTransform(false);
-			cityUI.setSize(180, 40);//FIXME hardcode
+			cityUI.setSize(180, 30);//FIXME hardcode
 			cityUIs.add(cityUI);
 			stage.addActor(cityUI);
 			cityUI.setPosition((city.getWidth() - cityUI.getWidth()) / 2 + city.getX(),
@@ -221,7 +221,7 @@ public class GameUI {
 		topUI = new TopUI(cities, assets);
 		topUI.setTransform(false);
 		stage.addActor(topUI);
-		topUI.setSize(500, 60);
+		topUI.setSize(500, 36);
 		topUI.setPosition((screenW - topUI.getWidth()) / 2, screenH - topUI.getHeight());
 		
 		cityUIs.get(ii).setY(topCity.getY() + topCity.getHeight());

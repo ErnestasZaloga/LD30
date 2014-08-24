@@ -36,11 +36,11 @@ public final class CityUI extends Group {
 		UIBackground = new Image(assets.black);
 		addActor(UIBackground);
 		
-		food = new Image(assets.water);
-		metal = new Image(assets.water);
-		wood = new Image(assets.water);
-		soldiers = new Image(assets.water);
-		workers = new Image(assets.water);
+		food = new Image(assets.foodIcon);
+		metal = new Image(assets.metalIcon);
+		wood = new Image(assets.woodIcon);
+		soldiers = new Image(assets.soldierIcon);
+		workers = new Image(assets.workerIcon);
 		icons = new Image[5];
 		icons[0] = food;
 		icons[1] = metal;
