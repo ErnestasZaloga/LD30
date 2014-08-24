@@ -8,10 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ld30.game.Assets;
@@ -81,6 +79,19 @@ public class GameUI {
 			@Override
 			public boolean scrolled (InputEvent event, float x, float y, int amount) {
 				unitCount -= amount;
+				if(state == State.SENDING_WORKERS) {
+					if(unitCount > unitSenderCity.getWorkerCount()) {
+						unitCount = unitSenderCity.getWorkerCount();
+					}
+				} else if(state == State.SENDING_SOLDIERS) {
+					if(unitCount > unitSenderCity.getSoldierCount()) {
+						unitCount = unitSenderCity.getSoldierCount();
+					}
+				}
+				
+				if(unitCount < 0) {
+					unitCount = 0;
+				}
 				countChanger.setText("Count: " + unitCount);
 				countChanger.pack();
 				
@@ -188,7 +199,7 @@ public class GameUI {
 		private final TextButton trainWorker;
 		private final TextButton sendSoldier;
 		private final TextButton sendWorker;
-		//private final TextButton transportResources;
+		private final TextButton transportResources;
 		private final City city;
 		
 		
@@ -199,6 +210,12 @@ public class GameUI {
 			
 			UIBackground = new Image(assets.black);
 			addActor(UIBackground);
+			
+			transportResources = new TextButton("TRANSPORT\n RESOURCES", skin);
+			transportResources.addListener(new InputListener() {
+				
+			});
+			addActor(transportResources);
 			
 			trainSoldier = new TextButton("TRAIN\n SOLDIER", skin);
 			trainSoldier.addListener(new InputListener() {
@@ -220,7 +237,7 @@ public class GameUI {
 				}
 			});
 			addActor(trainWorker);
-			sendSoldier = new TextButton("SEND\n SOLDIER", skin);
+			sendSoldier = new TextButton("SEND\n SOLDIERS", skin);
 			sendSoldier.addListener(new InputListener() {
 				@Override
 				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -232,12 +249,13 @@ public class GameUI {
 				}
 			});
 			addActor(sendSoldier);
-			sendWorker = new TextButton("SEND\n WORKER", skin);
+			sendWorker = new TextButton("SEND\n WORKERS", skin);
 			sendWorker.addListener(new InputListener() {
 				@Override
 				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 					state = State.SENDING_WORKERS;
 					unitSenderCity = city;
+					stage.addActor(countChanger);
 					
 					return true;
 				}
@@ -253,9 +271,16 @@ public class GameUI {
 			UIBackground.setSize(width, height);
 			
 			trainSoldier.setPosition(0, 0);
-			sendSoldier.setPosition(0, height / 4f);
-			sendWorker.setPosition(0, height / 2f);
-			trainWorker.setPosition(0, height * 3f / 4f);
+			sendSoldier.setPosition(0, height / 5f);
+			transportResources.setPosition(0, height * 2 / 5f);
+			sendWorker.setPosition(0, height * 3 / 5f);
+			trainWorker.setPosition(0, height * 4 / 5f);
+			
+			sendSoldier.setWidth(transportResources.getWidth());
+			trainSoldier.setWidth(transportResources.getWidth());
+			trainWorker.setWidth(transportResources.getWidth());
+			sendWorker.setWidth(transportResources.getWidth());
+			//trainWorker.setWidth(transportResources.getWidth());
 			/*trainSoldier.setPosition(0, 0);//FIXME quick align
 			trainWorker.setPosition(0, height - trainWorker.getHeight());*/
 		}
