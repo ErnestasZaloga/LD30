@@ -19,6 +19,11 @@ import com.ld30.game.Model.GameWorld;
 import com.ld30.game.utils.Log;
 
 public class GameUI {
+	private enum State {
+		SENDING_UNITS, NORMAL;
+	}
+	private State state;
+	
 	private SpriteBatch batch;
 	private final Stage stage;
 	private final GameWorld gameWorld;
@@ -32,6 +37,7 @@ public class GameUI {
 	private final float height;
 	
 	public GameUI(final GameWorld gameWorld) {
+		state = State.NORMAL;
 		
 		this.gameWorld = gameWorld;
 		final Array<City> cities = gameWorld.getCities();
@@ -67,6 +73,9 @@ public class GameUI {
 			final Actor actor = new Actor() {
 				@Override
 				public void act(float delta) {
+					if(state != State.NORMAL) {
+						return;
+					}
 					float x = Gdx.input.getX();
 					float y = Gdx.graphics.getHeight() - Gdx.input.getY();
 					if(x >= getX() && x <= getRight() && y >=getY() && y <= getTop()) {
@@ -78,26 +87,6 @@ public class GameUI {
 				}
 			};
 			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
-			/*actor.addListener(new InputListener() {
-				@Override
-				public boolean mouseMoved(InputEvent event, float x, float y) {
-					if(x >= actor.getX() && x <= actor.getRight()) {
-						if(y >= actor.getY() && y <= actor.getTop()) {
-							if(bg.hasParent())
-							stage.addActor(bg);
-						}
-					} else {
-						bg.remove();
-					}
-					
-					return false;
-				}
-				
-				@Override
-				public void touchDragged (InputEvent event, float x, float y, int pointer) {
-					mouseMoved(event, x, y);
-				}
-			});*/
 			cityMouseOverRecievers.add(actor);
 			stage.addActor(actor);
 		}
@@ -111,16 +100,6 @@ public class GameUI {
 	}
 	
 	public void updateAndRender(SpriteBatch batch) {
-		
-		//Update
-		/*for(CityUI ui : cityUIs) {
-			ui.update();
-			City city = ui.city;
-			ui.setPosition(city.getX(), city.getY()); //TODO improve...
-		}
-		topUI.update();*/
-		//Gdx.gl.glClearColor(1, 1, 1, 1); //FIXME REMOVE!!!!!!!!!!!!!!!!!!!
-		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		batch.begin();
 		stage.draw();
