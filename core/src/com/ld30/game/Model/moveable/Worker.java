@@ -1,17 +1,26 @@
 package com.ld30.game.Model.moveable;
 
+import com.ld30.game.Model.GameWorld.ResourceType;
 
-public class Worker extends Humanoid {
+public class Worker extends PlayerHumanoid {
 	
-	private int lastCity;
+	private ResourceType type;
+	private int resourcesCarried;
 	
-	public Worker () {}
-	
-	public void setLastCity (final int lastCity) {
-		this.lastCity = lastCity;
+	public ResourceType getType() {
+		return type;
 	}
 	
-	public int getLastCity () {
-		return lastCity;
+	public void setType(ResourceType type) {
+		this.type = type;
 	}
+	
+	public int getResourcesCarried() {
+		return resourcesCarried;
+	}
+	
+	public void setResourcesCarried(int resourcesCarried) {
+		this.resourcesCarried = resourcesCarried;
+	}
+	
 }

@@ -22,14 +22,15 @@ public class City extends Entity {
 	
 	private int maxPopulation = 10;
 
-	private final GameWorld.Center type;
+	private final GameWorld.ResourceType type;
 	
 	private int food, metal, wood;
 	private int soldierCount, workerCount;
 	
 	private Tile centerTile;
 	
-	public City(TextureRegion region, float x, float y, GameWorld.Center type, Tile centralTile) {
+	public City(TextureRegion region, float x, float y, GameWorld.ResourceType type, Tile centralTile) {
+
 		this.type = type;
 		this.centerTile = centralTile;
 		
@@ -114,11 +115,11 @@ public class City extends Entity {
 			if(wood > 0)
 				wood--;
 			
-			if(type == GameWorld.Center.FOOD) {
+			if(type == GameWorld.ResourceType.FOOD) {
 				food += workerCount;
-			} else if(type == GameWorld.Center.IRON) {
+			} else if(type == GameWorld.ResourceType.IRON) {
 				metal += workerCount;
-			} else if(type == GameWorld.Center.WOOD){
+			} else if(type == GameWorld.ResourceType.WOOD){
 				wood += workerCount;
 			}
 		}

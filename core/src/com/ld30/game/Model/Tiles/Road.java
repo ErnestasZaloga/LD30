@@ -5,7 +5,7 @@ import com.ld30.game.Model.GameWorld;
 
 public class Road extends Tile {
 	
-	private GameWorld.Center center;
+	private GameWorld.ResourceType center;
 	
 	public Road(TextureRegion texture, float x, float y) {
 		setX(x);
@@ -14,11 +14,11 @@ public class Road extends Tile {
 		setWalkable(true);
 	}
 	
-	public void setCenter(GameWorld.Center center) {
+	public void setCenter(GameWorld.ResourceType center) {
 		this.center = center;
 	}
 	
-	public GameWorld.Center getCenter() {
+	public GameWorld.ResourceType getCenter() {
 		return this.center;
 	}
 	

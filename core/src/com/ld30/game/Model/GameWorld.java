@@ -6,13 +6,23 @@ import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
 import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.MovableManager;
-import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.View.UI.GameUI;
 import com.ld30.game.utils.AStar;
 import com.ld30.game.utils.Log;
 
+
+
 public class GameWorld {
 
+	private final Blockade blockadeFromFoodToIron = new Blockade();
+	private final Blockade blockadeFromIronToWood = new Blockade();
+	private final Blockade blockadeFromWoodToFood = new Blockade();
+	private final Blockade[] blockades = new Blockade[] {
+			blockadeFromFoodToIron,
+			blockadeFromIronToWood,
+			blockadeFromIronToWood
+	};
+	
 	private Assets assets;
 	private Map map = new Map();
 	private Array<MoveableEntity> entities = new Array<MoveableEntity>();
@@ -23,7 +33,7 @@ public class GameWorld {
 	
 	private GameUI gameUI;
 	
-	public enum Center {
+	public static enum ResourceType {
 		WOOD, FOOD, IRON, NONE
 	}
 	
@@ -38,16 +48,9 @@ public class GameWorld {
 	public void begin() {
 		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar);
 		map.setTiles(generatedWorld.tiles);
-
 		cityCenters = generatedWorld.centers;
 		
 		astar.setSize(map.getWidth(), map.getHeight());
-		
-		Worker worker = new Worker ();
-		worker.setTexture(assets.moveable);
-		worker.setPixelsPerSecond(256);
-		
-		entities.add(worker);
 		
 		for (int i = 0; i < cityCenters.length; i += 1) {
 			final Road road = (Road) cityCenters[i];
@@ -61,6 +64,15 @@ public class GameWorld {
 					cityCenters[i]);
 			cities.add(city);
 		}
+		
+		generatedWorld.getRoadFromFoodToIron();
+		generatedWorld.getRoadFromIronToWood();
+		generatedWorld.getRoadWoodToFood();
+
+		blockadeFromFoodToIron.setTile(generatedWorld.getRoadFromFoodToIron().get(generatedWorld.getRoadFromFoodToIron().size / 2));
+		blockadeFromIronToWood.setTile(generatedWorld.getRoadFromIronToWood().get(generatedWorld.getRoadFromIronToWood().size / 2));
+		blockadeFromWoodToFood.setTile(generatedWorld.getRoadWoodToFood().get(generatedWorld.getRoadWoodToFood().size / 2));
+		
 		gameUI = new GameUI(this);
 	}
 	
@@ -108,4 +120,20 @@ public class GameWorld {
 		return gameUI;
 	}
 	
+	public Blockade[] getBlockades () {
+		return blockades;
+	}
+
+	public Blockade getBlockadeFromFoodToIron() {
+		return blockadeFromFoodToIron;
+	}
+
+	public Blockade getBlockadeFromIronToWood() {
+		return blockadeFromIronToWood;
+	}
+
+	public Blockade getBlockadeFromWoodToFood() {
+		return blockadeFromWoodToFood;
+	}
+
 }
