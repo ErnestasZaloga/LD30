@@ -1,6 +1,5 @@
 package com.ld30.game.Model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -75,10 +74,11 @@ public class WorldGenerator {
 		/*
 		 * Create river start and end points
 		 */
-		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
+		int riverOffset = (int) (tiles[0].length*0.15f);
+		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2*riverOffset))+riverOffset);
 		Water r1 = new Water(assets.water, tWH*riverStart.x, tWH*riverStart.y);
 		tiles[(int)riverStart.x][(int)riverStart.y] = r1;
-		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
+		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*(tiles[0].length-2*riverOffset))+riverOffset);
 		Water r2 = new Water(assets.water, tWH*riverEnd.x, tWH*riverEnd.y);
 		tiles[(int)riverEnd.x][(int)riverEnd.y] = r2;
 		
