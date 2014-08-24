@@ -20,7 +20,7 @@ public class GameWorld {
 	private final Blockade[] blockades = new Blockade[] {
 			blockadeFromFoodToIron,
 			blockadeFromIronToWood,
-			blockadeFromIronToWood
+			blockadeFromWoodToFood
 	};
 	
 	private Assets assets;

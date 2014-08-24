@@ -3,6 +3,7 @@ package com.ld30.game.Model.moveable;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Model.Blockade;
 import com.ld30.game.Model.City;
 import com.ld30.game.Model.GameWorld;
@@ -13,7 +14,6 @@ import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.utils.AStar;
-import com.ld30.game.utils.Log;
 
 public class MovableManager {
 
@@ -64,6 +64,8 @@ public class MovableManager {
 				
 				final int currentPositionX = (int)(map.getWidth() * (humanoidX / (map.getWidth() * map.getTileWidth())));
 				final int currentPositionY = (int)(map.getHeight() * (humanoidY / (map.getHeight() * map.getTileHeight())));
+
+				boolean finish = false;
 				
 				if (humanoid.getWalkPath().size != 0 && 
 					!((currentPositionX == humanoid.getDestinationX()) && 
@@ -73,6 +75,7 @@ public class MovableManager {
 					int nextY = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 1);
 
 					boolean proceedMovement = true;
+					
 					if (currentPositionX != humanoid.getLastPositionX() ||
 						currentPositionY != humanoid.getLastPositonY()) {
 							
@@ -153,6 +156,12 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
+					finish = true;
+				}
+				
+				if (finish) {
+					humanoid.setState(Humanoid.State.IDLE);
+					
 					if (humanoid instanceof PlayerHumanoid) {
 						final PlayerHumanoid playerHumanoid = (PlayerHumanoid) humanoid;
 						final int destinationCity = playerHumanoid.getDestinationCity();
@@ -202,6 +211,10 @@ public class MovableManager {
 							
 							movables.removeIndex(i);
 							--i;
+						}
+						else if (orc instanceof OrcBrute) {
+							final OrcBrute orcBrute = (OrcBrute) orc;
+							
 						}
 					}
 				}

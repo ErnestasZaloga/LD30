@@ -2,6 +2,7 @@ package com.ld30.game.Model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.Humanoid;
 import com.ld30.game.Model.moveable.PlayerHumanoid;
@@ -153,13 +154,14 @@ public class City extends Entity {
 				}
 			}
 
-			troop.setX(centerTile.getX());
-			troop.setY(centerTile.getY());
-			troop.setLastPosition(cityX, cityY);
 			troop.setDestination(dstX, dstY);
 			troop.setState(Humanoid.State.WALKING);
-
+			
 			gameWorld.getMovableManager().setupRoadMovement(troop, cityX, cityY, dstX, dstY);
+			troop.setLastPosition(cityX, cityY);
+			troop.setX(troop.getLastPositionX() * map.getTileWidth());
+			troop.setY(troop.getLastPositonY() * map.getTileHeight());
+			
 			pendingHumanoids.add(troop);
 		}
 	}

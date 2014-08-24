@@ -57,8 +57,8 @@ public class WorldGenerator {
 	}
 	
 	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
-		int mapWidth = 64;
-		int mapHeight = 64;
+		int mapWidth = 96;
+		int mapHeight = 96;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
@@ -227,10 +227,10 @@ public class WorldGenerator {
 	}
 	
 	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
-		float radiusInTiles = 14;
+		float radiusInTiles = 20;
 		float percentageIncrement = (float) Math.ceil(100/radiusInTiles);
 		float chance = 0;
-		float objectSpawnChance = 0.13f;
+		float objectSpawnChance = 0.2f;
 		Road center = null;
 		for(String name : cityNames) {
 			if(name.equals("food")) {
@@ -480,12 +480,14 @@ public class WorldGenerator {
 		return result;
 	}
 	
+	private final static float DECAL_CHANCE = 0.08f;
+	
 	private static Tile[][] addRocksToMap(Tile[][] tiles, Assets assets, float tWH) {
 		//Scatter some rocks randomly on the map
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				if(chance < 0.13) {
+				if(chance < DECAL_CHANCE) {
 					if(tiles[x][y] instanceof Grass) {
 						//spawn rock
 						Rock r = new Rock(assets.rock, x*tWH, y*tWH);
@@ -505,7 +507,7 @@ public class WorldGenerator {
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				if(chance < 0.13) {
+				if(chance < DECAL_CHANCE) {
 					if(tiles[x][y] instanceof Grass) {
 						//spawn rock
 						Tree r = new Tree(assets.tree, x*tWH, y*tWH);
