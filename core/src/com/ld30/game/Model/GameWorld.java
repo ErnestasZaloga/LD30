@@ -7,6 +7,7 @@ import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.Model.moveable.Worker;
+import com.ld30.game.View.GameUI;
 import com.ld30.game.utils.AStar;
 
 public class GameWorld {
@@ -18,6 +19,8 @@ public class GameWorld {
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
 	private Tile[] cityCenters;
+	
+	private GameUI gameUI;
 	
 	public enum Center {
 		WOOD, FOOD, IRON, NONE
@@ -89,6 +92,10 @@ public class GameWorld {
 	
 	public Tile[] getCityCenters () {
 		return cityCenters;
+	}
+	
+	public Assets getAssets() {
+		return assets;
 	}
 	
 }
