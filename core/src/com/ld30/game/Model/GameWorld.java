@@ -54,6 +54,7 @@ public class GameWorld {
 			
 			Log.trace(this, road.getWidth(), assets.city.getRegionWidth());
 			City city = new City (
+					this,
 					assets.city, 
 					road.getX() + road.getWidth() / 2f - assets.city.getRegionWidth() / 2f, 
 					road.getY() + road.getHeight() / 2f - assets.city.getRegionHeight() / 2f, 
@@ -128,6 +129,10 @@ public class GameWorld {
 
 	public Blockade getBlockadeFromWoodToFood() {
 		return blockadeFromWoodToFood;
+	}
+	
+	public MovableManager getMovableManager () {
+		return movableManager;
 	}
 
 }

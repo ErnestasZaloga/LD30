@@ -13,6 +13,7 @@ import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.utils.AStar;
+import com.ld30.game.utils.Log;
 
 public class MovableManager {
 
@@ -76,12 +77,12 @@ public class MovableManager {
 							
 						if ((humanoid instanceof Worker || humanoid instanceof Troop)) {
 							for (int ii = 0; ii < blockades.length; ii += 1) {
-								if (!blockades[i].isActive()) {
+								if (!blockades[ii].isActive()) {
 									continue;
 								}
 								
-								int tileX = (int)(map.getWidth() * (blockades[i].getTile().getX() / (map.getWidth() * map.getTileWidth())));
-								int tileY = (int)(map.getHeight() * (blockades[i].getTile().getY() / (map.getHeight() * map.getTileHeight())));
+								int tileX = (int)(map.getWidth() * (blockades[ii].getTile().getX() / (map.getWidth() * map.getTileWidth())));
+								int tileY = (int)(map.getHeight() * (blockades[ii].getTile().getY() / (map.getHeight() * map.getTileHeight())));
 								
 								if (tileX == nextX && tileY == nextY) {
 									if (humanoid instanceof Worker) {
@@ -100,7 +101,9 @@ public class MovableManager {
 										proceedMovement = false;
 									}
 									else {
-										blockades[i].setActive(false);
+										blockades[ii].setActive(false);
+										blockades[ii].getTile().setTexture(gameWorld.getAssets().road);
+										
 										if (MathUtils.randomBoolean(0.5f)) {
 											movables.removeIndex(i);
 											--i;
@@ -112,9 +115,14 @@ public class MovableManager {
 						}
 						
 						humanoid.setLastPosition(currentPositionX, currentPositionY);
+						
+						if (proceedMovement) {
+							setupRoadMovement(humanoid, currentPositionX, currentPositionY, humanoid.getDestinationX(), humanoid.getDestinationY());
+						}
 					}
 					
 					if (!proceedMovement) {
+						Log.trace(this, "Dont proceed movement");
 						continue;
 					}
 					
@@ -138,6 +146,7 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
+					Log.trace(this, "Else");
 					if (humanoid instanceof PlayerHumanoid) {
 						final PlayerHumanoid playerHumanoid = (PlayerHumanoid) humanoid;
 						final int destinationCity = playerHumanoid.getDestinationCity();

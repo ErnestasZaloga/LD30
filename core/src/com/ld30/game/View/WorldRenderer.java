@@ -34,16 +34,6 @@ public class WorldRenderer {
 		for (int x = 0; x < entities.size; x += 1) {
 			final MoveableEntity entity = entities.get(x);
 			batch.draw(entity.getTexture(), entity.getX(), entity.getY());
-			
-			if (entity instanceof Humanoid) {
-				Humanoid humanoid = (Humanoid) entity;
-				
-				for (int i = 0; i < humanoid.getWalkPath().size; i += 2) {
-					batch.draw(entity.getTexture(), 
-							gameWorld.getMap().getTileWidth() * humanoid.getWalkPath().get(i),
-							gameWorld.getMap().getTileHeight() * humanoid.getWalkPath().get(i + 1));
-				}
-			}
 		}
 		
 		batch.setColor(1f, 1f, 1f, 0.5f);

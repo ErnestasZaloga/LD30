@@ -1,7 +1,12 @@
 package com.ld30.game.Model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.moveable.Humanoid;
+import com.ld30.game.Model.moveable.PlayerHumanoid;
+import com.ld30.game.Model.moveable.Troop;
+import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.utils.Log;
 
 public class City extends Entity {
@@ -19,18 +24,23 @@ public class City extends Entity {
 	private int cityFoodCost = 120;
 	private int cityWoodCost = 230;
 	private int cityMetalCost = 70;
+
+	private final Array<PlayerHumanoid> pendingHumanoids = new Array<PlayerHumanoid>();
 	
 	private int maxPopulation = 10;
 
 	private final GameWorld.ResourceType type;
 	
 	private int food, metal, wood;
-	private int soldierCount, workerCount;
+	private int soldierCount = 10, workerCount = 10;
 	
 	private Tile centerTile;
+	private GameWorld gameWorld;
 	
-	public City(TextureRegion region, float x, float y, GameWorld.ResourceType type, Tile centralTile) {
+	public City(GameWorld gameWorld, TextureRegion region, float x, float y, GameWorld.ResourceType type, Tile centralTile) {
 
+		this.gameWorld = gameWorld;
+		
 		this.type = type;
 		this.centerTile = centralTile;
 		
@@ -68,9 +78,42 @@ public class City extends Entity {
 	}
 	
 	public void sendWorkersTo(GameWorld gameWorld, City city, int count, boolean withResources) {
-		if(count <= workerCount) {
-			//TODO do stuff
+		if (city == this) {
+			return;
 		}
+		
+		final Map map = gameWorld.getMap();
+		final int cityX = (int)(map.getWidth() * (centerTile.getX() / (map.getWidth() * map.getTileWidth())));
+		final int cityY = (int)(map.getHeight() * (centerTile.getY() / (map.getHeight() * map.getTileHeight())));
+		final int dstX = (int)(map.getWidth() * (city.getCentralTile().getX() / (map.getWidth() * map.getTileWidth())));
+		final int dstY = (int)(map.getHeight() * (city.getCentralTile().getY() / (map.getHeight() * map.getTileHeight())));
+		
+		for (int i = 0; i < count; i += 1) {
+			final Worker worker = new Worker();
+			worker.setTexture(gameWorld.getAssets().moveable);
+			worker.setPixelsPerSecond(64); // TODO: Hardcoded
+			worker.setResourcesCarried(0);
+			worker.setType(type);
+			
+			for (int ii = 0; ii < gameWorld.getCities().size; ii += 1) {
+				if (gameWorld.getCities().get(ii) == this) {
+					worker.setSourceCity(ii);
+				}
+				else if (gameWorld.getCities().get(ii) == city) {
+					worker.setDestinationCity(ii);
+				}
+			}
+
+			worker.setX(centerTile.getX());
+			worker.setY(centerTile.getY());
+			worker.setLastPosition(cityX, cityY);
+			worker.setDestination(dstX, dstY);
+			worker.setState(Humanoid.State.WALKING);
+
+			gameWorld.getMovableManager().setupRoadMovement(worker, cityX, cityY, dstX, dstY);
+			pendingHumanoids.add(worker);
+		}
+
 	}
 	
 	public void makeSoldier() {
@@ -84,8 +127,38 @@ public class City extends Entity {
 	}
 	
 	public void sendSoldiersTo(GameWorld gameWorld, City city, int count) {
-		if(count <= soldierCount) {
-			//TODO do stuff
+		if (city == this) {
+			return;
+		}
+		
+		final Map map = gameWorld.getMap();
+		final int cityX = (int)(map.getWidth() * (centerTile.getX() / (map.getWidth() * map.getTileWidth())));
+		final int cityY = (int)(map.getHeight() * (centerTile.getY() / (map.getHeight() * map.getTileHeight())));
+		final int dstX = (int)(map.getWidth() * (city.getCentralTile().getX() / (map.getWidth() * map.getTileWidth())));
+		final int dstY = (int)(map.getHeight() * (city.getCentralTile().getY() / (map.getHeight() * map.getTileHeight())));
+		
+		for (int i = 0; i < count; i += 1) {
+			final Troop troop = new Troop();
+			troop.setTexture(gameWorld.getAssets().soldier);
+			troop.setPixelsPerSecond(64); // TODO: Hardcoded
+			
+			for (int ii = 0; ii < gameWorld.getCities().size; ii += 1) {
+				if (gameWorld.getCities().get(ii) == this) {
+					troop.setSourceCity(ii);
+				}
+				else if (gameWorld.getCities().get(ii) == city) {
+					troop.setDestinationCity(ii);
+				}
+			}
+
+			troop.setX(centerTile.getX());
+			troop.setY(centerTile.getY());
+			troop.setLastPosition(cityX, cityY);
+			troop.setDestination(dstX, dstY);
+			troop.setState(Humanoid.State.WALKING);
+
+			gameWorld.getMovableManager().setupRoadMovement(troop, cityX, cityY, dstX, dstY);
+			pendingHumanoids.add(troop);
 		}
 	}
 	
@@ -102,8 +175,22 @@ public class City extends Entity {
 	
 	private float resourceTime;
 	private float foodTime;
+	private float spawnTime;
+	
 	public void update(float delta) {
 		resourceTime += delta;
+		spawnTime += delta;
+		
+		if (spawnTime >= 0.1f) {
+			spawnTime = 0;
+			
+			if (pendingHumanoids.size > 0) {
+				final PlayerHumanoid player = pendingHumanoids.first();
+				pendingHumanoids.removeIndex(0);
+				
+				gameWorld.getEntities().add(player);
+			}
+		}
 		
 		if(resourceTime >= RESOURCE_TICK_TIME) {
 			resourceTime = 0;
@@ -123,7 +210,7 @@ public class City extends Entity {
 				wood += workerCount;
 			}
 		}
-		if(food <= 0) {
+		/*if(food <= 0) {
 			foodTime += delta;
 			if(foodTime >= PEOPLE_DIE_TIME) {
 				if(workerCount > 0)
@@ -131,7 +218,7 @@ public class City extends Entity {
 				if(soldierCount > 0)
 					soldierCount--;
 			}
-		}
+		}*/
 	}
 	
 	public Tile getCentralTile() {

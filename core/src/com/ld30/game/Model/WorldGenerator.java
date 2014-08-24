@@ -186,8 +186,8 @@ public class WorldGenerator {
 		int r = MathUtils.random(river.size-1);
 		float currentX = river.get(r).getX()/tWH;
 		float currentY = river.get(r).getY()/tWH;
-		if(currentX < 1) currentX = 1; else if(currentX > tiles.length-1) currentX = tiles.length-1;
-		if(currentY < 1) currentY = 1; else if(currentY > tiles[0].length-1) currentY = tiles[0].length-1;
+		if(currentX < 1) currentX = 1; else if(currentX >= tiles.length-1) currentX = tiles.length-2;
+		if(currentY < 1) currentY = 1; else if(currentY >= tiles[0].length-1) currentY = tiles[0].length-2;
 		ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
 		tiles[(int)currentX][(int)currentY] = tile;
 		

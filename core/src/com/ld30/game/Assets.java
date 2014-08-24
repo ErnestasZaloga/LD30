@@ -20,6 +20,7 @@ public class Assets {
 	private final Texture rockTexture;
 	private final Texture treeTexture;
 	private final Texture blockadeTexture;
+	private final Texture soldierTexture;
 	
 	public final TextureRegion blockade;
 	public final TextureRegion grass;
@@ -31,6 +32,7 @@ public class Assets {
 	public final TextureRegion moveable;
 	public final TextureRegion city;
 	public final TextureRegion black;
+	public final TextureRegion soldier;
 	
 	private final int tileWH = 8;
 	
@@ -106,13 +108,17 @@ public class Assets {
 		pixmap.setColor(Color.BLACK);
 		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
 		
-//<<<<<<< HEAD
 		black = new TextureRegion(new Texture(pixmap));
-//=======
 		blockadeTexture = new Texture(pixmap);
 		pixmap.dispose();
 		blockade = new TextureRegion(blockadeTexture);
-//>>>>>>> d19b41c9c98204f8276205f3ebdbe2f6e14334ee
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.PINK);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		soldierTexture = new Texture(pixmap);
+		pixmap.dispose();
+		soldier = new TextureRegion(soldierTexture);
 	}
 	
 	public void dispose () {
@@ -126,6 +132,7 @@ public class Assets {
 		rockTexture.dispose();
 		treeTexture.dispose();
 		blockadeTexture.dispose();
+		soldierTexture.dispose();
 	}
 	
 }
