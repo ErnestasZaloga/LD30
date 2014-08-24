@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -11,7 +12,7 @@ public class Assets {
 	
 	public final Skin UISkin;
 
-	private final Texture tileTexture;
+	/*private final Texture tileTexture;
 	private final Texture cityTexture;
 	private final Texture moveableTexture;
 	private final Texture waterTexture;
@@ -20,7 +21,8 @@ public class Assets {
 	private final Texture rockTexture;
 	private final Texture treeTexture;
 	private final Texture blockadeTexture;
-	private final Texture soldierTexture;
+	private final Texture soldierTexture;*/
+	private final TextureAtlas atlas;
 	
 	public final TextureRegion blockade;
 	public final TextureRegion grass;
@@ -34,105 +36,44 @@ public class Assets {
 	public final TextureRegion black;
 	public final TextureRegion soldier;
 	
+	public final TextureRegion foodIcon;
+	public final TextureRegion metalIcon;
+	public final TextureRegion woodIcon;
+	public final TextureRegion soldierIcon;
+	public final TextureRegion workerIcon;
+	
 	private final int tileWH = 8;
 	
 	public Assets () {
 		UISkin = new Skin(Gdx.files.internal("UISkin/uiskin.json"));
 		
-		Pixmap pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.GREEN);
-		pixmap.fillRectangle(0, 0, tileWH, tileWH);
+		atlas = new TextureAtlas(Gdx.files.internal("textures/xhdpi/atlas/atlas.pack"));
 		
-		tileTexture = new Texture(pixmap);
-		pixmap.dispose();
 		
-		grass = new TextureRegion(tileTexture);
+		//game graphycs
+		grass = new TextureRegion(atlas.findRegion("Zole"));
+		city = new TextureRegion(atlas.findRegion("PilisMedine"));
+		moveable = new TextureRegion(atlas.findRegion("Darbininkas"));
+		water = new TextureRegion(atlas.findRegion("VanduoTamsus"));
+		shallowWater = new TextureRegion(atlas.findRegion("VanduoSviesus"));
+		road = new TextureRegion(atlas.findRegion("Kelias"));
+		rock = new TextureRegion(atlas.findRegion("Akmuo"));
+		tree = new TextureRegion(atlas.findRegion("Medis"));
+		black = new TextureRegion(atlas.findRegion("Black"));
+		blockade = new TextureRegion(atlas.findRegion("Black"));
+		soldier = new TextureRegion(atlas.findRegion("Karys"));
 		
-		pixmap = new Pixmap(tileWH * 10, tileWH * 10, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.WHITE);
-		pixmap.fillRectangle(0, 0, tileWH * 10, tileWH * 10);
+		//game resource ui icons
+		foodIcon = new TextureRegion(atlas.findRegion("MaistasIkona"));
+		metalIcon = new TextureRegion(atlas.findRegion("GelezisIkona"));
+		woodIcon = new TextureRegion(atlas.findRegion("MedisIkona"));
+		soldierIcon = new TextureRegion(atlas.findRegion("KarysIkona"));
+		workerIcon = new TextureRegion(atlas.findRegion("DarbininkasIkona"));
 		
-		cityTexture = new Texture(pixmap);
-		pixmap.dispose();
-		city = new TextureRegion(cityTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.RED);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		moveableTexture = new Texture(pixmap);
-		pixmap.dispose();
-		moveable = new TextureRegion(moveableTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.BLUE);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		waterTexture = new Texture(pixmap);
-		pixmap.dispose();
-		water = new TextureRegion(waterTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.CYAN);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		shallowWaterTexture = new Texture(pixmap);
-		pixmap.dispose();
-		shallowWater = new TextureRegion(shallowWaterTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.YELLOW);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		roadTexture = new Texture(pixmap);
-		pixmap.dispose();
-		road = new TextureRegion(roadTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.GRAY);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		rockTexture = new Texture(pixmap);
-		pixmap.dispose();
-		rock = new TextureRegion(rockTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.TEAL);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		treeTexture = new Texture(pixmap);
-		pixmap.dispose();
-		tree = new TextureRegion(treeTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.BLACK);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		
-		black = new TextureRegion(new Texture(pixmap));
-		blockadeTexture = new Texture(pixmap);
-		pixmap.dispose();
-		blockade = new TextureRegion(blockadeTexture);
-		
-		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.PINK);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
-		soldierTexture = new Texture(pixmap);
-		pixmap.dispose();
-		soldier = new TextureRegion(soldierTexture);
 	}
 	
 	public void dispose () {
-		black.getTexture().dispose();
-		tileTexture.dispose();
-		cityTexture.dispose();
-		moveableTexture.dispose();
-		waterTexture.dispose();
-		shallowWaterTexture.dispose();
-		roadTexture.dispose();
-		rockTexture.dispose();
-		treeTexture.dispose();
-		blockadeTexture.dispose();
-		soldierTexture.dispose();
+		atlas.dispose();
 	}
 	
 }

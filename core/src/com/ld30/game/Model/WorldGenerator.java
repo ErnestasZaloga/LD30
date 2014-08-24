@@ -56,9 +56,7 @@ public class WorldGenerator {
 		
 	}
 	
-	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
-		int mapWidth = 96;
-		int mapHeight = 96;
+	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar, int mapWidth, int mapHeight) {
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
@@ -74,10 +72,11 @@ public class WorldGenerator {
 		/*
 		 * Create river start and end points
 		 */
-		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
+		int riverOffset = (int) (tiles[0].length*0.15f);
+		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2*riverOffset))+riverOffset);
 		Water r1 = new Water(assets.water, tWH*riverStart.x, tWH*riverStart.y);
 		tiles[(int)riverStart.x][(int)riverStart.y] = r1;
-		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
+		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*(tiles[0].length-2*riverOffset))+riverOffset);
 		Water r2 = new Water(assets.water, tWH*riverEnd.x, tWH*riverEnd.y);
 		tiles[(int)riverEnd.x][(int)riverEnd.y] = r2;
 		
@@ -168,25 +167,6 @@ public class WorldGenerator {
 			}
 		}
 		
-		/*float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+1;
-		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
-		foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		foodCityCentre.setCenter(GameWorld.Center.FOOD);
-		foodCityCentre.setCenter(GameWorld.ResourceType.FOOD);
-		tiles[(int)randomX][(int)randomY] = foodCityCentre;
-		
-		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
-		randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
-		ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		ironCityCentre.setCenter(GameWorld.ResourceType.IRON);
-		tiles[(int)randomX][(int)randomY] = ironCityCentre;
-		
-		randomX = (float) Math.floor(Math.random()*(tiles.length-2))+1;
-		randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2-1;
-		woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		woodCityCentre.setCenter(GameWorld.Center.WOOD);
-		tiles[(int)randomX][(int)randomY] = woodCityCentre;*/
-		
 		final Tile[] centers = new Tile[] {
 				woodCityCentre,
 				ironCityCentre,
@@ -227,7 +207,8 @@ public class WorldGenerator {
 	}
 	
 	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
-		float radiusInTiles = 20;
+		//XXX: variables with warnings are needed for gradient generation, which is now turned off
+		float radiusInTiles = 14;
 		float percentageIncrement = (float) Math.ceil(100/radiusInTiles);
 		float chance = 0;
 		float objectSpawnChance = 0.2f;
@@ -242,7 +223,7 @@ public class WorldGenerator {
 			}
 			
 			for(int x = 0; x < tiles.length; x++) {
-				for(int y = 0; y < tiles.length; y++) {
+				for(int y = 0; y < tiles[0].length; y++) {
 					float dx = x-center.getX()/tWH;
 					float dy = y-center.getY()/tWH;
 					float dist = (float) Math.floor(Math.sqrt(dx*dx+dy*dy));
@@ -253,24 +234,24 @@ public class WorldGenerator {
 							float foodPercentageIncrement = (float) Math.ceil(100/foodRadiusInTiles);
 							if(dist <= foodRadiusInTiles) {
 								//roll, and see if swap is possible
-								chance = (float) Math.random()*100;
-								if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
+								//XXX: comment out theese comments to turn on gradient
+								//chance = (float) Math.random()*100;
+								//if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
 									Tile t = new Grass(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								}
-//								Tile t = new Grass(assets.grass, x*tWH, y*tWH);
-//								tiles[x][y] = t;
+								//}
 							}
 						}
 					} else if(center.getCenter() == GameWorld.ResourceType.IRON) {
 						if(tiles[x][y] instanceof Tree) {
 							if(dist <= radiusInTiles) {
 								//roll, and see if swap is possible
-								chance = (float) Math.random()*100;
-								if(chance >= dist*percentageIncrement-percentageIncrement) {
+								//XXX: comment out theese comments to turn on gradient
+								//chance = (float) Math.random()*100;
+								//if(chance >= dist*percentageIncrement-percentageIncrement) {
 									Tile t = new Rock(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								}
+								//}
 							}
 						} else if(tiles[x][y] instanceof Grass) {
 							float r = (float) Math.random();
@@ -283,13 +264,12 @@ public class WorldGenerator {
 						if(tiles[x][y] instanceof Rock) {
 							if(dist <= radiusInTiles) {
 								//roll, and see if swap is possible
-								chance = (float) Math.random()*100;
-								if(chance >= dist*percentageIncrement-percentageIncrement) {
+								//XXX: comment out theese comments to turn on gradient
+								//chance = (float) Math.random()*100;
+								//if(chance >= dist*percentageIncrement-percentageIncrement) {
 									Tile t = new Tree(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								}
-//								Tile t = new Tree(assets.grass, x*tWH, y*tWH);
-//								tiles[x][y] = t;
+								//}
 							}
 						} else if(tiles[x][y] instanceof Grass) {
 							float r = (float) Math.random();
@@ -443,7 +423,6 @@ public class WorldGenerator {
 				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water);
 			}
 		};
-		//riverEnd.x -= 1;
 		IntArray path = new IntArray();
 		path.addAll(astar.getPath((int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y, riverAStarValidation));
 		
@@ -485,7 +464,7 @@ public class WorldGenerator {
 	private static Tile[][] addRocksToMap(Tile[][] tiles, Assets assets, float tWH) {
 		//Scatter some rocks randomly on the map
 		for(int x = 0; x < tiles.length; x++) {
-			for(int y = 0; y < tiles.length; y++) {
+			for(int y = 0; y < tiles[0].length; y++) {
 				float chance = MathUtils.random();
 				if(chance < DECAL_CHANCE) {
 					if(tiles[x][y] instanceof Grass) {
@@ -496,8 +475,6 @@ public class WorldGenerator {
 				}
 			}
 		}
-		//Scatter some more around iron city centre
-		
 		
 		return tiles;
 	}
@@ -505,7 +482,7 @@ public class WorldGenerator {
 	private static Tile[][] addTreesToMap(Tile[][] tiles, Assets assets, float tWH) {
 		//Scatter some trees randomly on the map
 		for(int x = 0; x < tiles.length; x++) {
-			for(int y = 0; y < tiles.length; y++) {
+			for(int y = 0; y < tiles[0].length; y++) {
 				float chance = MathUtils.random();
 				if(chance < DECAL_CHANCE) {
 					if(tiles[x][y] instanceof Grass) {
@@ -516,8 +493,6 @@ public class WorldGenerator {
 				}
 			}
 		}
-		//Scatter some more around wood city centre
-		
 		
 		return tiles;
 	}
