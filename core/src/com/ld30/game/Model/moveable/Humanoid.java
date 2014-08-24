@@ -2,6 +2,7 @@ package com.ld30.game.Model.moveable;
 
 import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Model.MoveableEntity;
+import com.ld30.game.utils.AStar;
 
 public class Humanoid extends MoveableEntity {
 	
@@ -10,6 +11,7 @@ public class Humanoid extends MoveableEntity {
 		WALKING;
 	}
 	
+	private AStar.Validator movementValidator;
 	private int lastPositionX;
 	private int lastPositionY;
 	private State state = State.IDLE;
@@ -17,6 +19,14 @@ public class Humanoid extends MoveableEntity {
 	private int destinationY;
 	private final IntArray walkPath = new IntArray();
 	
+	public AStar.Validator getMovementValidator() {
+		return movementValidator;
+	}
+
+	public void setMovementValidator(AStar.Validator movementValidator) {
+		this.movementValidator = movementValidator;
+	}
+
 	public void setLastPosition (final int lastPositionX, 
 			 					 final int lastPositionY) {
 
