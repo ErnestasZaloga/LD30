@@ -2,6 +2,7 @@ package com.ld30.game.View;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.ld30.game.Model.City;
 import com.ld30.game.Model.GameWorld;
 import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Tile;
@@ -12,7 +13,6 @@ public class WorldRenderer {
 	private final SpriteBatch batch;
 	private GameWorld gameWorld;
 
-	
 	public WorldRenderer(SpriteBatch batch,
 						 GameWorld gameWorld) {
 		
@@ -44,6 +44,12 @@ public class WorldRenderer {
 							gameWorld.getMap().getTileHeight() * humanoid.getWalkPath().get(i + 1));
 				}
 			}
+		}
+		
+		final Array<City> cities = gameWorld.getCities();
+		for (int x = 0; x < cities.size; x += 1) {
+			final City city = cities.get(x);
+			batch.draw(city.getTexture(), city.getX(), city.getY());
 		}
 		
 		batch.end();

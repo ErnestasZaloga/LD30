@@ -44,15 +44,49 @@ public class MovableManager {
 		final Array<MoveableEntity> movables = gameWorld.getEntities();
 		final AStar astar = gameWorld.getAStar();
 		final Map map = gameWorld.getMap();
+		final Tile[] cityCenters = gameWorld.getCityCenters();
 		
 		for (int i = 0; i < movables.size; i += 1) {
 			final MoveableEntity movable = movables.get(i);
 			
 			if (movable instanceof Humanoid) {
 				Humanoid humanoid = (Humanoid) movable;
-				
+
 				if (humanoid.getState() == Humanoid.State.IDLE) {
-					continue;
+					if (humanoid instanceof Worker) {
+						Worker worker = (Worker) humanoid;
+						final int startCenter = MathUtils.random(0, cityCenters.length - 1);
+
+						humanoid.setX(cityCenters[startCenter].getX());
+						humanoid.setY(cityCenters[startCenter].getY());
+
+						int x = 0;
+						int y = 0;
+						
+						worker.setLastCity(startCenter);
+						
+						if (worker.getLastCity() == 0) {
+							worker.setLastCity(1);
+							x = (int)(map.getWidth() * (cityCenters[1].getX() / (map.getWidth() * map.getTileWidth())));
+							y = (int)(map.getHeight() * (cityCenters[1].getY() / (map.getHeight() * map.getTileHeight())));
+						}
+						else if (worker.getLastCity() == 1) {
+							worker.setLastCity(2);
+							x = (int)(map.getWidth() * (cityCenters[2].getX() / (map.getWidth() * map.getTileWidth())));
+							y = (int)(map.getHeight() * (cityCenters[2].getY() / (map.getHeight() * map.getTileHeight())));
+						}
+						else if (worker.getLastCity() == 2) {
+							worker.setLastCity(0);
+							x = (int)(map.getWidth() * (cityCenters[0].getX() / (map.getWidth() * map.getTileWidth())));
+							y = (int)(map.getHeight() * (cityCenters[0].getY() / (map.getHeight() * map.getTileHeight())));
+						}
+						Log.trace(this, "Destination", x, y);
+						humanoid.setDestination(x, y);
+						//humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
+					}
+					
+					humanoid.setState(Humanoid.State.WALKING);
+					//continue;
 				}
 				
 				final float humanoidX = humanoid.getX() + humanoid.getWidth() / 2f;
@@ -97,8 +131,34 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
+					
+					int x = 0;
+					int y = 0;
+
+					if (humanoid instanceof Worker) {
+						final Worker worker = (Worker) humanoid;
+						
+						if (worker.getLastCity() == 0) {
+							worker.setLastCity(1);
+							x = (int)(map.getWidth() * (cityCenters[1].getX() / (map.getWidth() * map.getTileWidth())));
+							y = (int)(map.getHeight() * (cityCenters[1].getY() / (map.getHeight() * map.getTileHeight())));
+						}
+						else if (worker.getLastCity() == 1) {
+							worker.setLastCity(2);
+							x = (int)(map.getWidth() * (cityCenters[2].getX() / (map.getWidth() * map.getTileWidth())));
+							y = (int)(map.getHeight() * (cityCenters[2].getY() / (map.getHeight() * map.getTileHeight())));
+						}
+						else if (worker.getLastCity() == 2) {
+							worker.setLastCity(0);
+							x = (int)(map.getWidth() * (cityCenters[0].getX() / (map.getWidth() * map.getTileWidth())));
+							y = (int)(map.getHeight() * (cityCenters[0].getY() / (map.getHeight() * map.getTileHeight())));
+						}
+					}
+					
 					Log.trace(this, "No options left generating new path", humanoid.getWalkPath().size);
-					humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
+					Log.trace(this, "New dst", x, y);
+					Log.trace(this, "Last dst", humanoid.getDestinationX(), humanoid.getDestinationY());
+					humanoid.setDestination(x, y);//MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
 					humanoid.getWalkPath().clear();
 					humanoid.getWalkPath().addAll(
 							astar.getPath(
