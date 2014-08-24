@@ -7,12 +7,10 @@ import com.ld30.game.Assets;
 import com.ld30.game.Model.Tiles.Grass;
 import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.Rock;
-import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.utils.AStar;
-import com.ld30.game.utils.Log;
 
 public class WorldGenerator {
 	
@@ -44,7 +42,7 @@ public class WorldGenerator {
 		}
 		
 		/*
-		 * Create a river
+		 * Create river start and end points
 		 */
 		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
 		Water r1 = new Water(assets.water, tWH*riverStart.x, tWH*riverStart.y);
@@ -97,42 +95,6 @@ public class WorldGenerator {
 				tiles[(int)endX][(int)endY+1] = w;
 			}
 		}
-		/*if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
-			tiles[(int)currentX][(int)currentY-1] = t;
-		}
-		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
-			tiles[(int)currentX][(int)currentY+1] = t;
-		}*/
-		/*while(currentX != riverEnd.x || currentY != riverEnd.y) {
-			if(currentX < riverEnd.x) {
-				currentX++;
-			} else if(currentX > riverEnd.x) {
-				currentX--;
-			}
-			
-			if(currentY < riverEnd.y) {
-				currentY++;
-			} else if(currentY > riverEnd.y) {
-				currentY--;
-			}
-			
-			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
-			currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
-			
-			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
-				tiles[(int)currentX][(int)currentYminus1] = t;
-			}
-			if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
-				tiles[(int)currentX][(int)currentYplus1] = t;
-			}
-			
-		}*/
 		
 		/*
 		 * Create city centres
@@ -173,8 +135,9 @@ public class WorldGenerator {
 		/*
 		 * Create roads between city centres
 		 */
+		addRoadFromFoodToIron(foodCityCentre, ironCityCentre, tiles, assets, astar, tWH);
 		//From food centre to iron
-		currentX = foodCityCentre.getX()/tWH;
+		/*currentX = foodCityCentre.getX()/tWH;
 		currentY = foodCityCentre.getY()/tWH;
 		float targetX = ironCityCentre.getX()/tWH;
 		float targetY = ironCityCentre.getY()/tWH;
@@ -222,9 +185,9 @@ public class WorldGenerator {
 				t.setCenter(GameWorld.Center.NONE);
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
-		}
+		}*/
 		//From iron city centre to wood
-		currentX = ironCityCentre.getX()/tWH;
+		/*currentX = ironCityCentre.getX()/tWH;
 		currentY = ironCityCentre.getY()/tWH;
 		targetX = woodCityCentre.getX()/tWH;
 		targetY = woodCityCentre.getY()/tWH;
@@ -272,9 +235,9 @@ public class WorldGenerator {
 				t.setCenter(GameWorld.Center.NONE);
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
-		}
+		}*/
 		//From wood city centre to food
-		currentX = woodCityCentre.getX()/tWH;
+		/*currentX = woodCityCentre.getX()/tWH;
 		currentY = woodCityCentre.getY()/tWH;
 		targetX = foodCityCentre.getX()/tWH;
 		targetY = foodCityCentre.getY()/tWH;
@@ -322,13 +285,19 @@ public class WorldGenerator {
 				t.setCenter(GameWorld.Center.NONE);
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
-		}
+		}*/
 		
 		return new GeneratedWorld(tiles, centers);
 	}
 	
+	private static Tile[] addRoadFromFoodToIron(Road foodCityCentre, Road ironCityCentre, Tile[][] tiles, Assets assets, AStar astar, float tWH) {
+		Tile[] result;
+		
+		return null;
+	}
+	
 	private static Tile[][] addRiverToMap(AStar astar, final Tile[][] tiles, Assets assets, float tWH, Vector2 riverStart, Vector2 riverEnd, int mapW, int mapH) {
-		astar.setSize(mapW, mapH);  //FIXME: Fix this hardcoding!
+		astar.setSize(mapW, mapH);
 		AStar.Validator riverAStarValidation = new AStar.Validator() {
 			@Override
 			public boolean isValid(int x, int y) {
