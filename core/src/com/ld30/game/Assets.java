@@ -45,7 +45,7 @@ public class Assets {
 		
 		pixmap = new Pixmap(tileWH * 10, tileWH * 10, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
-		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		pixmap.fillRectangle(0, 0, tileWH * 10, tileWH * 10);
 		
 		cityTexture = new Texture(pixmap);
 		pixmap.dispose();

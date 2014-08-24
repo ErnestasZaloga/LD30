@@ -1,6 +1,7 @@
 package com.ld30.game.View;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -8,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -30,11 +30,13 @@ public class GameUI {
 	private final float height;
 	
 	public GameUI(final GameWorld gameWorld, 
-				  final Array<City> cities, 
-				  final Assets assets, 
+				  /*final Array<City> cities, 
+				  final Assets assets, */
 				  final SpriteBatch batch) {
 		
 		this.gameWorld = gameWorld;
+		final Array<City> cities = gameWorld.getCities();
+		final Assets assets = gameWorld.getAssets();
 		
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
@@ -52,15 +54,16 @@ public class GameUI {
 			CityUI group = new CityUI(city, assets);
 			group.setTransform(false);
 			
-			group.setSize(city.getWidth() + 250, 150); //FIXME hardcode
+			group.setSize(100, 20);//FIXME hardcode
 			cityUIs.add(group);
 			stage.addActor(group);
-			group.setPosition(city.getX(), city.getY());
+			group.setPosition(city.getX() - 10, city.getY() - 10);
 			
 			final CityButtonGroup bg = new CityButtonGroup(city, assets);
 			buttonGroups.add(bg);
 			bg.setPosition(city.getX(), city.getY());
 			bg.setSize(100, 150);//FIXME hardcode again
+			bg.setTransform(false);
 			
 			
 			final Actor actor = new Actor();
@@ -92,6 +95,8 @@ public class GameUI {
 		topUI = new TopUI(cities, assets);
 		topUI.setTransform(false);
 		stage.addActor(topUI);
+		topUI.setSize(500, 60);
+		topUI.setPosition(0, stage.getHeight() - topUI.getHeight());
 		
 	}
 	
@@ -223,6 +228,8 @@ public class GameUI {
 		
 		@Override
 		public void act(float delta) {
+			super.act(delta);
+			
 			foodCount = 0;
 			metalCount = 0;
 			woodCount = 0;
@@ -257,7 +264,7 @@ public class GameUI {
 			//food.set
 			float pointX = 0;
 			for(int i = 0; i < 5; i++) {
-				pointX += width / 7;
+				pointX += width / 6;
 				Image im = icons[i];
 				
 				im.setX(pointX - im.getWidth() / 2);
@@ -326,6 +333,8 @@ public class GameUI {
 		
 		@Override
 		public void act(float delta) {
+			super.act(delta);
+			
 			foodNumber.setText(String.valueOf(city.getFoodCount()));
 			metalNumber.setText(String.valueOf(city.getMetalCount()));
 			woodNumber.setText(String.valueOf(city.getWoodCount()));
@@ -356,5 +365,23 @@ public class GameUI {
 			
 			UIBackground.setSize(width, height);
 		}
+	}
+	
+	public class Label extends com.badlogic.gdx.scenes.scene2d.ui.Label {
+
+		public Label(CharSequence text, Skin skin) {
+			super(text, skin);
+		}
+		
+		public Label(CharSequence text, Skin skin, Color color) {
+			super(text, skin);
+		}
+		
+		@Override
+		public void setText(CharSequence text) {
+			super.setText(text);
+			pack();
+		}
+		
 	}
 }

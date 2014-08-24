@@ -1,12 +1,15 @@
 package com.ld30.game.Model;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
+import com.ld30.game.Model.Tiles.Road;
+import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.Model.moveable.Worker;
+import com.ld30.game.View.GameUI;
 import com.ld30.game.utils.AStar;
+import com.ld30.game.utils.Log;
 
 public class GameWorld {
 
@@ -16,6 +19,9 @@ public class GameWorld {
 	private Array<City> cities = new Array<City>();
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
+	private Tile[] cityCenters;
+	
+	private GameUI gameUI;
 	
 	public enum Center {
 		WOOD, FOOD, IRON, NONE
@@ -32,20 +38,36 @@ public class GameWorld {
 	public void begin() {
 		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar);
 		map.setTiles(generatedWorld.tiles);
-		//astar.setSize(map.getWidth(), map.getHeight());
+
+		cityCenters = generatedWorld.centers;
+		
+		astar.setSize(map.getWidth(), map.getHeight());
 		
 		Worker worker = new Worker ();
 		worker.setTexture(assets.moveable);
-		worker.setLastPosition(0, 0);
-		worker.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
-		worker.setPixelsPerSecond(64);
-		movableManager.move(worker);
+		worker.setPixelsPerSecond(256);
 		
 		entities.add(worker);
+		
+		for (int i = 0; i < cityCenters.length; i += 1) {
+			final Road road = (Road) cityCenters[i];
+			
+			Log.trace(this, road.getWidth(), assets.city.getRegionWidth());
+			City city = new City (
+					assets.city, 
+					road.getX() + road.getWidth() / 2f - assets.city.getRegionWidth() / 2f, 
+					road.getY() + road.getHeight() / 2f - assets.city.getRegionHeight() / 2f, 
+					road.getCenter());
+			cities.add(city);
+		}
 	}
 	
 	public void update(float delta) {
 		movableManager.update(delta);
+		
+		for (int i = 0; i < cities.size; i += 1) {
+			cities.get(i).update(delta);
+		}
 	}
 
 	public Array<MoveableEntity> getEntities() {
@@ -70,6 +92,14 @@ public class GameWorld {
 	
 	public AStar getAStar () {
 		return astar;
+	}
+	
+	public Tile[] getCityCenters () {
+		return cityCenters;
+	}
+	
+	public Assets getAssets() {
+		return assets;
 	}
 	
 }
