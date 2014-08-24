@@ -64,11 +64,11 @@ public class GameWorld {
 		
 		generatedWorld.getRoadFromFoodToIron();
 		generatedWorld.getRoadFromIronToWood();
-		generatedWorld.getRoadWoodFoodToFood();
+		generatedWorld.getRoadWoodToFood();
 
 		blockadeFromFoodToIron.setTile(generatedWorld.getRoadFromFoodToIron().get(generatedWorld.getRoadFromFoodToIron().size / 2));
 		blockadeFromIronToWood.setTile(generatedWorld.getRoadFromIronToWood().get(generatedWorld.getRoadFromIronToWood().size / 2));
-		blockadeFromWoodToFood.setTile(generatedWorld.getRoadWoodFoodToFood().get(generatedWorld.getRoadWoodFoodToFood().size / 2));
+		blockadeFromWoodToFood.setTile(generatedWorld.getRoadWoodToFood().get(generatedWorld.getRoadWoodToFood().size / 2));
 		
 		gameUI = new GameUI(this);
 	}
