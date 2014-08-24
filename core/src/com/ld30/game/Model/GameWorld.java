@@ -30,9 +30,9 @@ public class GameWorld {
 	}
 	
 	public void begin() {
-		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth());
+		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar);
 		map.setTiles(generatedWorld.tiles);
-		astar.setSize(map.getWidth(), map.getHeight());
+		//astar.setSize(map.getWidth(), map.getHeight());
 		
 		Worker worker = new Worker ();
 		worker.setTexture(assets.moveable);

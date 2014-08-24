@@ -2,6 +2,7 @@ package com.ld30.game.Model;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.Tiles.Grass;
 import com.ld30.game.Model.Tiles.Road;
@@ -10,6 +11,8 @@ import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
+import com.ld30.game.utils.AStar;
+import com.ld30.game.utils.Log;
 
 public class WorldGenerator {
 	
@@ -25,9 +28,9 @@ public class WorldGenerator {
 		}
 	}
 	
-	public static GeneratedWorld generateMap(Assets assets, float tWH) {
-		int mapWidth = 64;
-		int mapHeight = 64;
+	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
+		int mapWidth = 128;
+		int mapHeight = 128;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
@@ -43,28 +46,25 @@ public class WorldGenerator {
 		/*
 		 * Create a river
 		 */
-		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*tiles[0].length));
+		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
 		Water r1 = new Water(assets.water, tWH*riverStart.x, tWH*riverStart.y);
 		tiles[(int)riverStart.x][(int)riverStart.y] = r1;
-		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*tiles[0].length));
+		Vector2 riverEnd = new Vector2(tiles.length-1, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
 		Water r2 = new Water(assets.water, tWH*riverEnd.x, tWH*riverEnd.y);
 		tiles[(int)riverEnd.x][(int)riverEnd.y] = r2;
 		
 		float currentX = riverStart.x;
 		float currentY = riverStart.y;
-		
-		float currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
-		float currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
-		
-		if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
-			tiles[(int)currentX][(int)currentYminus1] = t;
+		/*if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+			tiles[(int)currentX][(int)currentY-1] = t;
 		}
-		if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
-			tiles[(int)currentX][(int)currentYplus1] = t;
-		}
-		while(currentX != riverEnd.x || currentY != riverEnd.y) {
+		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+			tiles[(int)currentX][(int)currentY+1] = t;
+		}*/
+		addRiverToMap(astar, tiles, assets, tWH, riverStart, riverEnd, mapWidth, mapHeight);
+		/*while(currentX != riverEnd.x || currentY != riverEnd.y) {
 			if(currentX < riverEnd.x) {
 				currentX++;
 			} else if(currentX > riverEnd.x) {
@@ -80,7 +80,6 @@ public class WorldGenerator {
 			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
 			currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
 			
-			
 			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
 			if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
@@ -92,7 +91,7 @@ public class WorldGenerator {
 				tiles[(int)currentX][(int)currentYplus1] = t;
 			}
 			
-		}
+		}*/
 		
 		/*
 		 * Create city centres
@@ -286,15 +285,38 @@ public class WorldGenerator {
 		return new GeneratedWorld(tiles, centers);
 	}
 	
+	private static Tile[][] addRiverToMap(AStar astar, final Tile[][] tiles, Assets assets, float tWH, Vector2 riverStart, Vector2 riverEnd, int mapW, int mapH) {
+		astar.setSize(mapW, mapH);  //FIXME: Fix this hardcoding!
+		AStar.Validator riverAStarValidation = new AStar.Validator() {
+			@Override
+			public boolean isValid(int x, int y) {
+				return (tiles[x][y] instanceof Grass);
+			}
+		};
+		riverEnd.x -= 16;
+		IntArray path = new IntArray();
+		path.addAll(astar.getPath((int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y, riverAStarValidation));
+		Log.trace(WorldGenerator.class, (int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y);
+		for(int i = 0; i < path.size; i+=2) {
+			Water t = new Water(assets.water, tWH*path.get(i), tWH*path.get(i+1));
+			tiles[path.get(i)][path.get(i+1)] = t;
+		}
+		
+		return tiles;
+	}
+	
 	private static Tile[][] addRocksToMap(Tile[][] tiles, Assets assets, float tWH) {
 		//Scatter some rocks randomly on the map
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				if(chance < 0.013) {
-					//spawn rock
-					Rock r = new Rock(assets.rock, x*tWH, y*tWH);
-					tiles[x][y] = r;
+				//if(chance < 0.013) {
+				if(chance < 0.2) {
+					if(tiles[x][y] instanceof Grass) {
+						//spawn rock
+						Rock r = new Rock(assets.rock, x*tWH, y*tWH);
+						tiles[x][y] = r;
+					}
 				}
 			}
 		}
@@ -310,9 +332,11 @@ public class WorldGenerator {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
 				if(chance < 0.013) {
-					//spawn rock
-					Tree r = new Tree(assets.tree, x*tWH, y*tWH);
-					tiles[x][y] = r;
+					if(tiles[x][y] instanceof Grass) {
+						//spawn rock
+						Tree r = new Tree(assets.tree, x*tWH, y*tWH);
+						tiles[x][y] = r;
+					}
 				}
 			}
 		}
