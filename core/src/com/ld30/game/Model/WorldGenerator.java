@@ -55,6 +55,48 @@ public class WorldGenerator {
 		
 		float currentX = riverStart.x;
 		float currentY = riverStart.y;
+		if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+			Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+			tiles[(int)currentX][(int)currentY-1] = w;
+		} else if(tiles[(int)currentX][(int)currentY-1] instanceof Road) {
+			Road r = (Road) tiles[(int)currentX][(int)currentY-1];
+			if(r.getCenter() == GameWorld.Center.NONE) {
+				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+				tiles[(int)currentX][(int)currentY-1] = w;
+			}
+		}
+		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+			Water w = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+			tiles[(int)currentX][(int)currentY+1] = w;
+		} else if(tiles[(int)currentX][(int)currentY+1] instanceof Road) {
+			Road r = (Road) tiles[(int)currentX][(int)currentY+1];
+			if(r.getCenter() == GameWorld.Center.NONE) {
+				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+				tiles[(int)currentX][(int)currentY+1] = w;
+			}
+		}
+		float endX = riverEnd.x;
+		float endY = riverEnd.y;
+		if(tiles[(int)endX][(int)endY-1] instanceof Grass) {
+			Water w = new Water(assets.water, tWH*endX, tWH*(endY-1));
+			tiles[(int)endX][(int)endY-1] = w;
+		} else if(tiles[(int)endX][(int)endY-1] instanceof Road) {
+			Road r = (Road) tiles[(int)endX][(int)endY-1];
+			if(r.getCenter() == GameWorld.Center.NONE) {
+				Water w = new Water(assets.water, tWH*endX, tWH*(endY-1));
+				tiles[(int)endX][(int)endY-1] = w;
+			}
+		}
+		if(tiles[(int)endX][(int)currentY+1] instanceof Grass) {
+			Water w = new Water(assets.water, tWH*endX, tWH*(endY+1));
+			tiles[(int)endX][(int)endY+1] = w;
+		} else if(tiles[(int)endX][(int)endY+1] instanceof Road) {
+			Road r = (Road) tiles[(int)endX][(int)endY+1];
+			if(r.getCenter() == GameWorld.Center.NONE) {
+				Water w = new Water(assets.water, tWH*endX, tWH*(endY+1));
+				tiles[(int)endX][(int)endY+1] = w;
+			}
+		}
 		/*if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
 			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
 			tiles[(int)currentX][(int)currentY-1] = t;
@@ -63,7 +105,6 @@ public class WorldGenerator {
 			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
 			tiles[(int)currentX][(int)currentY+1] = t;
 		}*/
-		addRiverToMap(astar, tiles, assets, tWH, riverStart, riverEnd, mapWidth, mapHeight);
 		/*while(currentX != riverEnd.x || currentY != riverEnd.y) {
 			if(currentX < riverEnd.x) {
 				currentX++;
@@ -127,6 +168,7 @@ public class WorldGenerator {
 		 */
 		addRocksToMap(tiles, assets, tWH);
 		addTreesToMap(tiles, assets, tWH);
+		addRiverToMap(astar, tiles, assets, tWH, riverStart, riverEnd, mapWidth, mapHeight);
 		
 		/*
 		 * Create roads between city centres
@@ -293,13 +335,36 @@ public class WorldGenerator {
 				return (tiles[x][y] instanceof Grass);
 			}
 		};
-		riverEnd.x -= 16;
+		riverEnd.x -= 1;
 		IntArray path = new IntArray();
 		path.addAll(astar.getPath((int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y, riverAStarValidation));
-		Log.trace(WorldGenerator.class, (int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y);
+		
 		for(int i = 0; i < path.size; i+=2) {
 			Water t = new Water(assets.water, tWH*path.get(i), tWH*path.get(i+1));
 			tiles[path.get(i)][path.get(i+1)] = t;
+			//Make river wider
+			float currentX = path.get(i);
+			float currentY = path.get(i+1);
+			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
+				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+				tiles[(int)currentX][(int)currentY-1] = w;
+			} else if(tiles[(int)currentX][(int)currentY-1] instanceof Road) {
+				Road r = (Road) tiles[(int)currentX][(int)currentY-1];
+				if(r.getCenter() == GameWorld.Center.NONE) {
+					Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
+					tiles[(int)currentX][(int)currentY-1] = w;
+				}
+			}
+			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
+				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+				tiles[(int)currentX][(int)currentY+1] = w;
+			} else if(tiles[(int)currentX][(int)currentY+1] instanceof Road) {
+				Road r = (Road) tiles[(int)currentX][(int)currentY+1];
+				if(r.getCenter() == GameWorld.Center.NONE) {
+					Water w = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
+					tiles[(int)currentX][(int)currentY+1] = w;
+				}
+			}
 		}
 		
 		return tiles;
@@ -310,8 +375,8 @@ public class WorldGenerator {
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				//if(chance < 0.013) {
-				if(chance < 0.2) {
+				if(chance < 0.013) {
+				//if(chance < 0.2) {
 					if(tiles[x][y] instanceof Grass) {
 						//spawn rock
 						Rock r = new Rock(assets.rock, x*tWH, y*tWH);
