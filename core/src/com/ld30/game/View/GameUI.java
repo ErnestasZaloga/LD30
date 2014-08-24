@@ -19,6 +19,11 @@ import com.ld30.game.Model.GameWorld;
 import com.ld30.game.utils.Log;
 
 public class GameUI {
+	private enum State {
+		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL;
+	}
+	private State state;
+	
 	private SpriteBatch batch;
 	private final Stage stage;
 	private final GameWorld gameWorld;
@@ -31,7 +36,10 @@ public class GameUI {
 	private final float width;
 	private final float height;
 	
+	private City unitSenderCity;
+	
 	public GameUI(final GameWorld gameWorld) {
+		state = State.NORMAL;
 		
 		this.gameWorld = gameWorld;
 		final Array<City> cities = gameWorld.getCities();
@@ -42,6 +50,18 @@ public class GameUI {
 		
 		stage = new Stage(new StretchViewport(width, height), batch);
 		Gdx.input.setInputProcessor(stage);
+		Actor r = new Actor();
+		r.setSize(width, height);
+		r.addListener(new InputListener() {
+			
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				if(state != state.NORMAL)
+				state = State.NORMAL;
+				unitSenderCity = null;
+				return true;
+			}
+		});
 		
 		cityUIs = new Array<CityUI>(cities.size);
 		cityMouseOverRecievers = new Array<Actor>(cities.size);
@@ -67,6 +87,9 @@ public class GameUI {
 			final Actor actor = new Actor() {
 				@Override
 				public void act(float delta) {
+					if(state != State.NORMAL) {
+						return;
+					}
 					float x = Gdx.input.getX();
 					float y = Gdx.graphics.getHeight() - Gdx.input.getY();
 					if(x >= getX() && x <= getRight() && y >=getY() && y <= getTop()) {
@@ -77,27 +100,23 @@ public class GameUI {
 					}
 				}
 			};
-			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
-			/*actor.addListener(new InputListener() {
+			actor.addListener(new InputListener() {
 				@Override
-				public boolean mouseMoved(InputEvent event, float x, float y) {
-					if(x >= actor.getX() && x <= actor.getRight()) {
-						if(y >= actor.getY() && y <= actor.getTop()) {
-							if(bg.hasParent())
-							stage.addActor(bg);
-						}
-					} else {
-						bg.remove();
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					if(state == State.NORMAL) {
+						return true;
+					} else if (state == State.SENDING_SOLDIERS){
+						//unitSenderCity//TODO .send specific units
+						return clearSendState();
+					} else if(state == State.SENDING_WORKERS) {
+						
+						return clearSendState();
 					}
 					
-					return false;
+					return true;
 				}
-				
-				@Override
-				public void touchDragged (InputEvent event, float x, float y, int pointer) {
-					mouseMoved(event, x, y);
-				}
-			});*/
+			});
+			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
 			cityMouseOverRecievers.add(actor);
 			stage.addActor(actor);
 		}
@@ -110,17 +129,13 @@ public class GameUI {
 		
 	}
 	
+	public boolean clearSendState() {
+		unitSenderCity = null;
+		state = State.NORMAL;
+		return true;
+	}
+	
 	public void updateAndRender(SpriteBatch batch) {
-		
-		//Update
-		/*for(CityUI ui : cityUIs) {
-			ui.update();
-			City city = ui.city;
-			ui.setPosition(city.getX(), city.getY()); //TODO improve...
-		}
-		topUI.update();*/
-		//Gdx.gl.glClearColor(1, 1, 1, 1); //FIXME REMOVE!!!!!!!!!!!!!!!!!!!
-		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		batch.begin();
 		stage.draw();
@@ -166,7 +181,8 @@ public class GameUI {
 			sendSoldier.addListener(new InputListener() {
 				@Override
 				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-					city.makeSoldier();
+					state = State.SENDING_SOLDIERS;
+					unitSenderCity = city;
 					
 					return true;
 				}
@@ -176,7 +192,8 @@ public class GameUI {
 			sendWorker.addListener(new InputListener() {
 				@Override
 				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-					city.makeWorker();
+					state = State.SENDING_WORKERS;
+					unitSenderCity = city;
 					
 					return true;
 				}
