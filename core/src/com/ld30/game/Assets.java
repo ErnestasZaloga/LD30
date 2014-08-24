@@ -105,10 +105,14 @@ public class Assets {
 		tree = new TextureRegion(treeTexture);
 		
 		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
-		pixmap.setColor(Color.BLACK);
+		pixmap.setColor(new Color(0, 0, 0, 0.5f));
 		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
 		
 		black = new TextureRegion(new Texture(pixmap));
+		pixmap.dispose();
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.BLACK);
 		blockadeTexture = new Texture(pixmap);
 		pixmap.dispose();
 		blockade = new TextureRegion(blockadeTexture);
