@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ld30.game.Assets;
@@ -59,7 +60,7 @@ public class GameUI {
 			final CityButtonGroup bg = new CityButtonGroup(city, assets);
 			buttonGroups.add(bg);
 			bg.setPosition(city.getX(), city.getY());
-			bg.setSize(100, 150);//FIXME hardcode again
+			bg.setSize(100, 190);//FIXME hardcode again
 			bg.setTransform(false);
 			
 			
@@ -130,8 +131,10 @@ public class GameUI {
 		private final Image UIBackground;
 		private final Skin skin;
 		
-		private final Label trainSoldier;
-		private final Label trainWorker;
+		private final TextButton trainSoldier;
+		private final TextButton trainWorker;
+		private final TextButton sendSoldier;
+		private final TextButton sendWorker;
 		
 		public CityButtonGroup(final City city, final Assets assets) {
 			skin = assets.UISkin;
@@ -139,30 +142,47 @@ public class GameUI {
 			UIBackground = new Image(assets.road);
 			addActor(UIBackground);
 			
-			trainSoldier = new Label("   TRAIN\n SOLDIER", skin);
+			trainSoldier = new TextButton("TRAIN\n SOLDIER", skin);
 			trainSoldier.addListener(new InputListener() {
 				@Override
-				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-					if(x >= trainSoldier.getX() && x <= trainSoldier.getRight()) {
-						if(y >= trainSoldier.getY() && y <= trainSoldier.getTop()) {
-							city.makeSoldier();
-						}
-					}
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					city.makeSoldier();
+					
+					return true;
 				}
 			});
 			addActor(trainSoldier);
-			trainWorker = new Label("   TRAIN\n WORKER", skin);
+			trainWorker = new TextButton("TRAIN\n WORKER", skin);
 			trainWorker.addListener(new InputListener() {
 				@Override
-				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-					if(x >= trainWorker.getX() && x <= trainWorker.getRight()) {
-						if(y >= trainWorker.getY() && y <= trainWorker.getTop()) {
-							city.makeWorker();
-						}
-					}
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					city.makeWorker();
+						
+					return true;
 				}
 			});
 			addActor(trainWorker);
+			sendSoldier = new TextButton("SEND\n SOLDIER", skin);
+			sendSoldier.addListener(new InputListener() {
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					city.makeSoldier();
+					
+					return true;
+				}
+			});
+			addActor(sendSoldier);
+			sendWorker = new TextButton("SEND\n WORKER", skin);
+			sendWorker.addListener(new InputListener() {
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					city.makeWorker();
+					
+					return true;
+				}
+			});
+			addActor(sendWorker);
+			
 		}
 		
 		@Override
@@ -171,8 +191,12 @@ public class GameUI {
 			
 			UIBackground.setSize(width, height);
 			
-			trainSoldier.setPosition(0, 0);//FIXME quick align
-			trainWorker.setPosition(0, height - trainWorker.getHeight());
+			trainSoldier.setPosition(0, 0);
+			sendSoldier.setPosition(0, height / 4f);
+			sendWorker.setPosition(0, height / 2f);
+			trainWorker.setPosition(0, height * 3f / 4f);
+			/*trainSoldier.setPosition(0, 0);//FIXME quick align
+			trainWorker.setPosition(0, height - trainWorker.getHeight());*/
 		}
 	}
 	
