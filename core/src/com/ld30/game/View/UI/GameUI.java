@@ -19,7 +19,7 @@ import com.ld30.game.utils.Log;
 
 public class GameUI {
 	private enum State {
-		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL, WAITING_RE_MOUSE_OVER;
+		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL, WAITING_RE_MOUSE_OVER, SENDING_RESOURCES;
 	}
 	private State state;
 	
@@ -87,6 +87,24 @@ public class GameUI {
 					if(unitCount > unitSenderCity.getSoldierCount()) {
 						unitCount = unitSenderCity.getSoldierCount();
 					}
+				} else if(state == State.SENDING_RESOURCES) {
+					GameWorld.ResourceType type = unitSenderCity.getType();
+					int resource;
+					if(type == GameWorld.ResourceType.FOOD) {
+						resource = unitSenderCity.getFoodCount();
+					} else if(type == GameWorld.ResourceType.IRON) {
+						resource = unitSenderCity.getMetalCount();
+					} else if(type == GameWorld.ResourceType.WOOD) {
+						resource = unitSenderCity.getWoodCount();
+					} else {
+						throw new IllegalArgumentException("Sending resource from NONE type city");
+					}
+					int wc = unitSenderCity.getWorkerCount();
+					int rwc = resource /  City.RESOURCE_PER_WORKER;
+					
+					if(unitCount > wc || unitCount > rwc) {
+						unitCount = wc < rwc ? wc : rwc;
+					}
 				}
 				
 				if(unitCount < 0) {
@@ -148,11 +166,15 @@ public class GameUI {
 					if(state == State.NORMAL) {
 						return true;
 					} else if (state == State.SENDING_SOLDIERS){
-						unitSenderCity.sendSoldiersTo(gameWorld, city, unitCount); //TODO count
+						unitSenderCity.sendSoldiersTo(gameWorld, city, unitCount);
 						recieverCity = city;
 						return clearSendState();
 					} else if(state == State.SENDING_WORKERS) {
-						unitSenderCity.sendWorkersTo(gameWorld, city, unitCount, false);//TODO count
+						unitSenderCity.sendWorkersTo(gameWorld, city, unitCount, false);
+						recieverCity = city;
+						return clearSendState();
+					} else if(state == State.SENDING_RESOURCES) {
+						unitSenderCity.sendWorkersTo(gameWorld, city, unitCount, true);
 						recieverCity = city;
 						return clearSendState();
 					}
@@ -213,7 +235,14 @@ public class GameUI {
 			
 			transportResources = new TextButton("TRANSPORT\n RESOURCES", skin);
 			transportResources.addListener(new InputListener() {
-				
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					state = State.SENDING_RESOURCES;
+					unitSenderCity = city;
+					stage.addActor(countChanger);
+					
+					return true;
+				}
 			});
 			addActor(transportResources);
 			
