@@ -9,6 +9,7 @@ import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.View.GameUI;
 import com.ld30.game.utils.AStar;
+import com.ld30.game.utils.Log;
 
 public class GameWorld {
 
@@ -43,12 +44,14 @@ public class GameWorld {
 		
 		Worker worker = new Worker ();
 		worker.setTexture(assets.moveable);
-		worker.setPixelsPerSecond(64);
+		worker.setPixelsPerSecond(256);
 		
 		entities.add(worker);
 		
 		for (int i = 0; i < cityCenters.length; i += 1) {
 			final Road road = (Road) cityCenters[i];
+			
+			Log.trace(this, road.getWidth(), assets.city.getRegionWidth());
 			City city = new City (
 					assets.city, 
 					road.getX() + road.getWidth() / 2f - assets.city.getRegionWidth() / 2f, 
