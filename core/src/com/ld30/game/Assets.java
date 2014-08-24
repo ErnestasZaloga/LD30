@@ -17,11 +17,14 @@ public class Assets {
 	private final Texture waterTexture;
 	private final Texture shallowWaterTexture;
 	private final Texture roadTexture;
+	private final Texture rockTexture;
+	private final Texture treeTexture;
 	
 	public final TextureRegion grass;
 	public final TextureRegion water;
 	public final TextureRegion shallowWater;
-	
+	public final TextureRegion rock;
+	public final TextureRegion tree;
 	public final TextureRegion road;
 	public final TextureRegion moveable;
 	public final TextureRegion city;
@@ -79,6 +82,22 @@ public class Assets {
 		roadTexture = new Texture(pixmap);
 		pixmap.dispose();
 		road = new TextureRegion(roadTexture);
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.GRAY);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		rockTexture = new Texture(pixmap);
+		pixmap.dispose();
+		rock = new TextureRegion(rockTexture);
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.TEAL);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		treeTexture = new Texture(pixmap);
+		pixmap.dispose();
+		tree = new TextureRegion(treeTexture);
 	}
 	
 	public void dispose () {

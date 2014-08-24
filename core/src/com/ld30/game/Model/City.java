@@ -92,9 +92,9 @@ public class City extends Entity {
 			/*if(food > 0)
 				food--;
 			if(metal > 0)
-				metal--;
+				metal--;*/
 			if(wood > 0)
-				wood--;*/
+				wood--;
 			
 			if(type == GameWorld.Center.FOOD) {
 				food += workerCount;

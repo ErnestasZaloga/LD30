@@ -1,10 +1,14 @@
 package com.ld30.game.Model;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.Tiles.Grass;
 import com.ld30.game.Model.Tiles.Road;
+import com.ld30.game.Model.Tiles.Rock;
+import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
 
 public class WorldGenerator {
@@ -48,13 +52,17 @@ public class WorldGenerator {
 		
 		float currentX = riverStart.x;
 		float currentY = riverStart.y;
-		if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
-			tiles[(int)currentX][(int)currentY-1] = t;
+		
+		float currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
+		float currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
+		
+		if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
+			tiles[(int)currentX][(int)currentYminus1] = t;
 		}
-		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
-			tiles[(int)currentX][(int)currentY+1] = t;
+		if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
+			tiles[(int)currentX][(int)currentYplus1] = t;
 		}
 		while(currentX != riverEnd.x || currentY != riverEnd.y) {
 			if(currentX < riverEnd.x) {
@@ -69,15 +77,19 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
+			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
+			currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
+			
+			
 			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
-			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
-				tiles[(int)currentX][(int)currentY-1] = t;
+			if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
+				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
+				tiles[(int)currentX][(int)currentYminus1] = t;
 			}
-			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
-				tiles[(int)currentX][(int)currentY+1] = t;
+			if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
+				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
+				tiles[(int)currentX][(int)currentYplus1] = t;
 			}
 			
 		}
@@ -90,6 +102,7 @@ public class WorldGenerator {
 		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		foodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		foodCityCentre.setCenter(GameWorld.Center.FOOD);
+		
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
@@ -109,6 +122,12 @@ public class WorldGenerator {
 				ironCityCentre,
 				foodCityCentre
 		};
+		
+		/*
+		 * Create various objects in the map
+		 */
+		addRocksToMap(tiles, assets, tWH);
+		addTreesToMap(tiles, assets, tWH);
 		
 		/*
 		 * Create roads between city centres
@@ -133,9 +152,15 @@ public class WorldGenerator {
 			
 			if(currentX == targetX && currentY == targetY) continue;
 			
-			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+			}
+			
 			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
 				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
 				t.setCenter(GameWorld.Center.NONE);
@@ -177,9 +202,15 @@ public class WorldGenerator {
 			
 			if(currentX == targetX && currentY == targetY) continue;
 			
-			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+			}
+			
 			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
 				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
 				t.setCenter(GameWorld.Center.NONE);
@@ -221,9 +252,15 @@ public class WorldGenerator {
 			
 			if(currentX == targetX && currentY == targetY) continue;
 			
-			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+			}
+			
 			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
 				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
 				t.setCenter(GameWorld.Center.NONE);
@@ -249,4 +286,39 @@ public class WorldGenerator {
 		return new GeneratedWorld(tiles, centers);
 	}
 	
+	private static Tile[][] addRocksToMap(Tile[][] tiles, Assets assets, float tWH) {
+		//Scatter some rocks randomly on the map
+		for(int x = 0; x < tiles.length; x++) {
+			for(int y = 0; y < tiles.length; y++) {
+				float chance = MathUtils.random();
+				if(chance < 0.013) {
+					//spawn rock
+					Rock r = new Rock(assets.rock, x*tWH, y*tWH);
+					tiles[x][y] = r;
+				}
+			}
+		}
+		//Scatter some more around iron city centre
+		
+		
+		return tiles;
+	}
+	
+	private static Tile[][] addTreesToMap(Tile[][] tiles, Assets assets, float tWH) {
+		//Scatter some trees randomly on the map
+		for(int x = 0; x < tiles.length; x++) {
+			for(int y = 0; y < tiles.length; y++) {
+				float chance = MathUtils.random();
+				if(chance < 0.013) {
+					//spawn rock
+					Tree r = new Tree(assets.tree, x*tWH, y*tWH);
+					tiles[x][y] = r;
+				}
+			}
+		}
+		//Scatter some more around wood city centre
+		
+		
+		return tiles;
+	}
 }
