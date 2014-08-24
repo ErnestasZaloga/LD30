@@ -2,7 +2,10 @@ package com.ld30.game.View;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,6 +23,8 @@ public class GameUI {
 	
 	private final Array<CityUI> cityUIs;
 	private final TopUI topUI;
+	private final Array<Actor> cityMouseOverRecievers;
+	private final Array<CityButtonGroup> buttonGroups;
 	
 	private final float width;
 	private final float height;
@@ -35,8 +40,13 @@ public class GameUI {
 		height = Gdx.graphics.getHeight();
 		
 		stage = new Stage(new StretchViewport(width, height), batch);
+		Gdx.input.setInputProcessor(stage);
 		
 		cityUIs = new Array<CityUI>(cities.size);
+		cityMouseOverRecievers = new Array<Actor>(cities.size);
+		buttonGroups = new Array<CityButtonGroup>(cities.size);
+		
+		//Set up city uis.
 		for(int i = 0, n = cities.size; i < n; i++) {
 			City city = cities.get(i);
 			CityUI group = new CityUI(city, assets);
@@ -47,6 +57,36 @@ public class GameUI {
 			stage.addActor(group);
 			group.setPosition(city.getX(), city.getY());
 			
+			final CityButtonGroup bg = new CityButtonGroup(city, assets);
+			buttonGroups.add(bg);
+			bg.setPosition(city.getX(), city.getY());
+			bg.setSize(100, 150);//FIXME hardcode again
+			
+			
+			final Actor actor = new Actor();
+			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
+			actor.addListener(new InputListener() {
+				@Override
+				public boolean mouseMoved(InputEvent event, float x, float y) {
+					if(x >= actor.getX() && x <= actor.getRight()) {
+						if(y >= actor.getY() && y <= actor.getTop()) {
+							if(bg.hasParent())
+							stage.addActor(bg);
+						}
+					} else {
+						bg.remove();
+					}
+					
+					return false;
+				}
+				
+				@Override
+				public void touchDragged (InputEvent event, float x, float y, int pointer) {
+					mouseMoved(event, x, y);
+				}
+			});
+			cityMouseOverRecievers.add(actor);
+			stage.addActor(actor);
 		}
 		
 		topUI = new TopUI(cities, assets);
@@ -74,8 +114,8 @@ public class GameUI {
 		private final Image UIBackground;
 		private final Skin skin;
 		
-		private final Label trainSoldiers;
-		private final Label trainWorkers;
+		private final Label trainSoldier;
+		private final Label trainWorker;
 		
 		public CityButtonGroup(final City city, final Assets assets) {
 			skin = assets.UISkin;
@@ -83,10 +123,40 @@ public class GameUI {
 			UIBackground = new Image(assets.road);
 			addActor(UIBackground);
 			
-			trainSoldiers = new Label("TRAIN SOLDIER", skin);
-			trainWorkers = new Label("TRAIN WORKER", skin);
+			trainSoldier = new Label("TRAIN SOLDIER", skin);
+			trainSoldier.addListener(new InputListener() {
+				@Override
+				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+					if(x >= trainSoldier.getX() && x <= trainSoldier.getRight()) {
+						if(y >= trainSoldier.getY() && y <= trainSoldier.getTop()) {
+							city.makeSoldier();
+						}
+					}
+				}
+			});
+			addActor(trainSoldier);
+			trainWorker = new Label("TRAIN WORKER", skin);
+			trainWorker.addListener(new InputListener() {
+				@Override
+				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+					if(x >= trainWorker.getX() && x <= trainWorker.getRight()) {
+						if(y >= trainWorker.getY() && y <= trainWorker.getTop()) {
+							city.makeWorker();
+						}
+					}
+				}
+			});
+			addActor(trainWorker);
+		}
+		
+		@Override
+		public void setSize(float width, float height) {
+			super.setSize(width, height);
 			
+			UIBackground.setSize(width, height);
 			
+			trainSoldier.setPosition(0, 0);//FIXME quick align
+			trainWorker.setPosition(0, height - trainWorker.getHeight());
 		}
 	}
 	

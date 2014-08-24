@@ -52,13 +52,17 @@ public class WorldGenerator {
 		
 		float currentX = riverStart.x;
 		float currentY = riverStart.y;
-		if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
-			tiles[(int)currentX][(int)currentY-1] = t;
+		
+		float currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
+		float currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
+		
+		if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
+			tiles[(int)currentX][(int)currentYminus1] = t;
 		}
-		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
-			tiles[(int)currentX][(int)currentY+1] = t;
+		if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
+			Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
+			tiles[(int)currentX][(int)currentYplus1] = t;
 		}
 		while(currentX != riverEnd.x || currentY != riverEnd.y) {
 			if(currentX < riverEnd.x) {
@@ -73,15 +77,19 @@ public class WorldGenerator {
 				currentY--;
 			}
 			
+			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
+			currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
+			
+			
 			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
 			tiles[(int)currentX][(int)currentY] = tile;
-			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
-				tiles[(int)currentX][(int)currentY-1] = t;
+			if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
+				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
+				tiles[(int)currentX][(int)currentYminus1] = t;
 			}
-			if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
-				tiles[(int)currentX][(int)currentY+1] = t;
+			if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
+				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
+				tiles[(int)currentX][(int)currentYplus1] = t;
 			}
 			
 		}
@@ -94,6 +102,7 @@ public class WorldGenerator {
 		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		foodCityCentre = new Road(assets.city, randomX*tWH, randomY*tWH);
 		foodCityCentre.setCenter(GameWorld.Center.FOOD);
+		
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
