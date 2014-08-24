@@ -44,7 +44,6 @@ public class MovableManager {
 	Vector2 tmpVector = new Vector2();
 	public void update (final float delta) {
 		final Array<MoveableEntity> movables = gameWorld.getEntities();
-		final AStar astar = gameWorld.getAStar();
 		final Map map = gameWorld.getMap();
 		final Blockade[] blockades = gameWorld.getBlockades();
 		
@@ -86,12 +85,18 @@ public class MovableManager {
 								
 								if (tileX == nextX && tileY == nextY) {
 									if (humanoid instanceof Worker) {
-										// TODO: reduce resources
-										// TODO: make worker go back
 										Worker worker = (Worker) humanoid;
-										worker.setResourcesCarried(0);
-										
 										final int sourceCity = worker.getSourceCity();
+										final City city = gameWorld.getCities().get(sourceCity);
+										worker.setResourcesCarried(0);
+										worker.setDestinationCity(sourceCity);
+										
+										final Tile cityTile = city.getCentralTile();
+										int cityTileX = (int)(map.getWidth() * (cityTile.getX() / (map.getWidth() * map.getTileWidth())));
+										int cityTileY = (int)(map.getHeight() * (cityTile.getY() / (map.getHeight() * map.getTileHeight())));
+										
+										setupRoadMovement (worker, currentPositionX, currentPositionY, cityTileX, cityTileY);
+										
 										proceedMovement = false;
 									}
 									else {
@@ -133,7 +138,6 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
-					// TODO: flush to city
 					if (humanoid instanceof PlayerHumanoid) {
 						final PlayerHumanoid playerHumanoid = (PlayerHumanoid) humanoid;
 						final int destinationCity = playerHumanoid.getDestinationCity();
@@ -161,6 +165,11 @@ public class MovableManager {
 									break;
 								}
 							}
+							
+							city.setWorkerCount(city.getWorkerCount() + 1);
+						}
+						else if (humanoid instanceof Troop) {
+							city.setSoldierCount(city.getSoldierCount() + 1);
 						}
 						
 						movables.removeIndex(i);

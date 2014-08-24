@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
 import com.ld30.game.Model.Tiles.Road;
-import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.View.UI.GameUI;
 import com.ld30.game.utils.AStar;
@@ -29,7 +28,6 @@ public class GameWorld {
 	private Array<City> cities = new Array<City>();
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
-	private Tile[] cityCenters;
 	
 	private GameUI gameUI;
 	
@@ -48,12 +46,11 @@ public class GameWorld {
 	public void begin() {
 		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar);
 		map.setTiles(generatedWorld.tiles);
-		cityCenters = generatedWorld.centers;
 		
 		astar.setSize(map.getWidth(), map.getHeight());
 		
-		for (int i = 0; i < cityCenters.length; i += 1) {
-			final Road road = (Road) cityCenters[i];
+		for (int i = 0; i < generatedWorld.centers.length; i += 1) {
+			final Road road = (Road) generatedWorld.centers[i];
 			
 			Log.trace(this, road.getWidth(), assets.city.getRegionWidth());
 			City city = new City (
@@ -61,7 +58,8 @@ public class GameWorld {
 					road.getX() + road.getWidth() / 2f - assets.city.getRegionWidth() / 2f, 
 					road.getY() + road.getHeight() / 2f - assets.city.getRegionHeight() / 2f, 
 					road.getCenter(),
-					cityCenters[i]);
+					generatedWorld.centers[i]);
+			
 			cities.add(city);
 		}
 		
@@ -106,10 +104,6 @@ public class GameWorld {
 	
 	public AStar getAStar () {
 		return astar;
-	}
-	
-	public Tile[] getCityCenters () {
-		return cityCenters;
 	}
 	
 	public Assets getAssets() {
