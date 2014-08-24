@@ -5,6 +5,8 @@ import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.utils.Log;
 
 public class City extends Entity {
+	public static final int RESOURCE_PER_WORKER = 5;
+	
 	private static final float PEOPLE_DIE_TIME = 3f;
 	private static final float RESOURCE_TICK_TIME = 1f;
 	
@@ -132,6 +134,10 @@ public class City extends Entity {
 					soldierCount--;
 			}
 		}
+	}
+	
+	public GameWorld.ResourceType getType() {
+		return type;
 	}
 	
 	public Tile getCentralTile() {
