@@ -129,12 +129,50 @@ public class WorldGenerator {
 		/*
 		 * Create city centres
 		 */
-		Road woodCityCentre, ironCityCentre, foodCityCentre;
-		float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+1;
+		Road woodCityCentre = null;
+		Road ironCityCentre = null;
+		Road foodCityCentre = null;
+		Array<String> cityNames = new Array<String>();
+		cityNames.add("food"); cityNames.add("iron"); cityNames.add("wood");
+		cityNames.shuffle();
+		int offset = 5;  //Must not be <1
+		int count = 0;
+		for(String name : cityNames) {
+			count++;
+			float randomX = 0;
+			float randomY = 0;
+			if(count == 1) {
+				randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+offset;
+				randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+offset;
+			} else if(count == 2) {
+				randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-offset;
+				randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+offset;
+			} else if(count == 3) {
+				randomX = (float) Math.floor(Math.random()*(tiles.length-2*offset))+offset;
+				randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2-offset;
+			}
+			
+			if(name.equals("food")) {
+				foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+				foodCityCentre.setCenter(GameWorld.ResourceType.FOOD);
+				tiles[(int)randomX][(int)randomY] = foodCityCentre;
+			} else if(name.equals("iron")) {
+				ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+				ironCityCentre.setCenter(GameWorld.ResourceType.IRON);
+				tiles[(int)randomX][(int)randomY] = ironCityCentre;
+			}
+			else if(name.equals("wood")) {
+				woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+				woodCityCentre.setCenter(GameWorld.ResourceType.WOOD);
+				tiles[(int)randomX][(int)randomY] = woodCityCentre;
+			}
+		}
+		
+		/*float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+1;
 		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
+		foodCityCentre.setCenter(GameWorld.Center.FOOD);
 		foodCityCentre.setCenter(GameWorld.ResourceType.FOOD);
-		
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
@@ -146,8 +184,8 @@ public class WorldGenerator {
 		randomX = (float) Math.floor(Math.random()*(tiles.length-2))+1;
 		randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2-1;
 		woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		woodCityCentre.setCenter(GameWorld.ResourceType.WOOD);
-		tiles[(int)randomX][(int)randomY] = woodCityCentre;
+		woodCityCentre.setCenter(GameWorld.Center.WOOD);
+		tiles[(int)randomX][(int)randomY] = woodCityCentre;*/
 		
 		final Tile[] centers = new Tile[] {
 				woodCityCentre,
@@ -174,12 +212,63 @@ public class WorldGenerator {
 		generatedWorld.setRoadFromIronToWood(roadFromIronToWood);
 		generatedWorld.setRoadWoodFoodToFood(roadFromWoodToFood);
 		
+		/*
+		 * Transform map
+		 */
+		//Add shallow waters
 		int r = MathUtils.random(2)+2;
 		for(int i = 0; i < r; i++) {
 			addShallowWater(tiles, river, assets, tWH);
 		}
+		//Transform cities' surroundings according to their type
+		transformCitiesSurroundings(tiles, centers, cityNames, assets, tWH);
 		
 		return generatedWorld;
+	}
+	
+	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
+		float radiusInTiles = 10;
+		Road center = null;
+		for(String name : cityNames) {
+			if(name.equals("food")) {
+				center = (Road) centers[2];
+			} else if(name.equals("wood")) {
+				center = (Road) centers[0];
+			} else if(name.equals("iron")) {
+				center = (Road) centers[1];
+			}
+			
+			for(int x = 0; x < tiles.length; x++) {
+				for(int y = 0; y < tiles.length; y++) {
+					float dx = x-center.getX()/tWH;
+					float dy = y-center.getY()/tWH;
+					float dist = (float) Math.floor(Math.sqrt(dx*dx+dy*dy));
+					
+					if(center.getCenter() == GameWorld.ResourceType.FOOD) {
+						if(tiles[x][y] instanceof Tree || tiles[x][y] instanceof Rock) {
+							if(dist <= radiusInTiles) {
+								Tile t = new Grass(assets.grass, x*tWH, y*tWH);
+								tiles[x][y] = t;
+							}
+						}
+					} else if(center.getCenter() == GameWorld.ResourceType.IRON) {
+						if(tiles[x][y] instanceof Tree) {
+							if(dist <= radiusInTiles) {
+								Tile t = new Rock(assets.grass, x*tWH, y*tWH);
+								tiles[x][y] = t;
+							}
+						}
+					} else if(center.getCenter() == GameWorld.ResourceType.WOOD) {
+						if(tiles[x][y] instanceof Rock) {
+							if(dist <= radiusInTiles) {
+								Tile t = new Tree(assets.grass, x*tWH, y*tWH);
+								tiles[x][y] = t;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private static void addShallowWater(Tile[][] tiles, Array<Tile> river, Assets assets, float tWH) {
