@@ -20,7 +20,7 @@ import com.ld30.game.utils.Log;
 
 public class GameUI {
 	private enum State {
-		SENDING_UNITS, NORMAL;
+		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL;
 	}
 	private State state;
 	
@@ -36,6 +36,8 @@ public class GameUI {
 	private final float width;
 	private final float height;
 	
+	private City unitSenderCity;
+	
 	public GameUI(final GameWorld gameWorld) {
 		state = State.NORMAL;
 		
@@ -48,6 +50,18 @@ public class GameUI {
 		
 		stage = new Stage(new StretchViewport(width, height), batch);
 		Gdx.input.setInputProcessor(stage);
+		Actor r = new Actor();
+		r.setSize(width, height);
+		r.addListener(new InputListener() {
+			
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				if(state != state.NORMAL)
+				state = State.NORMAL;
+				unitSenderCity = null;
+				return true;
+			}
+		});
 		
 		cityUIs = new Array<CityUI>(cities.size);
 		cityMouseOverRecievers = new Array<Actor>(cities.size);
@@ -86,6 +100,22 @@ public class GameUI {
 					}
 				}
 			};
+			actor.addListener(new InputListener() {
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					if(state == State.NORMAL) {
+						return true;
+					} else if (state == State.SENDING_SOLDIERS){
+						//unitSenderCity//TODO .send specific units
+						return clearSendState();
+					} else if(state == State.SENDING_WORKERS) {
+						
+						return clearSendState();
+					}
+					
+					return true;
+				}
+			});
 			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
 			cityMouseOverRecievers.add(actor);
 			stage.addActor(actor);
@@ -97,6 +127,12 @@ public class GameUI {
 		topUI.setSize(500, 60);
 		topUI.setPosition(0, stage.getHeight() - topUI.getHeight());
 		
+	}
+	
+	public boolean clearSendState() {
+		unitSenderCity = null;
+		state = State.NORMAL;
+		return true;
 	}
 	
 	public void updateAndRender(SpriteBatch batch) {
@@ -145,7 +181,8 @@ public class GameUI {
 			sendSoldier.addListener(new InputListener() {
 				@Override
 				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-					city.makeSoldier();
+					state = State.SENDING_SOLDIERS;
+					unitSenderCity = city;
 					
 					return true;
 				}
@@ -155,7 +192,8 @@ public class GameUI {
 			sendWorker.addListener(new InputListener() {
 				@Override
 				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-					city.makeWorker();
+					state = State.SENDING_WORKERS;
+					unitSenderCity = city;
 					
 					return true;
 				}
