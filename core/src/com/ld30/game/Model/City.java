@@ -1,6 +1,7 @@
 package com.ld30.game.Model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.ld30.game.utils.Log;
 
 public class City extends Entity {
 	private static final float PEOPLE_DIE_TIME = 3f;
@@ -51,6 +52,7 @@ public class City extends Entity {
 	}
 	
 	public void makeWorker() {
+		Log.trace(type);
 		if(workerCount + soldierCount < maxPopulation 
 		   && canBuy(WORKER_FOOD_COST, WORKER_METAL_COST, WORKER_WOOD_COST)) {
 			workerCount++;

@@ -2,6 +2,7 @@ package com.ld30.game.Model;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.Tiles.Grass;
@@ -12,13 +13,15 @@ import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.utils.AStar;
-import com.ld30.game.utils.Log;
 
 public class WorldGenerator {
 	
 	public static class GeneratedWorld {
 		public final Tile[][] tiles;
 		public final Tile[] centers;
+		private Array<Tile> roadFromFoodToIron;
+		private Array<Tile> roadFromIronToWood;
+		private Array<Tile> roadWoodFoodToFood;
 		
 		public GeneratedWorld (final Tile[][] tiles, 
 							   final Tile[] centers) {
@@ -26,6 +29,31 @@ public class WorldGenerator {
 			this.tiles = tiles;
 			this.centers = centers;
 		}
+
+		public Array<Tile> getRoadFromFoodToIron() {
+			return roadFromFoodToIron;
+		}
+
+		public void setRoadFromFoodToIron(Array<Tile> roadFromFoodToIron) {
+			this.roadFromFoodToIron = roadFromFoodToIron;
+		}
+
+		public Array<Tile> getRoadFromIronToWood() {
+			return roadFromIronToWood;
+		}
+
+		public void setRoadFromIronToWood(Array<Tile> roadFromIronToWood) {
+			this.roadFromIronToWood = roadFromIronToWood;
+		}
+
+		public Array<Tile> getRoadWoodFoodToFood() {
+			return roadWoodFoodToFood;
+		}
+
+		public void setRoadWoodFoodToFood(Array<Tile> roadWoodFoodToFood) {
+			this.roadWoodFoodToFood = roadWoodFoodToFood;
+		}
+		
 	}
 	
 	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
@@ -44,7 +72,7 @@ public class WorldGenerator {
 		}
 		
 		/*
-		 * Create a river
+		 * Create river start and end points
 		 */
 		Vector2 riverStart = new Vector2(0f, (float) Math.floor(Math.random()*(tiles[0].length-2))+1);
 		Water r1 = new Water(assets.water, tWH*riverStart.x, tWH*riverStart.y);
@@ -97,42 +125,6 @@ public class WorldGenerator {
 				tiles[(int)endX][(int)endY+1] = w;
 			}
 		}
-		/*if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
-			tiles[(int)currentX][(int)currentY-1] = t;
-		}
-		if(tiles[(int)currentX][(int)currentY+1] instanceof Grass) {
-			Water t = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
-			tiles[(int)currentX][(int)currentY+1] = t;
-		}*/
-		/*while(currentX != riverEnd.x || currentY != riverEnd.y) {
-			if(currentX < riverEnd.x) {
-				currentX++;
-			} else if(currentX > riverEnd.x) {
-				currentX--;
-			}
-			
-			if(currentY < riverEnd.y) {
-				currentY++;
-			} else if(currentY > riverEnd.y) {
-				currentY--;
-			}
-			
-			currentYminus1 = currentY <= 0 ? 0 : currentY - 1; //TODO quick and dirty
-			currentYplus1 = currentY >= mapHeight - 1 ? mapHeight - 1 : currentY + 1;
-			
-			Water tile = new Water(assets.water, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			if(tiles[(int)currentX][(int)currentYminus1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYminus1));
-				tiles[(int)currentX][(int)currentYminus1] = t;
-			}
-			if(tiles[(int)currentX][(int)currentYplus1] instanceof Grass) {
-				Water t = new Water(assets.water, tWH*currentX, tWH*(currentYplus1));
-				tiles[(int)currentX][(int)currentYplus1] = t;
-			}
-			
-		}*/
 		
 		/*
 		 * Create city centres
@@ -173,8 +165,11 @@ public class WorldGenerator {
 		/*
 		 * Create roads between city centres
 		 */
+		Array<Tile> roadFromFoodToIron = addRoadFromFoodToIron(foodCityCentre, ironCityCentre, tiles, assets, astar, tWH);
+		Array<Tile> roadFromIronToWood = addRoadFromIronToWood(ironCityCentre, woodCityCentre, tiles, assets, astar, tWH);
+		Array<Tile> roadFromWoodToFood = addRoadFromWoodToFood(woodCityCentre, foodCityCentre, tiles, assets, astar, tWH);
 		//From food centre to iron
-		currentX = foodCityCentre.getX()/tWH;
+		/*currentX = foodCityCentre.getX()/tWH;
 		currentY = foodCityCentre.getY()/tWH;
 		float targetX = ironCityCentre.getX()/tWH;
 		float targetY = ironCityCentre.getY()/tWH;
@@ -222,9 +217,9 @@ public class WorldGenerator {
 				t.setCenter(GameWorld.Center.NONE);
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
-		}
+		}*/
 		//From iron city centre to wood
-		currentX = ironCityCentre.getX()/tWH;
+		/*currentX = ironCityCentre.getX()/tWH;
 		currentY = ironCityCentre.getY()/tWH;
 		targetX = woodCityCentre.getX()/tWH;
 		targetY = woodCityCentre.getY()/tWH;
@@ -272,9 +267,9 @@ public class WorldGenerator {
 				t.setCenter(GameWorld.Center.NONE);
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
-		}
+		}*/
 		//From wood city centre to food
-		currentX = woodCityCentre.getX()/tWH;
+		/*currentX = woodCityCentre.getX()/tWH;
 		currentY = woodCityCentre.getY()/tWH;
 		targetX = foodCityCentre.getX()/tWH;
 		targetY = foodCityCentre.getY()/tWH;
@@ -322,20 +317,111 @@ public class WorldGenerator {
 				t.setCenter(GameWorld.Center.NONE);
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
+		}*/
+		GeneratedWorld generatedWorld = new GeneratedWorld(tiles, centers);
+		generatedWorld.setRoadFromFoodToIron(roadFromFoodToIron);
+		generatedWorld.setRoadFromIronToWood(roadFromIronToWood);
+		generatedWorld.setRoadWoodFoodToFood(roadFromWoodToFood);
+		
+		return generatedWorld;
+	}
+	
+	private static Array<Tile> addRoadFromFoodToIron(Road foodCityCentre, Road ironCityCentre, final Tile[][] tiles, Assets assets, AStar astar, float tWH) {
+		Array<Tile> result = new Array<Tile>();
+		AStar.Validator roadAStarValidation = new AStar.Validator() {
+			@Override
+			public boolean isValid(int x, int y) {
+				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water || tiles[x][y] instanceof Road);
+			}
+		};
+		IntArray path = new IntArray();
+		path.addAll(astar.getPath((int)(foodCityCentre.getX()/tWH), (int)(foodCityCentre.getY()/tWH), (int)(ironCityCentre.getX()/tWH), (int)(ironCityCentre.getY()/tWH), roadAStarValidation));
+		
+		for(int i = 0; i < path.size; i+=2) {
+			float currentX = path.get(i);
+			float currentY = path.get(i+1);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				result.add(tile);
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+				result.add(tile);
+			}
 		}
 		
-		return new GeneratedWorld(tiles, centers);
+		return result;
+	}
+	
+	private static Array<Tile> addRoadFromIronToWood(Road ironCityCentre, Road woodCityCentre, final Tile[][] tiles, Assets assets, AStar astar, float tWH) {
+		Array<Tile> result = new Array<Tile>();
+		AStar.Validator roadAStarValidation = new AStar.Validator() {
+			@Override
+			public boolean isValid(int x, int y) {
+				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water || tiles[x][y] instanceof Road);
+			}
+		};
+		IntArray path = new IntArray();
+		path.addAll(astar.getPath((int)(ironCityCentre.getX()/tWH), (int)(ironCityCentre.getY()/tWH), (int)(woodCityCentre.getX()/tWH), (int)(woodCityCentre.getY()/tWH), roadAStarValidation));
+		
+		for(int i = 0; i < path.size; i+=2) {
+			float currentX = path.get(i);
+			float currentY = path.get(i+1);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				result.add(tile);
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+				result.add(tile);
+			}
+		}
+		
+		return result;
+	}
+	
+	private static Array<Tile> addRoadFromWoodToFood(Road woodCityCentre, Road foodCityCentre, final Tile[][] tiles, Assets assets, AStar astar, float tWH) {
+		Array<Tile> result = new Array<Tile>();
+		AStar.Validator roadAStarValidation = new AStar.Validator() {
+			@Override
+			public boolean isValid(int x, int y) {
+				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water || tiles[x][y] instanceof Road);
+			}
+		};
+		IntArray path = new IntArray();
+		path.addAll(astar.getPath((int)(woodCityCentre.getX()/tWH), (int)(woodCityCentre.getY()/tWH), (int)(foodCityCentre.getX()/tWH), (int)(foodCityCentre.getY()/tWH), roadAStarValidation));
+		
+		for(int i = 0; i < path.size; i+=2) {
+			float currentX = path.get(i);
+			float currentY = path.get(i+1);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				result.add(tile);
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+				result.add(tile);
+			}
+		}
+		
+		return result;
 	}
 	
 	private static Tile[][] addRiverToMap(AStar astar, final Tile[][] tiles, Assets assets, float tWH, Vector2 riverStart, Vector2 riverEnd, int mapW, int mapH) {
-		astar.setSize(mapW, mapH);  //FIXME: Fix this hardcoding!
+		astar.setSize(mapW, mapH);
 		AStar.Validator riverAStarValidation = new AStar.Validator() {
 			@Override
 			public boolean isValid(int x, int y) {
-				return (tiles[x][y] instanceof Grass);
+				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water);
 			}
 		};
-		riverEnd.x -= 1;
+		//riverEnd.x -= 1;
 		IntArray path = new IntArray();
 		path.addAll(astar.getPath((int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y, riverAStarValidation));
 		
@@ -345,6 +431,8 @@ public class WorldGenerator {
 			//Make river wider
 			float currentX = path.get(i);
 			float currentY = path.get(i+1);
+			//currentY = (currentY-1 < 0) ? 0 : 0;
+			if(currentY-1 < 0) currentY = 1; else if (currentY > tiles[0].length-1) currentY = tiles[0].length-1;
 			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
 				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
 				tiles[(int)currentX][(int)currentY-1] = w;
@@ -375,8 +463,8 @@ public class WorldGenerator {
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				if(chance < 0.013) {
-				//if(chance < 0.2) {
+				//if(chance < 0.013) {
+				if(chance < 0.2) {
 					if(tiles[x][y] instanceof Grass) {
 						//spawn rock
 						Rock r = new Rock(assets.rock, x*tWH, y*tWH);

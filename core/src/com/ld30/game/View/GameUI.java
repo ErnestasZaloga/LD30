@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ld30.game.Assets;
@@ -18,6 +19,11 @@ import com.ld30.game.Model.GameWorld;
 import com.ld30.game.utils.Log;
 
 public class GameUI {
+	private enum State {
+		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL;
+	}
+	private State state;
+	
 	private SpriteBatch batch;
 	private final Stage stage;
 	private final GameWorld gameWorld;
@@ -30,7 +36,10 @@ public class GameUI {
 	private final float width;
 	private final float height;
 	
+	private City unitSenderCity;
+	
 	public GameUI(final GameWorld gameWorld) {
+		state = State.NORMAL;
 		
 		this.gameWorld = gameWorld;
 		final Array<City> cities = gameWorld.getCities();
@@ -41,6 +50,18 @@ public class GameUI {
 		
 		stage = new Stage(new StretchViewport(width, height), batch);
 		Gdx.input.setInputProcessor(stage);
+		Actor r = new Actor();
+		r.setSize(width, height);
+		r.addListener(new InputListener() {
+			
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				if(state != state.NORMAL)
+				state = State.NORMAL;
+				unitSenderCity = null;
+				return true;
+			}
+		});
 		
 		cityUIs = new Array<CityUI>(cities.size);
 		cityMouseOverRecievers = new Array<Actor>(cities.size);
@@ -59,13 +80,16 @@ public class GameUI {
 			final CityButtonGroup bg = new CityButtonGroup(city, assets);
 			buttonGroups.add(bg);
 			bg.setPosition(city.getX(), city.getY());
-			bg.setSize(100, 150);//FIXME hardcode again
+			bg.setSize(100, 190);//FIXME hardcode again
 			bg.setTransform(false);
 			
 			
 			final Actor actor = new Actor() {
 				@Override
 				public void act(float delta) {
+					if(state != State.NORMAL) {
+						return;
+					}
 					float x = Gdx.input.getX();
 					float y = Gdx.graphics.getHeight() - Gdx.input.getY();
 					if(x >= getX() && x <= getRight() && y >=getY() && y <= getTop()) {
@@ -76,27 +100,23 @@ public class GameUI {
 					}
 				}
 			};
-			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
-			/*actor.addListener(new InputListener() {
+			actor.addListener(new InputListener() {
 				@Override
-				public boolean mouseMoved(InputEvent event, float x, float y) {
-					if(x >= actor.getX() && x <= actor.getRight()) {
-						if(y >= actor.getY() && y <= actor.getTop()) {
-							if(bg.hasParent())
-							stage.addActor(bg);
-						}
-					} else {
-						bg.remove();
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					if(state == State.NORMAL) {
+						return true;
+					} else if (state == State.SENDING_SOLDIERS){
+						//unitSenderCity//TODO .send specific units
+						return clearSendState();
+					} else if(state == State.SENDING_WORKERS) {
+						
+						return clearSendState();
 					}
 					
-					return false;
+					return true;
 				}
-				
-				@Override
-				public void touchDragged (InputEvent event, float x, float y, int pointer) {
-					mouseMoved(event, x, y);
-				}
-			});*/
+			});
+			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
 			cityMouseOverRecievers.add(actor);
 			stage.addActor(actor);
 		}
@@ -109,17 +129,13 @@ public class GameUI {
 		
 	}
 	
+	public boolean clearSendState() {
+		unitSenderCity = null;
+		state = State.NORMAL;
+		return true;
+	}
+	
 	public void updateAndRender(SpriteBatch batch) {
-		
-		//Update
-		/*for(CityUI ui : cityUIs) {
-			ui.update();
-			City city = ui.city;
-			ui.setPosition(city.getX(), city.getY()); //TODO improve...
-		}
-		topUI.update();*/
-		//Gdx.gl.glClearColor(1, 1, 1, 1); //FIXME REMOVE!!!!!!!!!!!!!!!!!!!
-		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		batch.begin();
 		stage.draw();
@@ -130,8 +146,10 @@ public class GameUI {
 		private final Image UIBackground;
 		private final Skin skin;
 		
-		private final Label trainSoldier;
-		private final Label trainWorker;
+		private final TextButton trainSoldier;
+		private final TextButton trainWorker;
+		private final TextButton sendSoldier;
+		private final TextButton sendWorker;
 		
 		public CityButtonGroup(final City city, final Assets assets) {
 			skin = assets.UISkin;
@@ -139,30 +157,49 @@ public class GameUI {
 			UIBackground = new Image(assets.road);
 			addActor(UIBackground);
 			
-			trainSoldier = new Label("   TRAIN\n SOLDIER", skin);
+			trainSoldier = new TextButton("TRAIN\n SOLDIER", skin);
 			trainSoldier.addListener(new InputListener() {
 				@Override
-				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-					if(x >= trainSoldier.getX() && x <= trainSoldier.getRight()) {
-						if(y >= trainSoldier.getY() && y <= trainSoldier.getTop()) {
-							city.makeSoldier();
-						}
-					}
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					city.makeSoldier();
+					
+					return true;
 				}
 			});
 			addActor(trainSoldier);
-			trainWorker = new Label("   TRAIN\n WORKER", skin);
+			trainWorker = new TextButton("TRAIN\n WORKER", skin);
 			trainWorker.addListener(new InputListener() {
 				@Override
-				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-					if(x >= trainWorker.getX() && x <= trainWorker.getRight()) {
-						if(y >= trainWorker.getY() && y <= trainWorker.getTop()) {
-							city.makeWorker();
-						}
-					}
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					city.makeWorker();
+						
+					return true;
 				}
 			});
 			addActor(trainWorker);
+			sendSoldier = new TextButton("SEND\n SOLDIER", skin);
+			sendSoldier.addListener(new InputListener() {
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					state = State.SENDING_SOLDIERS;
+					unitSenderCity = city;
+					
+					return true;
+				}
+			});
+			addActor(sendSoldier);
+			sendWorker = new TextButton("SEND\n WORKER", skin);
+			sendWorker.addListener(new InputListener() {
+				@Override
+				public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+					state = State.SENDING_WORKERS;
+					unitSenderCity = city;
+					
+					return true;
+				}
+			});
+			addActor(sendWorker);
+			
 		}
 		
 		@Override
@@ -171,8 +208,12 @@ public class GameUI {
 			
 			UIBackground.setSize(width, height);
 			
-			trainSoldier.setPosition(0, 0);//FIXME quick align
-			trainWorker.setPosition(0, height - trainWorker.getHeight());
+			trainSoldier.setPosition(0, 0);
+			sendSoldier.setPosition(0, height / 4f);
+			sendWorker.setPosition(0, height / 2f);
+			trainWorker.setPosition(0, height * 3f / 4f);
+			/*trainSoldier.setPosition(0, 0);//FIXME quick align
+			trainWorker.setPosition(0, height - trainWorker.getHeight());*/
 		}
 	}
 	

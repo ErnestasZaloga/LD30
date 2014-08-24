@@ -8,8 +8,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		
-		config.width = 600;
-		config.height = 600; //TODO REMOVE
+		config.width = 660;
+		config.height = 660; //TODO REMOVE
 		new LwjglApplication(new LD30(), config);
 	}
 }
