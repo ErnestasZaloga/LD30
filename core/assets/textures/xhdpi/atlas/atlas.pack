@@ -1,0 +1,159 @@
+
+atlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Akmuo
+  rotate: false
+  xy: 151, 47
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+Black
+  rotate: false
+  xy: 205, 19
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+Darbininkas
+  rotate: false
+  xy: 151, 29
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+DarbininkasIkona
+  rotate: false
+  xy: 12, 1
+  size: 7, 8
+  orig: 7, 8
+  offset: 0, 0
+  index: -1
+GelezisIkona
+  rotate: false
+  xy: 241, 38
+  size: 14, 6
+  orig: 14, 6
+  offset: 0, 0
+  index: -1
+Karys
+  rotate: false
+  xy: 169, 47
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KarysIkona
+  rotate: false
+  xy: 1, 1
+  size: 9, 8
+  orig: 9, 8
+  offset: 0, 0
+  index: -1
+Kelias
+  rotate: false
+  xy: 169, 29
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+Kraujas
+  rotate: false
+  xy: 187, 47
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+MaistasIkona
+  rotate: false
+  xy: 241, 55
+  size: 14, 8
+  orig: 14, 8
+  offset: 0, 0
+  index: -1
+Medis
+  rotate: false
+  xy: 187, 29
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+MedisIkona
+  rotate: false
+  xy: 241, 46
+  size: 14, 7
+  orig: 14, 7
+  offset: 0, 0
+  index: -1
+Orkas
+  rotate: false
+  xy: 205, 47
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+OrkasBarikada
+  rotate: false
+  xy: 205, 29
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+OrkasNesasi
+  rotate: false
+  xy: 223, 47
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+PilisAkmenine
+  rotate: false
+  xy: 1, 15
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+PilisGyvuliu
+  rotate: false
+  xy: 51, 15
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+PilisMedine
+  rotate: false
+  xy: 101, 15
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+Trenkia
+  rotate: false
+  xy: 223, 29
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+VanduoSviesus
+  rotate: false
+  xy: 151, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+VanduoTamsus
+  rotate: false
+  xy: 169, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+Zole
+  rotate: false
+  xy: 187, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1

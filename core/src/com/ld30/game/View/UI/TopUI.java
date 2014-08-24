@@ -39,6 +39,7 @@ public final class TopUI extends Group {
 		skin = assets.UISkin;
 		
 		UIBackground = new Image(assets.black);
+		//UIBackground.setc
 		addActor(UIBackground);
 		
 		food = new Image(assets.water);
