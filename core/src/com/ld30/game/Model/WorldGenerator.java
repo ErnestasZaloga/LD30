@@ -212,12 +212,63 @@ public class WorldGenerator {
 		generatedWorld.setRoadFromIronToWood(roadFromIronToWood);
 		generatedWorld.setRoadWoodFoodToFood(roadFromWoodToFood);
 		
+		/*
+		 * Transform map
+		 */
+		//Add shallow waters
 		int r = MathUtils.random(2)+2;
 		for(int i = 0; i < r; i++) {
 			addShallowWater(tiles, river, assets, tWH);
 		}
+		//Transform cities' surroundings according to their type
+		transformCitiesSurroundings(tiles, centers, cityNames, assets, tWH);
 		
 		return generatedWorld;
+	}
+	
+	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
+		float radiusInTiles = 10;
+		Road center = null;
+		for(String name : cityNames) {
+			if(name.equals("food")) {
+				center = (Road) centers[2];
+			} else if(name.equals("wood")) {
+				center = (Road) centers[0];
+			} else if(name.equals("iron")) {
+				center = (Road) centers[1];
+			}
+			
+			for(int x = 0; x < tiles.length; x++) {
+				for(int y = 0; y < tiles.length; y++) {
+					float dx = x-center.getX()/tWH;
+					float dy = y-center.getY()/tWH;
+					float dist = (float) Math.floor(Math.sqrt(dx*dx+dy*dy));
+					
+					if(center.getCenter() == GameWorld.ResourceType.FOOD) {
+						if(tiles[x][y] instanceof Tree || tiles[x][y] instanceof Rock) {
+							if(dist <= radiusInTiles) {
+								Tile t = new Grass(assets.grass, x*tWH, y*tWH);
+								tiles[x][y] = t;
+							}
+						}
+					} else if(center.getCenter() == GameWorld.ResourceType.IRON) {
+						if(tiles[x][y] instanceof Tree) {
+							if(dist <= radiusInTiles) {
+								Tile t = new Rock(assets.grass, x*tWH, y*tWH);
+								tiles[x][y] = t;
+							}
+						}
+					} else if(center.getCenter() == GameWorld.ResourceType.WOOD) {
+						if(tiles[x][y] instanceof Rock) {
+							if(dist <= radiusInTiles) {
+								Tile t = new Tree(assets.grass, x*tWH, y*tWH);
+								tiles[x][y] = t;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private static void addShallowWater(Tile[][] tiles, Array<Tile> river, Assets assets, float tWH) {
