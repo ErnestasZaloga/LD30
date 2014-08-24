@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.City;
 import com.ld30.game.Model.GameWorld;
+import com.ld30.game.utils.Log;
 
 public class GameUI {
 	private SpriteBatch batch;
@@ -29,10 +30,7 @@ public class GameUI {
 	private final float width;
 	private final float height;
 	
-	public GameUI(final GameWorld gameWorld, 
-				  /*final Array<City> cities, 
-				  final Assets assets, */
-				  final SpriteBatch batch) {
+	public GameUI(final GameWorld gameWorld) {
 		
 		this.gameWorld = gameWorld;
 		final Array<City> cities = gameWorld.getCities();
@@ -53,7 +51,6 @@ public class GameUI {
 			City city = cities.get(i);
 			CityUI group = new CityUI(city, assets);
 			group.setTransform(false);
-			
 			group.setSize(100, 20);//FIXME hardcode
 			cityUIs.add(group);
 			stage.addActor(group);
@@ -66,9 +63,21 @@ public class GameUI {
 			bg.setTransform(false);
 			
 			
-			final Actor actor = new Actor();
+			final Actor actor = new Actor() {
+				@Override
+				public void act(float delta) {
+					float x = Gdx.input.getX();
+					float y = Gdx.graphics.getHeight() - Gdx.input.getY();
+					if(x >= getX() && x <= getRight() && y >=getY() && y <= getTop()) {
+						if(!bg.hasParent())
+						stage.addActor(bg);
+					} else if(!(x >= bg.getX() && x <= bg.getRight() && y >= bg.getY() && y <= bg.getTop())) {
+						bg.remove();
+					}
+				}
+			};
 			actor.setBounds(city.getX(), city.getY(), city.getWidth(), city.getHeight());
-			actor.addListener(new InputListener() {
+			/*actor.addListener(new InputListener() {
 				@Override
 				public boolean mouseMoved(InputEvent event, float x, float y) {
 					if(x >= actor.getX() && x <= actor.getRight()) {
@@ -87,7 +96,7 @@ public class GameUI {
 				public void touchDragged (InputEvent event, float x, float y, int pointer) {
 					mouseMoved(event, x, y);
 				}
-			});
+			});*/
 			cityMouseOverRecievers.add(actor);
 			stage.addActor(actor);
 		}
@@ -111,8 +120,10 @@ public class GameUI {
 		topUI.update();*/
 		//Gdx.gl.glClearColor(1, 1, 1, 1); //FIXME REMOVE!!!!!!!!!!!!!!!!!!!
 		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		stage.act();
+		stage.act(Gdx.graphics.getDeltaTime());
+		batch.begin();
 		stage.draw();
+		batch.end();
 	}
 	
 	private class CityButtonGroup extends Group {
@@ -128,7 +139,7 @@ public class GameUI {
 			UIBackground = new Image(assets.road);
 			addActor(UIBackground);
 			
-			trainSoldier = new Label("TRAIN SOLDIER", skin);
+			trainSoldier = new Label("   TRAIN\n SOLDIER", skin);
 			trainSoldier.addListener(new InputListener() {
 				@Override
 				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -140,7 +151,7 @@ public class GameUI {
 				}
 			});
 			addActor(trainSoldier);
-			trainWorker = new Label("TRAIN WORKER", skin);
+			trainWorker = new Label("   TRAIN\n WORKER", skin);
 			trainWorker.addListener(new InputListener() {
 				@Override
 				public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -352,6 +363,7 @@ public class GameUI {
 		public void setSize(float width, float height) {
 			super.setSize(width, height);
 			
+			Log.trace(this);
 			//food.set
 			float pointX = 0;
 			for(int i = 0; i < 5; i++) {

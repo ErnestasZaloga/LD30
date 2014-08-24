@@ -12,14 +12,12 @@ public class WorldRenderer {
 	
 	private final SpriteBatch batch;
 	private GameWorld gameWorld;
-	private GameUI gameUI;
 
 	public WorldRenderer(SpriteBatch batch,
 						 GameWorld gameWorld) {
 		
 		this.batch = batch;
 		this.gameWorld = gameWorld;
-		gameUI = new GameUI(gameWorld, batch);
 	}
 	
 	public void render() {
@@ -56,7 +54,7 @@ public class WorldRenderer {
 		}
 		
 		batch.end();
-		gameUI.updateAndRender(batch);
+		gameWorld.getUI().updateAndRender(batch);
 	}
 	
 }
