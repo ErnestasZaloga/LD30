@@ -60,6 +60,7 @@ public class GameWorld {
 					road.getCenter());
 			cities.add(city);
 		}
+		gameUI = new GameUI(this);
 	}
 	
 	public void update(float delta) {
@@ -100,6 +101,10 @@ public class GameWorld {
 	
 	public Assets getAssets() {
 		return assets;
+	}
+	
+	public GameUI getUI() {
+		return gameUI;
 	}
 	
 }

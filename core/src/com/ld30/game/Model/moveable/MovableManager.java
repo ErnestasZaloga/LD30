@@ -80,7 +80,7 @@ public class MovableManager {
 							x = (int)(map.getWidth() * (cityCenters[0].getX() / (map.getWidth() * map.getTileWidth())));
 							y = (int)(map.getHeight() * (cityCenters[0].getY() / (map.getHeight() * map.getTileHeight())));
 						}
-						Log.trace(this, "Destination", x, y);
+						//Log.trace(this, "Destination", x, y);
 						humanoid.setDestination(x, y);
 						//humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
 					}
@@ -163,9 +163,9 @@ public class MovableManager {
 						}
 					}
 					
-					Log.trace(this, "No options left generating new path", humanoid.getWalkPath().size);
-					Log.trace(this, "New dst", x, y);
-					Log.trace(this, "Last dst", humanoid.getDestinationX(), humanoid.getDestinationY());
+					//Log.trace(this, "No options left generating new path", humanoid.getWalkPath().size);
+					//Log.trace(this, "New dst", x, y);
+					//Log.trace(this, "Last dst", humanoid.getDestinationX(), humanoid.getDestinationY());
 					humanoid.setDestination(x, y);
 					//humanoid.setDestination(MathUtils.random(0, map.getWidth() - 1), MathUtils.random(0, map.getHeight() - 1));
 					humanoid.getWalkPath().clear();
