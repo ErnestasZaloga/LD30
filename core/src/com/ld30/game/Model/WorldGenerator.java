@@ -227,7 +227,10 @@ public class WorldGenerator {
 	}
 	
 	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
-		float radiusInTiles = 10;
+		float radiusInTiles = 14;
+		float percentageIncrement = (float) Math.ceil(100/radiusInTiles);
+		float chance = 0;
+		float objectSpawnChance = 0.13f;
 		Road center = null;
 		for(String name : cityNames) {
 			if(name.equals("food")) {
@@ -246,14 +249,32 @@ public class WorldGenerator {
 					
 					if(center.getCenter() == GameWorld.ResourceType.FOOD) {
 						if(tiles[x][y] instanceof Tree || tiles[x][y] instanceof Rock) {
-							if(dist <= radiusInTiles) {
-								Tile t = new Grass(assets.grass, x*tWH, y*tWH);
-								tiles[x][y] = t;
+							float foodRadiusInTiles = radiusInTiles + radiusInTiles/3;
+							float foodPercentageIncrement = (float) Math.ceil(100/foodRadiusInTiles);
+							if(dist <= foodRadiusInTiles) {
+								//roll, and see if swap is possible
+								chance = (float) Math.random()*100;
+								if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
+									Tile t = new Grass(assets.grass, x*tWH, y*tWH);
+									tiles[x][y] = t;
+								}
+//								Tile t = new Grass(assets.grass, x*tWH, y*tWH);
+//								tiles[x][y] = t;
 							}
 						}
 					} else if(center.getCenter() == GameWorld.ResourceType.IRON) {
 						if(tiles[x][y] instanceof Tree) {
 							if(dist <= radiusInTiles) {
+								//roll, and see if swap is possible
+								chance = (float) Math.random()*100;
+								if(chance >= dist*percentageIncrement-percentageIncrement) {
+									Tile t = new Rock(assets.grass, x*tWH, y*tWH);
+									tiles[x][y] = t;
+								}
+							}
+						} else if(tiles[x][y] instanceof Grass) {
+							float r = (float) Math.random();
+							if(r < objectSpawnChance) {
 								Tile t = new Rock(assets.grass, x*tWH, y*tWH);
 								tiles[x][y] = t;
 							}
@@ -261,6 +282,18 @@ public class WorldGenerator {
 					} else if(center.getCenter() == GameWorld.ResourceType.WOOD) {
 						if(tiles[x][y] instanceof Rock) {
 							if(dist <= radiusInTiles) {
+								//roll, and see if swap is possible
+								chance = (float) Math.random()*100;
+								if(chance >= dist*percentageIncrement-percentageIncrement) {
+									Tile t = new Tree(assets.grass, x*tWH, y*tWH);
+									tiles[x][y] = t;
+								}
+//								Tile t = new Tree(assets.grass, x*tWH, y*tWH);
+//								tiles[x][y] = t;
+							}
+						} else if(tiles[x][y] instanceof Grass) {
+							float r = (float) Math.random();
+							if(r < objectSpawnChance) {
 								Tile t = new Tree(assets.grass, x*tWH, y*tWH);
 								tiles[x][y] = t;
 							}
@@ -452,8 +485,7 @@ public class WorldGenerator {
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				//if(chance < 0.013) {
-				if(chance < 0.1) {
+				if(chance < 0.13) {
 					if(tiles[x][y] instanceof Grass) {
 						//spawn rock
 						Rock r = new Rock(assets.rock, x*tWH, y*tWH);
@@ -473,8 +505,7 @@ public class WorldGenerator {
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles.length; y++) {
 				float chance = MathUtils.random();
-				//if(chance < 0.013) {
-				if(chance < 0.1) {
+				if(chance < 0.13) {
 					if(tiles[x][y] instanceof Grass) {
 						//spawn rock
 						Tree r = new Tree(assets.tree, x*tWH, y*tWH);
