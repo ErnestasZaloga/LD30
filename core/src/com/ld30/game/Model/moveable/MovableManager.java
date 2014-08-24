@@ -1,8 +1,12 @@
 package com.ld30.game.Model.moveable;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.ld30.game.Model.Blockade;
+import com.ld30.game.Model.City;
 import com.ld30.game.Model.GameWorld;
+import com.ld30.game.Model.GameWorld.ResourceType;
 import com.ld30.game.Model.Map;
 import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Road;
@@ -14,7 +18,7 @@ public class MovableManager {
 
 	private Map map;
 	private GameWorld gameWorld;
-	private AStar.Validator workerAStarValidation = new AStar.Validator() {
+	private AStar.Validator roadAStarValidation = new AStar.Validator() {
 		@Override
 		public boolean isValid(int x, int y) {
 			return map.getTiles()[x][y] instanceof Road || map.getTiles()[x][y] instanceof ShallowWater;
@@ -26,11 +30,22 @@ public class MovableManager {
 		this.map = gameWorld.getMap();
 	}
 	
+	public void setupRoadMovement (final Humanoid humanoid,
+								   final int currentPositionX,
+								   final int currentPositionY,
+								   final int targetX,
+								   final int targetY) {
+		
+		humanoid.getWalkPath().clear();
+		humanoid.getWalkPath().addAll(gameWorld.getAStar().getPath(currentPositionX, currentPositionY, targetX, targetY, roadAStarValidation));
+		humanoid.setDestination(targetX, targetY);
+	}
+	
 	Vector2 tmpVector = new Vector2();
 	public void update (final float delta) {
 		final Array<MoveableEntity> movables = gameWorld.getEntities();
-		final AStar astar = gameWorld.getAStar();
 		final Map map = gameWorld.getMap();
+		final Blockade[] blockades = gameWorld.getBlockades();
 		
 		for (int i = 0; i < movables.size; i += 1) {
 			final MoveableEntity movable = movables.get(i);
@@ -48,21 +63,6 @@ public class MovableManager {
 				final int currentPositionX = (int)(map.getWidth() * (humanoidX / (map.getWidth() * map.getTileWidth())));
 				final int currentPositionY = (int)(map.getHeight() * (humanoidY / (map.getHeight() * map.getTileHeight())));
 				
-				if (currentPositionX != humanoid.getLastPositionX() ||
-					currentPositionY != humanoid.getLastPositonY()) {
-
-					if (humanoid instanceof Worker) {
-						final Worker worker = (Worker) humanoid;
-					}
-					else if (humanoid instanceof Troop) {
-						final Humanoid troop = (Troop) humanoid;
-					}
-					
-					// TODO: do additional checks like checking for blockade if worker
-					//		 or checking for blockade if warrior
-					humanoid.setLastPosition(currentPositionX, currentPositionY);
-				}
-				
 				if (humanoid.getWalkPath().size != 0 && 
 					!((currentPositionX == humanoid.getDestinationX()) && 
 					(currentPositionY == humanoid.getDestinationY()))) {
@@ -70,6 +70,54 @@ public class MovableManager {
 					int nextX = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 2);
 					int nextY = humanoid.getWalkPath().get(humanoid.getWalkPath().size - 1);
 
+					boolean proceedMovement = true;
+					if (currentPositionX != humanoid.getLastPositionX() ||
+						currentPositionY != humanoid.getLastPositonY()) {
+							
+						if ((humanoid instanceof Worker || humanoid instanceof Troop)) {
+							for (int ii = 0; ii < blockades.length; ii += 1) {
+								if (!blockades[i].isActive()) {
+									continue;
+								}
+								
+								int tileX = (int)(map.getWidth() * (blockades[i].getTile().getX() / (map.getWidth() * map.getTileWidth())));
+								int tileY = (int)(map.getHeight() * (blockades[i].getTile().getY() / (map.getHeight() * map.getTileHeight())));
+								
+								if (tileX == nextX && tileY == nextY) {
+									if (humanoid instanceof Worker) {
+										Worker worker = (Worker) humanoid;
+										final int sourceCity = worker.getSourceCity();
+										final City city = gameWorld.getCities().get(sourceCity);
+										worker.setResourcesCarried(0);
+										worker.setDestinationCity(sourceCity);
+										
+										final Tile cityTile = city.getCentralTile();
+										int cityTileX = (int)(map.getWidth() * (cityTile.getX() / (map.getWidth() * map.getTileWidth())));
+										int cityTileY = (int)(map.getHeight() * (cityTile.getY() / (map.getHeight() * map.getTileHeight())));
+										
+										setupRoadMovement (worker, currentPositionX, currentPositionY, cityTileX, cityTileY);
+										
+										proceedMovement = false;
+									}
+									else {
+										blockades[i].setActive(false);
+										if (MathUtils.randomBoolean(0.5f)) {
+											movables.removeIndex(i);
+											--i;
+											proceedMovement = false;
+										}
+									}
+								}
+							}
+						}
+						
+						humanoid.setLastPosition(currentPositionX, currentPositionY);
+					}
+					
+					if (!proceedMovement) {
+						continue;
+					}
+					
 					final Tile nextTile = map.getTile(nextX, nextY);
 					
 					tmpVector.x = (nextTile.getX() + nextTile.getWidth() / 2f) - (humanoidX);
@@ -90,16 +138,43 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
-					if (humanoid instanceof Worker) {
-						final Worker worker = (Worker) humanoid;
+					if (humanoid instanceof PlayerHumanoid) {
+						final PlayerHumanoid playerHumanoid = (PlayerHumanoid) humanoid;
+						final int destinationCity = playerHumanoid.getDestinationCity();
+						final City city = gameWorld.getCities().get(destinationCity);
+						
+						if (humanoid instanceof Worker) {
+							final Worker worker = (Worker) playerHumanoid;
+							final ResourceType resourceType = worker.getType();
+							final int resourcesCarried = worker.getResourcesCarried();
+							
+							switch (resourceType) {
+								case WOOD: {
+									city.setFoodCount(city.getFoodCount() + resourcesCarried);
+									break;
+								}
+								case IRON: {
+									city.setMetalCount(city.getMetalCount() + resourcesCarried);
+									break;
+								}
+								case FOOD: {
+									city.setFoodCount(city.getFoodCount() + resourcesCarried);
+									break;
+								}
+								default: {
+									break;
+								}
+							}
+							
+							city.setWorkerCount(city.getWorkerCount() + 1);
+						}
+						else if (humanoid instanceof Troop) {
+							city.setSoldierCount(city.getSoldierCount() + 1);
+						}
+						
+						movables.removeIndex(i);
+						--i;
 					}
-					else if (humanoid instanceof Troop) {
-						final Troop troop = (Troop) humanoid;
-					}
-					
-					// TODO: do some additional checks like checking if target was a blockade and if the worker
-					// 		 has to go back or go forward
-					// TODO: do some additional checks if warrior for blockades
 				}
 			}
 		}

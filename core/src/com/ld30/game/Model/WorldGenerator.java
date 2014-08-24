@@ -88,7 +88,7 @@ public class WorldGenerator {
 			tiles[(int)currentX][(int)currentY-1] = w;
 		} else if(tiles[(int)currentX][(int)currentY-1] instanceof Road) {
 			Road r = (Road) tiles[(int)currentX][(int)currentY-1];
-			if(r.getCenter() == GameWorld.Center.NONE) {
+			if(r.getCenter() == GameWorld.ResourceType.NONE) {
 				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
 				tiles[(int)currentX][(int)currentY-1] = w;
 			}
@@ -98,7 +98,7 @@ public class WorldGenerator {
 			tiles[(int)currentX][(int)currentY+1] = w;
 		} else if(tiles[(int)currentX][(int)currentY+1] instanceof Road) {
 			Road r = (Road) tiles[(int)currentX][(int)currentY+1];
-			if(r.getCenter() == GameWorld.Center.NONE) {
+			if(r.getCenter() == GameWorld.ResourceType.NONE) {
 				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
 				tiles[(int)currentX][(int)currentY+1] = w;
 			}
@@ -110,7 +110,7 @@ public class WorldGenerator {
 			tiles[(int)endX][(int)endY-1] = w;
 		} else if(tiles[(int)endX][(int)endY-1] instanceof Road) {
 			Road r = (Road) tiles[(int)endX][(int)endY-1];
-			if(r.getCenter() == GameWorld.Center.NONE) {
+			if(r.getCenter() == GameWorld.ResourceType.NONE) {
 				Water w = new Water(assets.water, tWH*endX, tWH*(endY-1));
 				tiles[(int)endX][(int)endY-1] = w;
 			}
@@ -120,7 +120,7 @@ public class WorldGenerator {
 			tiles[(int)endX][(int)endY+1] = w;
 		} else if(tiles[(int)endX][(int)endY+1] instanceof Road) {
 			Road r = (Road) tiles[(int)endX][(int)endY+1];
-			if(r.getCenter() == GameWorld.Center.NONE) {
+			if(r.getCenter() == GameWorld.ResourceType.NONE) {
 				Water w = new Water(assets.water, tWH*endX, tWH*(endY+1));
 				tiles[(int)endX][(int)endY+1] = w;
 			}
@@ -154,16 +154,16 @@ public class WorldGenerator {
 			
 			if(name.equals("food")) {
 				foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-				foodCityCentre.setCenter(GameWorld.Center.FOOD);
+				foodCityCentre.setCenter(GameWorld.ResourceType.FOOD);
 				tiles[(int)randomX][(int)randomY] = foodCityCentre;
 			} else if(name.equals("iron")) {
 				ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-				ironCityCentre.setCenter(GameWorld.Center.IRON);
+				ironCityCentre.setCenter(GameWorld.ResourceType.IRON);
 				tiles[(int)randomX][(int)randomY] = ironCityCentre;
 			}
 			else if(name.equals("wood")) {
 				woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-				woodCityCentre.setCenter(GameWorld.Center.WOOD);
+				woodCityCentre.setCenter(GameWorld.ResourceType.WOOD);
 				tiles[(int)randomX][(int)randomY] = woodCityCentre;
 			}
 		}
@@ -172,12 +172,13 @@ public class WorldGenerator {
 		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
 		foodCityCentre.setCenter(GameWorld.Center.FOOD);
+		foodCityCentre.setCenter(GameWorld.ResourceType.FOOD);
 		tiles[(int)randomX][(int)randomY] = foodCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
 		randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
 		ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		ironCityCentre.setCenter(GameWorld.Center.IRON);
+		ironCityCentre.setCenter(GameWorld.ResourceType.IRON);
 		tiles[(int)randomX][(int)randomY] = ironCityCentre;
 		
 		randomX = (float) Math.floor(Math.random()*(tiles.length-2))+1;
@@ -283,7 +284,7 @@ public class WorldGenerator {
 			} else {
 				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 				tiles[(int)currentX][(int)currentY] = tile;
-				tile.setCenter(GameWorld.Center.NONE);
+				tile.setCenter(GameWorld.ResourceType.NONE);
 				result.add(tile);
 			}
 		}
@@ -312,7 +313,7 @@ public class WorldGenerator {
 			} else {
 				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 				tiles[(int)currentX][(int)currentY] = tile;
-				tile.setCenter(GameWorld.Center.NONE);
+				tile.setCenter(GameWorld.ResourceType.NONE);
 				result.add(tile);
 			}
 		}
@@ -341,7 +342,7 @@ public class WorldGenerator {
 			} else {
 				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
 				tiles[(int)currentX][(int)currentY] = tile;
-				tile.setCenter(GameWorld.Center.NONE);
+				tile.setCenter(GameWorld.ResourceType.NONE);
 				result.add(tile);
 			}
 		}
@@ -375,7 +376,7 @@ public class WorldGenerator {
 				tiles[(int)currentX][(int)currentY-1] = w;
 			} else if(tiles[(int)currentX][(int)currentY-1] instanceof Road) {
 				Road r = (Road) tiles[(int)currentX][(int)currentY-1];
-				if(r.getCenter() == GameWorld.Center.NONE) {
+				if(r.getCenter() == GameWorld.ResourceType.NONE) {
 					Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
 					tiles[(int)currentX][(int)currentY-1] = w;
 				}
@@ -385,7 +386,7 @@ public class WorldGenerator {
 				tiles[(int)currentX][(int)currentY+1] = w;
 			} else if(tiles[(int)currentX][(int)currentY+1] instanceof Road) {
 				Road r = (Road) tiles[(int)currentX][(int)currentY+1];
-				if(r.getCenter() == GameWorld.Center.NONE) {
+				if(r.getCenter() == GameWorld.ResourceType.NONE) {
 					Water w = new Water(assets.water, tWH*currentX, tWH*(currentY+1));
 					tiles[(int)currentX][(int)currentY+1] = w;
 				}
