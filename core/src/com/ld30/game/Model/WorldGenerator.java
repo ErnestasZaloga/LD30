@@ -1,10 +1,14 @@
 package com.ld30.game.Model;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.Tiles.Grass;
 import com.ld30.game.Model.Tiles.Road;
+import com.ld30.game.Model.Tiles.Rock;
+import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
 
 public class WorldGenerator {
@@ -111,6 +115,12 @@ public class WorldGenerator {
 		};
 		
 		/*
+		 * Create various objects in the map
+		 */
+		addRocksToMap(tiles, assets, tWH);
+		addTreesToMap(tiles, assets, tWH);
+		
+		/*
 		 * Create roads between city centres
 		 */
 		//From food centre to iron
@@ -133,9 +143,15 @@ public class WorldGenerator {
 			
 			if(currentX == targetX && currentY == targetY) continue;
 			
-			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+			}
+			
 			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
 				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
 				t.setCenter(GameWorld.Center.NONE);
@@ -177,9 +193,15 @@ public class WorldGenerator {
 			
 			if(currentX == targetX && currentY == targetY) continue;
 			
-			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+			}
+			
 			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
 				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
 				t.setCenter(GameWorld.Center.NONE);
@@ -221,9 +243,15 @@ public class WorldGenerator {
 			
 			if(currentX == targetX && currentY == targetY) continue;
 			
-			Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
-			tiles[(int)currentX][(int)currentY] = tile;
-			tile.setCenter(GameWorld.Center.NONE);
+			if(tiles[(int)currentX][(int)currentY] instanceof Water) {
+				ShallowWater tile = new ShallowWater(assets.shallowWater, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+			} else {
+				Road tile = new Road(assets.road, tWH*currentX, tWH*currentY);
+				tiles[(int)currentX][(int)currentY] = tile;
+				tile.setCenter(GameWorld.Center.NONE);
+			}
+			
 			if(tiles[(int)currentX-1][(int)currentY] instanceof Grass) {
 				Road t = new Road(assets.road, tWH*(currentX-1), tWH*currentY);
 				t.setCenter(GameWorld.Center.NONE);
@@ -249,4 +277,39 @@ public class WorldGenerator {
 		return new GeneratedWorld(tiles, centers);
 	}
 	
+	private static Tile[][] addRocksToMap(Tile[][] tiles, Assets assets, float tWH) {
+		//Scatter some rocks randomly on the map
+		for(int x = 0; x < tiles.length; x++) {
+			for(int y = 0; y < tiles.length; y++) {
+				float chance = MathUtils.random();
+				if(chance < 0.013) {
+					//spawn rock
+					Rock r = new Rock(assets.rock, x*tWH, y*tWH);
+					tiles[x][y] = r;
+				}
+			}
+		}
+		//Scatter some more around iron city centre
+		
+		
+		return tiles;
+	}
+	
+	private static Tile[][] addTreesToMap(Tile[][] tiles, Assets assets, float tWH) {
+		//Scatter some trees randomly on the map
+		for(int x = 0; x < tiles.length; x++) {
+			for(int y = 0; y < tiles.length; y++) {
+				float chance = MathUtils.random();
+				if(chance < 0.013) {
+					//spawn rock
+					Tree r = new Tree(assets.tree, x*tWH, y*tWH);
+					tiles[x][y] = r;
+				}
+			}
+		}
+		//Scatter some more around wood city centre
+		
+		
+		return tiles;
+	}
 }
