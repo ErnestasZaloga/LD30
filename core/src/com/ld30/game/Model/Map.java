@@ -4,8 +4,9 @@ import com.ld30.game.Model.Tiles.Tile;
 
 public class Map {
 
-	private int tileWidth;
-	private int tileHeight;
+	private float tileWidth;
+	private float tileHeight;
+	private float tileScale;
 	private int width;
 	private int height;
 	private Tile[][] tiles;
@@ -20,20 +21,28 @@ public class Map {
 		return tiles;
 	}
 
-	public int getTileWidth() {
+	public float getTileWidth() {
 		return tileWidth;
 	}
 
-	public void setTileWidth(int tileWidth) {
+	public void setTileWidth(float tileWidth) {
 		this.tileWidth = tileWidth;
 	}
 
-	public int getTileHeight() {
+	public float getTileHeight() {
 		return tileHeight;
 	}
 
-	public void setTileHeight(int tileHeight) {
+	public void setTileHeight(float tileHeight) {
 		this.tileHeight = tileHeight;
+	}
+
+	public float getTileScale() {
+		return tileScale;
+	}
+
+	public void setTileScale(float tileScale) {
+		this.tileScale = tileScale;
 	}
 
 	public Tile getTile (final int x, final int y) {

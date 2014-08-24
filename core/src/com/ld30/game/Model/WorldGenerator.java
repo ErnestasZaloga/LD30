@@ -1,5 +1,6 @@
 package com.ld30.game.Model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -56,9 +57,9 @@ public class WorldGenerator {
 		
 	}
 	
-	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
-		int mapWidth = 64;
-		int mapHeight = 64;
+	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar, int mapWidth, int mapHeight) {
+//		int mapWidth = 64;
+//		int mapHeight = 64;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
@@ -242,7 +243,7 @@ public class WorldGenerator {
 			}
 			
 			for(int x = 0; x < tiles.length; x++) {
-				for(int y = 0; y < tiles.length; y++) {
+				for(int y = 0; y < tiles[0].length; y++) {
 					float dx = x-center.getX()/tWH;
 					float dy = y-center.getY()/tWH;
 					float dist = (float) Math.floor(Math.sqrt(dx*dx+dy*dy));
@@ -258,8 +259,6 @@ public class WorldGenerator {
 									Tile t = new Grass(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
 								}
-//								Tile t = new Grass(assets.grass, x*tWH, y*tWH);
-//								tiles[x][y] = t;
 							}
 						}
 					} else if(center.getCenter() == GameWorld.ResourceType.IRON) {
@@ -483,7 +482,7 @@ public class WorldGenerator {
 	private static Tile[][] addRocksToMap(Tile[][] tiles, Assets assets, float tWH) {
 		//Scatter some rocks randomly on the map
 		for(int x = 0; x < tiles.length; x++) {
-			for(int y = 0; y < tiles.length; y++) {
+			for(int y = 0; y < tiles[0].length; y++) {
 				float chance = MathUtils.random();
 				if(chance < 0.13) {
 					if(tiles[x][y] instanceof Grass) {
@@ -503,7 +502,7 @@ public class WorldGenerator {
 	private static Tile[][] addTreesToMap(Tile[][] tiles, Assets assets, float tWH) {
 		//Scatter some trees randomly on the map
 		for(int x = 0; x < tiles.length; x++) {
-			for(int y = 0; y < tiles.length; y++) {
+			for(int y = 0; y < tiles[0].length; y++) {
 				float chance = MathUtils.random();
 				if(chance < 0.13) {
 					if(tiles[x][y] instanceof Grass) {

@@ -1,5 +1,6 @@
 package com.ld30.game.Model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
@@ -44,7 +45,21 @@ public class GameWorld {
 	}
 	
 	public void begin() {
-		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar);
+		float screenWidth = Gdx.graphics.getWidth();
+		float screenHeight = Gdx.graphics.getHeight();
+		
+		int numberOfTilesVertically = 64;
+		int numberOfTilesHorizontally;
+		
+		float tileSize = screenHeight/numberOfTilesVertically;
+		final float tileWH = 16;
+		float tileScale = tileSize/tileWH;
+		map.setTileScale(tileScale);
+		map.setTileHeight(tileSize);
+		map.setTileWidth(tileSize);
+		numberOfTilesHorizontally = (int) Math.ceil(screenWidth/tileSize);
+		
+		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar, numberOfTilesHorizontally, numberOfTilesVertically);
 		map.setTiles(generatedWorld.tiles);
 		
 		astar.setSize(map.getWidth(), map.getHeight());
