@@ -6,13 +6,13 @@ import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
 import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.MovableManager;
-import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.View.GameUI;
 import com.ld30.game.utils.AStar;
 import com.ld30.game.utils.Log;
 
 public class GameWorld {
 
+	private Array<Blockade> blockades = new Array<Blockade>();
 	private Assets assets;
 	private Map map = new Map();
 	private Array<MoveableEntity> entities = new Array<MoveableEntity>();
@@ -42,12 +42,6 @@ public class GameWorld {
 		cityCenters = generatedWorld.centers;
 		
 		astar.setSize(map.getWidth(), map.getHeight());
-		
-		Worker worker = new Worker ();
-		worker.setTexture(assets.moveable);
-		worker.setPixelsPerSecond(256);
-		
-		entities.add(worker);
 		
 		for (int i = 0; i < cityCenters.length; i += 1) {
 			final Road road = (Road) cityCenters[i];
@@ -105,6 +99,10 @@ public class GameWorld {
 	
 	public GameUI getUI() {
 		return gameUI;
+	}
+	
+	public Array<Blockade> getBlockades () {
+		return blockades;
 	}
 	
 }
