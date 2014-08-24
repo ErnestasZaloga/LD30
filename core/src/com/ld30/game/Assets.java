@@ -28,6 +28,7 @@ public class Assets {
 	public final TextureRegion road;
 	public final TextureRegion moveable;
 	public final TextureRegion city;
+	public final TextureRegion black;
 	
 	private final int tileWH = 8;
 	
@@ -98,9 +99,17 @@ public class Assets {
 		treeTexture = new Texture(pixmap);
 		pixmap.dispose();
 		tree = new TextureRegion(treeTexture);
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.BLACK);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		black = new TextureRegion(new Texture(pixmap));
+		pixmap.dispose();
 	}
 	
 	public void dispose () {
+		black.getTexture().dispose();
 		tileTexture.dispose();
 		cityTexture.dispose();
 		moveableTexture.dispose();

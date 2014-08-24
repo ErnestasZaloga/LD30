@@ -1,6 +1,7 @@
 package com.ld30.game.Model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.utils.Log;
 
 public class City extends Entity {
@@ -26,8 +27,11 @@ public class City extends Entity {
 	private int food, metal, wood;
 	private int soldierCount, workerCount;
 	
-	public City(TextureRegion region, float x, float y, GameWorld.Center type) {
+	private Tile centerTile;
+	
+	public City(TextureRegion region, float x, float y, GameWorld.Center type, Tile centralTile) {
 		this.type = type;
+		this.centerTile = centralTile;
 		
 		setTexture(region);
 		setX(x);
@@ -62,6 +66,12 @@ public class City extends Entity {
 		}
 	}
 	
+	public void sendWorkersTo(City city, int count) {
+		if(count <= workerCount) {
+			//TODO do stuff
+		}
+	}
+	
 	public void makeSoldier() {
 		if(workerCount + soldierCount < maxPopulation 
 		   && canBuy(SOLDIER_FOOD_COST, SOLDIER_METAL_COST, SOLDIER_WOOD_COST)) {
@@ -69,6 +79,12 @@ public class City extends Entity {
 			food -= SOLDIER_FOOD_COST;
 			metal -= SOLDIER_METAL_COST;
 			wood -= SOLDIER_WOOD_COST;
+		}
+	}
+	
+	public void sendSoldiersTo(City city, int count) {
+		if(count <= soldierCount) {
+			//TODO do stuff
 		}
 	}
 	
@@ -115,6 +131,10 @@ public class City extends Entity {
 					soldierCount--;
 			}
 		}
+	}
+	
+	public Tile getCentralTile() {
+		return centerTile;
 	}
 
 	public int getFoodCount() {

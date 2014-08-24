@@ -7,7 +7,7 @@ import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.Model.moveable.Worker;
-import com.ld30.game.View.GameUI;
+import com.ld30.game.View.UI.GameUI;
 import com.ld30.game.utils.AStar;
 import com.ld30.game.utils.Log;
 
@@ -57,7 +57,8 @@ public class GameWorld {
 					assets.city, 
 					road.getX() + road.getWidth() / 2f - assets.city.getRegionWidth() / 2f, 
 					road.getY() + road.getHeight() / 2f - assets.city.getRegionHeight() / 2f, 
-					road.getCenter());
+					road.getCenter(),
+					cityCenters[i]);
 			cities.add(city);
 		}
 		gameUI = new GameUI(this);
