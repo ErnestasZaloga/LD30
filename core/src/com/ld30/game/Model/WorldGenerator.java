@@ -19,6 +19,9 @@ public class WorldGenerator {
 	public static class GeneratedWorld {
 		public final Tile[][] tiles;
 		public final Tile[] centers;
+		private Array<Tile> roadFromFoodToIron;
+		private Array<Tile> roadFromIronToWood;
+		private Array<Tile> roadWoodFoodToFood;
 		
 		public GeneratedWorld (final Tile[][] tiles, 
 							   final Tile[] centers) {
@@ -26,6 +29,31 @@ public class WorldGenerator {
 			this.tiles = tiles;
 			this.centers = centers;
 		}
+
+		public Array<Tile> getRoadFromFoodToIron() {
+			return roadFromFoodToIron;
+		}
+
+		public void setRoadFromFoodToIron(Array<Tile> roadFromFoodToIron) {
+			this.roadFromFoodToIron = roadFromFoodToIron;
+		}
+
+		public Array<Tile> getRoadFromIronToWood() {
+			return roadFromIronToWood;
+		}
+
+		public void setRoadFromIronToWood(Array<Tile> roadFromIronToWood) {
+			this.roadFromIronToWood = roadFromIronToWood;
+		}
+
+		public Array<Tile> getRoadWoodFoodToFood() {
+			return roadWoodFoodToFood;
+		}
+
+		public void setRoadWoodFoodToFood(Array<Tile> roadWoodFoodToFood) {
+			this.roadWoodFoodToFood = roadWoodFoodToFood;
+		}
+		
 	}
 	
 	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
@@ -137,9 +165,9 @@ public class WorldGenerator {
 		/*
 		 * Create roads between city centres
 		 */
-		addRoadFromFoodToIron(foodCityCentre, ironCityCentre, tiles, assets, astar, tWH);
-		addRoadFromIronToWood(ironCityCentre, woodCityCentre, tiles, assets, astar, tWH);
-		addRoadFromWoodToFood(woodCityCentre, foodCityCentre, tiles, assets, astar, tWH);
+		Array<Tile> roadFromFoodToIron = addRoadFromFoodToIron(foodCityCentre, ironCityCentre, tiles, assets, astar, tWH);
+		Array<Tile> roadFromIronToWood = addRoadFromIronToWood(ironCityCentre, woodCityCentre, tiles, assets, astar, tWH);
+		Array<Tile> roadFromWoodToFood = addRoadFromWoodToFood(woodCityCentre, foodCityCentre, tiles, assets, astar, tWH);
 		//From food centre to iron
 		/*currentX = foodCityCentre.getX()/tWH;
 		currentY = foodCityCentre.getY()/tWH;
@@ -290,8 +318,12 @@ public class WorldGenerator {
 				tiles[(int)currentX][(int)currentY+1] = t;
 			}
 		}*/
+		GeneratedWorld generatedWorld = new GeneratedWorld(tiles, centers);
+		generatedWorld.setRoadFromFoodToIron(roadFromFoodToIron);
+		generatedWorld.setRoadFromIronToWood(roadFromIronToWood);
+		generatedWorld.setRoadWoodFoodToFood(roadFromWoodToFood);
 		
-		return new GeneratedWorld(tiles, centers);
+		return generatedWorld;
 	}
 	
 	private static Array<Tile> addRoadFromFoodToIron(Road foodCityCentre, Road ironCityCentre, final Tile[][] tiles, Assets assets, AStar astar, float tWH) {
@@ -389,7 +421,7 @@ public class WorldGenerator {
 				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water);
 			}
 		};
-		riverEnd.x -= 1;
+		//riverEnd.x -= 1;
 		IntArray path = new IntArray();
 		path.addAll(astar.getPath((int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y, riverAStarValidation));
 		
@@ -399,6 +431,8 @@ public class WorldGenerator {
 			//Make river wider
 			float currentX = path.get(i);
 			float currentY = path.get(i+1);
+			//currentY = (currentY-1 < 0) ? 0 : 0;
+			if(currentY-1 < 0) currentY = 1; else if (currentY > tiles[0].length-1) currentY = tiles[0].length-1;
 			if(tiles[(int)currentX][(int)currentY-1] instanceof Grass) {
 				Water w = new Water(assets.water, tWH*currentX, tWH*(currentY-1));
 				tiles[(int)currentX][(int)currentY-1] = w;
