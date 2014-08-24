@@ -57,8 +57,6 @@ public class WorldGenerator {
 	}
 	
 	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar, int mapWidth, int mapHeight) {
-//		int mapWidth = 64;
-//		int mapHeight = 64;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
@@ -169,25 +167,6 @@ public class WorldGenerator {
 			}
 		}
 		
-		/*float randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+1;
-		float randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
-		foodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		foodCityCentre.setCenter(GameWorld.Center.FOOD);
-		foodCityCentre.setCenter(GameWorld.ResourceType.FOOD);
-		tiles[(int)randomX][(int)randomY] = foodCityCentre;
-		
-		randomX = (float) Math.floor(Math.random()*(Math.floor(tiles.length/3)))+tiles.length/3*2-1;
-		randomY = (float) Math.floor(Math.random()*(tiles[0].length/3))+1;
-		ironCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		ironCityCentre.setCenter(GameWorld.ResourceType.IRON);
-		tiles[(int)randomX][(int)randomY] = ironCityCentre;
-		
-		randomX = (float) Math.floor(Math.random()*(tiles.length-2))+1;
-		randomY = (float) Math.floor(Math.random()*(Math.floor(tiles[0].length/2)))+tiles[0].length/2-1;
-		woodCityCentre = new Road(assets.road, randomX*tWH, randomY*tWH);
-		woodCityCentre.setCenter(GameWorld.Center.WOOD);
-		tiles[(int)randomX][(int)randomY] = woodCityCentre;*/
-		
 		final Tile[] centers = new Tile[] {
 				woodCityCentre,
 				ironCityCentre,
@@ -228,6 +207,7 @@ public class WorldGenerator {
 	}
 	
 	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
+		//XXX: variables with warnings are needed for gradient generation, which is now turned off
 		float radiusInTiles = 14;
 		float percentageIncrement = (float) Math.ceil(100/radiusInTiles);
 		float chance = 0;
@@ -254,22 +234,24 @@ public class WorldGenerator {
 							float foodPercentageIncrement = (float) Math.ceil(100/foodRadiusInTiles);
 							if(dist <= foodRadiusInTiles) {
 								//roll, and see if swap is possible
-								chance = (float) Math.random()*100;
-								if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
+								//XXX: comment out theese comments to turn on gradient
+								//chance = (float) Math.random()*100;
+								//if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
 									Tile t = new Grass(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								}
+								//}
 							}
 						}
 					} else if(center.getCenter() == GameWorld.ResourceType.IRON) {
 						if(tiles[x][y] instanceof Tree) {
 							if(dist <= radiusInTiles) {
 								//roll, and see if swap is possible
-								chance = (float) Math.random()*100;
-								if(chance >= dist*percentageIncrement-percentageIncrement) {
+								//XXX: comment out theese comments to turn on gradient
+								//chance = (float) Math.random()*100;
+								//if(chance >= dist*percentageIncrement-percentageIncrement) {
 									Tile t = new Rock(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								}
+								//}
 							}
 						} else if(tiles[x][y] instanceof Grass) {
 							float r = (float) Math.random();
@@ -282,13 +264,12 @@ public class WorldGenerator {
 						if(tiles[x][y] instanceof Rock) {
 							if(dist <= radiusInTiles) {
 								//roll, and see if swap is possible
-								chance = (float) Math.random()*100;
-								if(chance >= dist*percentageIncrement-percentageIncrement) {
+								//XXX: comment out theese comments to turn on gradient
+								//chance = (float) Math.random()*100;
+								//if(chance >= dist*percentageIncrement-percentageIncrement) {
 									Tile t = new Tree(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								}
-//								Tile t = new Tree(assets.grass, x*tWH, y*tWH);
-//								tiles[x][y] = t;
+								//}
 							}
 						} else if(tiles[x][y] instanceof Grass) {
 							float r = (float) Math.random();
@@ -442,7 +423,6 @@ public class WorldGenerator {
 				return (tiles[x][y] instanceof Grass || tiles[x][y] instanceof Water);
 			}
 		};
-		//riverEnd.x -= 1;
 		IntArray path = new IntArray();
 		path.addAll(astar.getPath((int)riverStart.x, (int)riverStart.y, (int)riverEnd.x, (int)riverEnd.y, riverAStarValidation));
 		
@@ -493,8 +473,6 @@ public class WorldGenerator {
 				}
 			}
 		}
-		//Scatter some more around iron city centre
-		
 		
 		return tiles;
 	}
@@ -513,8 +491,6 @@ public class WorldGenerator {
 				}
 			}
 		}
-		//Scatter some more around wood city centre
-		
 		
 		return tiles;
 	}
