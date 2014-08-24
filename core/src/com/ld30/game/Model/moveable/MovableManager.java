@@ -40,6 +40,7 @@ public class MovableManager {
 		humanoid.getWalkPath().clear();
 		humanoid.getWalkPath().addAll(gameWorld.getAStar().getPath(currentPositionX, currentPositionY, targetX, targetY, roadAStarValidation));
 		humanoid.setDestination(targetX, targetY);
+		humanoid.setMovementValidator(roadAStarValidation);
 	}
 	
 	Vector2 tmpVector = new Vector2();
@@ -117,12 +118,18 @@ public class MovableManager {
 						humanoid.setLastPosition(currentPositionX, currentPositionY);
 						
 						if (proceedMovement) {
-							setupRoadMovement(humanoid, currentPositionX, currentPositionY, humanoid.getDestinationX(), humanoid.getDestinationY());
+							humanoid.getWalkPath().clear();
+							humanoid.getWalkPath().addAll(
+									gameWorld.getAStar().getPath(
+											currentPositionX, 
+											currentPositionY, 
+											humanoid.getDestinationX(), 
+											humanoid.getDestinationY(), 
+											humanoid.getMovementValidator()));
 						}
 					}
 					
 					if (!proceedMovement) {
-						Log.trace(this, "Dont proceed movement");
 						continue;
 					}
 					
@@ -146,7 +153,6 @@ public class MovableManager {
 					humanoid.setY(humanoid.getY() + tmpVector.y);
 				}
 				else {
-					Log.trace(this, "Else");
 					if (humanoid instanceof PlayerHumanoid) {
 						final PlayerHumanoid playerHumanoid = (PlayerHumanoid) humanoid;
 						final int destinationCity = playerHumanoid.getDestinationCity();
@@ -183,6 +189,20 @@ public class MovableManager {
 						
 						movables.removeIndex(i);
 						--i;
+					}
+					else if (humanoid instanceof Orc) {
+						final Orc orc = (Orc) humanoid;
+						
+						if (orc instanceof BlockadeOrc) {
+							final BlockadeOrc blockadeOrc = (BlockadeOrc) orc;
+							gameWorld.getOrcManager().removePendingBlockade(blockadeOrc.getBlockade());
+							blockadeOrc.getBlockade().setActive(true);
+
+							blockadeOrc.getBlockade().getTile().setTexture(gameWorld.getAssets().blockade);
+							
+							movables.removeIndex(i);
+							--i;
+						}
 					}
 				}
 			}

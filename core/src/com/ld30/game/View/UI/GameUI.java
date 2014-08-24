@@ -32,8 +32,8 @@ public class GameUI {
 	private final Array<Actor> cityMouseOverRecievers;
 	private final Array<CityButtonGroup> buttonGroups;
 	
-	private final float width;
-	private final float height;
+	private final float screenW;
+	private final float screenH;
 	
 	private int unitCount = 0;
 	private final TextButton countChanger; 
@@ -48,17 +48,18 @@ public class GameUI {
 		final Array<City> cities = gameWorld.getCities();
 		final Assets assets = gameWorld.getAssets();
 		
-		width = Gdx.graphics.getWidth();
-		height = Gdx.graphics.getHeight();
+		screenW = Gdx.graphics.getWidth();
+		screenH = Gdx.graphics.getHeight();
 		
-		stage = new Stage(new StretchViewport(width, height), batch);
+		stage = new Stage(new StretchViewport(screenW, screenH), batch);
 		Gdx.input.setInputProcessor(stage);
 		Actor r = new Actor();
-		r.setSize(width, height);
+		r.setSize(screenW, screenH);
 		r.addListener(new InputListener() {
 			
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				recieverCity = null;
 				return clearSendState();
 			}
 		});
@@ -78,6 +79,7 @@ public class GameUI {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean scrolled (InputEvent event, float x, float y, int amount) {
+				if(countChanger.hasParent())
 				unitCount -= amount;
 				if(state == State.SENDING_WORKERS) {
 					if(unitCount > unitSenderCity.getWorkerCount()) {
@@ -124,20 +126,37 @@ public class GameUI {
 		
 		//Set up city uis.
 		for(int i = 0, n = cities.size; i < n; i++) {
-			final int ii = i;
+			//final int ii = i;
 			
 			final City city = cities.get(i);
-			CityUI group = new CityUI(city, assets);
-			group.setTransform(false);
-			group.setSize(100, 20);//FIXME hardcode
-			cityUIs.add(group);
-			stage.addActor(group);
-			group.setPosition(city.getX() - 10, city.getY() - 10);
+			CityUI cityUI = new CityUI(city, assets);
+			cityUI.setTransform(false);
+			cityUI.setSize(180, 40);//FIXME hardcode
+			cityUIs.add(cityUI);
+			stage.addActor(cityUI);
+			cityUI.setPosition((city.getWidth() - cityUI.getWidth()) / 2 + city.getX(),
+							   city.getY() <= (screenH - city.getHeight()) / 2 ? 
+									   city.getY() - cityUI.getHeight() : city.getY() + city.getHeight());
 			
 			final CityButtonGroup bg = new CityButtonGroup(city, assets);
 			buttonGroups.add(bg);
-			bg.setPosition(city.getX(), city.getY());
-			bg.setSize(100, 250);//FIXME hardcode again
+			
+			bg.setSize(100, 248);//FIXME hardcode again
+			bg.setPosition((city.getWidth() - bg.getWidth()) / 2 + city.getX(), 
+							(city.getHeight() - bg.getHeight()) / 2 + city.getY());
+			
+			if(bg.getX() < 0) 			
+				bg.setX(0);
+			
+			if(bg.getRight() > screenW) 	
+				bg.setX(screenW - bg.getWidth());
+			
+			if(bg.getY() < 0) 			
+				bg.setY(0);
+			
+			if(bg.getTop() > screenH) 	
+				bg.setY(screenH - bg.getHeight());
+			
 			bg.setTransform(false);
 			
 			
@@ -154,7 +173,7 @@ public class GameUI {
 						stage.addActor(bg);
 					} else if(!(x >= bg.getX() && x <= bg.getRight() && y >= bg.getY() && y <= bg.getTop())) {
 						bg.remove();
-						if(state == State.WAITING_RE_MOUSE_OVER && bg.city == recieverCity) {
+						if(state == State.WAITING_RE_MOUSE_OVER && (bg.city == recieverCity || recieverCity == null)) {
 							state = State.NORMAL;
 						}
 					}
@@ -186,12 +205,43 @@ public class GameUI {
 			cityMouseOverRecievers.add(cityMouseOverReciever);
 			stage.addActor(cityMouseOverReciever);
 		}
+		City topCity = null;
+		float top = 0;
+		int ii = 0;
+		int a = 0;
+		for(City city : cities) {
+			if(city.getY() > top) {
+				topCity = city;
+				top = city.getY();
+				ii = a;
+			}
+			a++;
+		}
 		
 		topUI = new TopUI(cities, assets);
 		topUI.setTransform(false);
 		stage.addActor(topUI);
 		topUI.setSize(500, 60);
-		topUI.setPosition(0, stage.getHeight() - topUI.getHeight());
+		topUI.setPosition((screenW - topUI.getWidth()) / 2, screenH - topUI.getHeight());
+		
+		cityUIs.get(ii).setY(topCity.getY() + topCity.getHeight());
+		for(int i = 0, n = cities.size; i < n; i++) {
+			final CityUI ui = cityUIs.get(i);
+			final City city = cities.get(i);
+			
+			if(ui.getX() < 0) 			
+				ui.setX(0);
+			
+			if(ui.getRight() > screenW) 	
+				ui.setX(screenW - ui.getWidth());
+			
+			if(ui.getY() < 0) 			
+				ui.setY(city.getY() + city.getHeight());
+			
+			if(ui.getTop() > topUI.getY()) 	
+				ui.setY(city.getY() - ui.getHeight());
+		}
+		
 		
 	}
 	
@@ -231,7 +281,7 @@ public class GameUI {
 			
 			
 			UIBackground = new Image(assets.black);
-			addActor(UIBackground);
+			//addActor(UIBackground);
 			
 			transportResources = new TextButton("TRANSPORT\n RESOURCES", skin);
 			transportResources.addListener(new InputListener() {

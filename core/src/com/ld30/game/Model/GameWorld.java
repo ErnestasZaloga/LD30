@@ -6,6 +6,7 @@ import com.ld30.game.Assets;
 import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
 import com.ld30.game.Model.Tiles.Road;
 import com.ld30.game.Model.moveable.MovableManager;
+import com.ld30.game.Model.moveable.OrcManager;
 import com.ld30.game.View.UI.GameUI;
 import com.ld30.game.utils.AStar;
 import com.ld30.game.utils.Log;
@@ -29,6 +30,7 @@ public class GameWorld {
 	private Array<City> cities = new Array<City>();
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
+	private OrcManager orcManager;
 	
 	private GameUI gameUI;
 	
@@ -42,6 +44,7 @@ public class GameWorld {
 		map.setTileHeight(assets.grass.getRegionHeight());
 		
 		movableManager = new MovableManager(this);
+		orcManager = new OrcManager(this);
 	}
 	
 	public void begin() {
@@ -91,6 +94,7 @@ public class GameWorld {
 	}
 	
 	public void update(float delta) {
+		orcManager.update(delta);
 		movableManager.update(delta);
 		
 		for (int i = 0; i < cities.size; i += 1) {
@@ -148,6 +152,10 @@ public class GameWorld {
 	
 	public MovableManager getMovableManager () {
 		return movableManager;
+	}
+
+	public OrcManager getOrcManager() {
+		return orcManager;
 	}
 
 }
