@@ -12,7 +12,15 @@ import com.ld30.game.utils.Log;
 
 public class GameWorld {
 
-	private Array<Blockade> blockades = new Array<Blockade>();
+	private final Blockade blockadeFromFoodToIron = new Blockade();
+	private final Blockade blockadeFromIronToWood = new Blockade();
+	private final Blockade blockadeFromWoodToFood = new Blockade();
+	private final Blockade[] blockades = new Blockade[] {
+			blockadeFromFoodToIron,
+			blockadeFromIronToWood,
+			blockadeFromIronToWood
+	};
+	
 	private Assets assets;
 	private Map map = new Map();
 	private Array<MoveableEntity> entities = new Array<MoveableEntity>();
@@ -23,7 +31,7 @@ public class GameWorld {
 	
 	private GameUI gameUI;
 	
-	public enum Center {
+	public static enum ResourceType {
 		WOOD, FOOD, IRON, NONE
 	}
 	
@@ -38,7 +46,6 @@ public class GameWorld {
 	public void begin() {
 		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar);
 		map.setTiles(generatedWorld.tiles);
-
 		cityCenters = generatedWorld.centers;
 		
 		astar.setSize(map.getWidth(), map.getHeight());
@@ -54,6 +61,15 @@ public class GameWorld {
 					road.getCenter());
 			cities.add(city);
 		}
+		
+		generatedWorld.getRoadFromFoodToIron();
+		generatedWorld.getRoadFromIronToWood();
+		generatedWorld.getRoadWoodFoodToFood();
+
+		blockadeFromFoodToIron.setTile(generatedWorld.getRoadFromFoodToIron().get(generatedWorld.getRoadFromFoodToIron().size / 2));
+		blockadeFromIronToWood.setTile(generatedWorld.getRoadFromIronToWood().get(generatedWorld.getRoadFromIronToWood().size / 2));
+		blockadeFromWoodToFood.setTile(generatedWorld.getRoadWoodFoodToFood().get(generatedWorld.getRoadWoodFoodToFood().size / 2));
+		
 		gameUI = new GameUI(this);
 	}
 	
@@ -101,8 +117,20 @@ public class GameWorld {
 		return gameUI;
 	}
 	
-	public Array<Blockade> getBlockades () {
+	public Blockade[] getBlockades () {
 		return blockades;
 	}
-	
+
+	public Blockade getBlockadeFromFoodToIron() {
+		return blockadeFromFoodToIron;
+	}
+
+	public Blockade getBlockadeFromIronToWood() {
+		return blockadeFromIronToWood;
+	}
+
+	public Blockade getBlockadeFromWoodToFood() {
+		return blockadeFromWoodToFood;
+	}
+
 }

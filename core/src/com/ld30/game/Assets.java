@@ -19,7 +19,9 @@ public class Assets {
 	private final Texture roadTexture;
 	private final Texture rockTexture;
 	private final Texture treeTexture;
+	private final Texture blockadeTexture;
 	
+	public final TextureRegion blockade;
 	public final TextureRegion grass;
 	public final TextureRegion water;
 	public final TextureRegion shallowWater;
@@ -98,12 +100,26 @@ public class Assets {
 		treeTexture = new Texture(pixmap);
 		pixmap.dispose();
 		tree = new TextureRegion(treeTexture);
+		
+		pixmap = new Pixmap(tileWH, tileWH, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.BLACK);
+		pixmap.fillRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+		
+		blockadeTexture = new Texture(pixmap);
+		pixmap.dispose();
+		blockade = new TextureRegion(blockadeTexture);
 	}
 	
 	public void dispose () {
 		tileTexture.dispose();
 		cityTexture.dispose();
 		moveableTexture.dispose();
+		waterTexture.dispose();
+		shallowWaterTexture.dispose();
+		roadTexture.dispose();
+		rockTexture.dispose();
+		treeTexture.dispose();
+		blockadeTexture.dispose();
 	}
 	
 }
