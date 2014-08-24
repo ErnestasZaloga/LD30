@@ -29,8 +29,8 @@ public class WorldGenerator {
 	}
 	
 	public static GeneratedWorld generateMap(Assets assets, float tWH, AStar astar) {
-		int mapWidth = 128;
-		int mapHeight = 128;
+		int mapWidth = 64;
+		int mapHeight = 64;
 		Tile[][] tiles = new Tile[mapWidth][mapHeight];
 		
 		/*
