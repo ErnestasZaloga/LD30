@@ -7,6 +7,7 @@ import com.ld30.game.Model.GameWorld;
 import com.ld30.game.Model.Map;
 import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Road;
+import com.ld30.game.Model.Tiles.ShallowWater;
 import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.utils.AStar;
 import com.ld30.game.utils.Log;
@@ -18,7 +19,7 @@ public class MovableManager {
 	private AStar.Validator workerAStarValidation = new AStar.Validator() {
 		@Override
 		public boolean isValid(int x, int y) {
-			return map.getTiles()[x][y] instanceof Road;//!(map.getTiles()[x][y] instanceof Water);
+			return map.getTiles()[x][y] instanceof Road || map.getTiles()[x][y] instanceof ShallowWater;
 		}
 	};
 	
@@ -135,8 +136,6 @@ public class MovableManager {
 					
 					humanoid.setX(humanoid.getX() + tmpVector.x);
 					humanoid.setY(humanoid.getY() + tmpVector.y);
-					
-					
 				}
 				else {
 					
