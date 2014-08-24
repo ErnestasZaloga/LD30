@@ -148,11 +148,11 @@ public class GameUI {
 					if(state == State.NORMAL) {
 						return true;
 					} else if (state == State.SENDING_SOLDIERS){
-						unitSenderCity.sendSoldiersTo(city, unitCount); //TODO count
+						unitSenderCity.sendSoldiersTo(gameWorld, city, unitCount); //TODO count
 						recieverCity = city;
 						return clearSendState();
 					} else if(state == State.SENDING_WORKERS) {
-						unitSenderCity.sendWorkersTo(city, unitCount);//TODO count
+						unitSenderCity.sendWorkersTo(gameWorld, city, unitCount, false);//TODO count
 						recieverCity = city;
 						return clearSendState();
 					}

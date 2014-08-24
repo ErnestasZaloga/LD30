@@ -67,7 +67,7 @@ public class City extends Entity {
 		}
 	}
 	
-	public void sendWorkersTo(City city, int count) {
+	public void sendWorkersTo(GameWorld gameWorld, City city, int count, boolean withResources) {
 		if(count <= workerCount) {
 			//TODO do stuff
 		}
@@ -83,7 +83,7 @@ public class City extends Entity {
 		}
 	}
 	
-	public void sendSoldiersTo(City city, int count) {
+	public void sendSoldiersTo(GameWorld gameWorld, City city, int count) {
 		if(count <= soldierCount) {
 			//TODO do stuff
 		}
