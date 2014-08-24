@@ -4,7 +4,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Model.Blockade;
+import com.ld30.game.Model.City;
 import com.ld30.game.Model.GameWorld;
+import com.ld30.game.Model.GameWorld.ResourceType;
 import com.ld30.game.Model.Map;
 import com.ld30.game.Model.MoveableEntity;
 import com.ld30.game.Model.Tiles.Road;
@@ -89,6 +91,7 @@ public class MovableManager {
 										Worker worker = (Worker) humanoid;
 										worker.setResourcesCarried(0);
 										
+										final int sourceCity = worker.getSourceCity();
 										proceedMovement = false;
 									}
 									else {
@@ -131,6 +134,38 @@ public class MovableManager {
 				}
 				else {
 					// TODO: flush to city
+					if (humanoid instanceof PlayerHumanoid) {
+						final PlayerHumanoid playerHumanoid = (PlayerHumanoid) humanoid;
+						final int destinationCity = playerHumanoid.getDestinationCity();
+						final City city = gameWorld.getCities().get(destinationCity);
+						
+						if (humanoid instanceof Worker) {
+							final Worker worker = (Worker) playerHumanoid;
+							final ResourceType resourceType = worker.getType();
+							final int resourcesCarried = worker.getResourcesCarried();
+							
+							switch (resourceType) {
+								case WOOD: {
+									city.setFoodCount(city.getFoodCount() + resourcesCarried);
+									break;
+								}
+								case IRON: {
+									city.setMetalCount(city.getMetalCount() + resourcesCarried);
+									break;
+								}
+								case FOOD: {
+									city.setFoodCount(city.getFoodCount() + resourcesCarried);
+									break;
+								}
+								default: {
+									break;
+								}
+							}
+						}
+						
+						movables.removeIndex(i);
+						--i;
+					}
 				}
 			}
 		}
