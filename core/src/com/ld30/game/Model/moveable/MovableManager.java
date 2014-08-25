@@ -1,11 +1,10 @@
 package com.ld30.game.Model.moveable;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Model.Blockade;
 import com.ld30.game.Model.City;
+import com.ld30.game.Model.Decal;
 import com.ld30.game.Model.GameWorld;
 import com.ld30.game.Model.GameWorld.ResourceType;
 import com.ld30.game.Model.Map;
@@ -56,6 +55,64 @@ public class MovableManager {
 				Humanoid humanoid = (Humanoid) movable;
 
 				if (humanoid.getState() == Humanoid.State.IDLE) {
+					if (humanoid instanceof BruteOrc) {
+						final BruteOrc bruteOrc = (BruteOrc) humanoid;
+						
+						if (bruteOrc.getHealth() <= 0f) {
+							if (bruteOrc.getSecondaryTarget() != null) {
+								bruteOrc.getSecondaryTarget().setSecondaryTarget(null);
+								final City sourceCity = gameWorld.getCities().get(bruteOrc.getSecondaryTarget().getSourceCity());
+								sourceCity.addTroop(bruteOrc.getSecondaryTarget());
+								
+								final int index = movables.indexOf(bruteOrc.getSecondaryTarget(), true);
+								movables.removeIndex(index);
+								if (index < i) {
+									--i;
+								}
+							}
+							
+							final Decal decal = new Decal();
+							decal.setTexture(gameWorld.getAssets().blood);
+							decal.setWidth(gameWorld.getMap().getTileWidth());
+							decal.setHeight(gameWorld.getMap().getTileHeight());
+							decal.setX(bruteOrc.getX());
+							decal.setY(bruteOrc.getY());
+							decal.setSpeed(20f);
+							gameWorld.getGroundDecals().add(decal);
+							
+							movables.removeIndex(i);
+							--i;
+						}
+						else {
+							bruteOrc.update(delta, gameWorld);
+						}
+					}
+					else if (humanoid instanceof Troop) {
+						final Troop troop = (Troop) humanoid;
+						if (troop.getHealth() <= 0f) {
+							if (troop.getSecondaryTarget() != null) {
+								troop.getSecondaryTarget().setSecondaryTarget(null);
+								final City sourceCity = gameWorld.getCities().get(troop.getSourceCity());
+								sourceCity.defendFrom(troop.getSecondaryTarget());
+							}
+							
+							final Decal decal = new Decal();
+							decal.setTexture(gameWorld.getAssets().blood);
+							decal.setWidth(gameWorld.getMap().getTileWidth());
+							decal.setHeight(gameWorld.getMap().getTileHeight());
+							decal.setX(troop.getX());
+							decal.setY(troop.getY());
+							decal.setSpeed(20f);
+							gameWorld.getGroundDecals().add(decal);
+							
+							movables.removeIndex(i);
+							--i;
+						}
+						else {
+							troop.update(delta, gameWorld);
+						}
+					}
+					
 					continue;
 				}
 				
@@ -105,19 +162,39 @@ public class MovableManager {
 										proceedMovement = false;
 									}
 									else {
-										blockades[ii].setActive(false);
-										blockades[ii].getTile().setTexture(gameWorld.getAssets().road);
+										final BlockadeOrc orc = blockades[ii].getOwner();
+										Decal decal = new Decal();
+										decal.setTexture(gameWorld.getAssets().blood);
+										decal.setWidth(map.getTileWidth());
+										decal.setHeight(map.getTileHeight());
+										decal.setX(orc.getX());
+										decal.setY(orc.getY());
+										decal.setSpeed(20f);
+										gameWorld.getGroundDecals().add(decal);
 										
-										if (MathUtils.randomBoolean(0.5f)) {
-											movables.removeIndex(i);
+										decal = new Decal();
+										decal.setTexture(gameWorld.getAssets().hit);
+										decal.setWidth(map.getTileWidth());
+										decal.setHeight(map.getTileHeight());
+										decal.setX(orc.getX());
+										decal.setY(orc.getY());
+										decal.setSpeed(0.3f);
+										gameWorld.getDecals().add(decal);
+										
+										final int orcIndex = movables.indexOf(blockades[ii].getOwner(), true);
+										movables.removeIndex(orcIndex);
+										if (orcIndex < i) {
 											--i;
-											proceedMovement = false;
 										}
+										
+										blockades[ii].setOwner(null);
+										blockades[ii].setActive(false);
 									}
 								}
 							}
 						}
 						
+						map.getTile(currentPositionX, currentPositionY).hit();
 						humanoid.setLastPosition(currentPositionX, currentPositionY);
 						
 						if (proceedMovement) {
@@ -154,6 +231,32 @@ public class MovableManager {
 					
 					humanoid.setX(humanoid.getX() + tmpVector.x);
 					humanoid.setY(humanoid.getY() + tmpVector.y);
+					
+					humanoid.setStateTime(humanoid.getStateTime() + delta);
+					if (humanoid.getStateTime() > 0.07f) {
+						humanoid.setStateTime(0f);
+						humanoid.setGoingUp(!humanoid.isGoingUp());
+					}
+					
+					/*float amount = (delta * (humanoid.getHeight() * 1f)) / 0.5f;
+					
+					if (!humanoid.isGoingUp()) {
+						amount *= -1;
+					}
+					
+					humanoid.setUp(humanoid.getUp() + amount);
+					if (humanoid.isGoingUp()) {
+						if (humanoid.getUp() >= humanoid.getHeight() * 1f) {
+							humanoid.setGoingUp(false);
+							humanoid.setUp(humanoid.getHeight() * 1f);
+						}
+					}
+					else {
+						if (humanoid.getUp() <= 0f) {
+							humanoid.setGoingUp(false);
+							humanoid.setUp(0);
+						}
+					}*/
 				}
 				else {
 					finish = true;
@@ -193,7 +296,7 @@ public class MovableManager {
 							city.setWorkerCount(city.getWorkerCount() + 1);
 						}
 						else if (humanoid instanceof Troop) {
-							city.setSoldierCount(city.getSoldierCount() + 1);
+							city.addTroop((Troop) humanoid);
 						}
 						
 						movables.removeIndex(i);
@@ -204,17 +307,15 @@ public class MovableManager {
 						
 						if (orc instanceof BlockadeOrc) {
 							final BlockadeOrc blockadeOrc = (BlockadeOrc) orc;
-							gameWorld.getOrcManager().removePendingBlockade(blockadeOrc.getBlockade());
+							
 							blockadeOrc.getBlockade().setActive(true);
-
-							blockadeOrc.getBlockade().getTile().setTexture(gameWorld.getAssets().blockade);
-							
-							movables.removeIndex(i);
-							--i;
+							blockadeOrc.setTexture(gameWorld.getAssets().blockade);
+							blockadeOrc.setX(blockadeOrc.getBlockade().getTile().getX());
+							blockadeOrc.setY(blockadeOrc.getBlockade().getTile().getY());
 						}
-						else if (orc instanceof OrcBrute) {
-							final OrcBrute orcBrute = (OrcBrute) orc;
-							
+						else if (orc instanceof BruteOrc) {
+							final BruteOrc orcBrute = (BruteOrc) orc;
+							orcBrute.getTarget().defendFrom(orcBrute);
 						}
 					}
 				}

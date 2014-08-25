@@ -1,16 +1,20 @@
 package com.ld30.game.Model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.WorldGenerator.GeneratedWorld;
 import com.ld30.game.Model.Tiles.Road;
+import com.ld30.game.Model.Tiles.Rock;
+import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.Tiles.Tree;
+import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.Model.moveable.MovableManager;
 import com.ld30.game.Model.moveable.OrcManager;
 import com.ld30.game.View.UI.GameUI;
 import com.ld30.game.utils.AStar;
 import com.ld30.game.utils.Log;
-
 
 
 public class GameWorld {
@@ -28,6 +32,8 @@ public class GameWorld {
 	private Map map = new Map();
 	private Array<MoveableEntity> entities = new Array<MoveableEntity>();
 	private Array<City> cities = new Array<City>();
+	private Array<Decal> groundDecals = new Array<Decal>();
+	private Array<Decal> decals = new Array<Decal>();
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
 	private OrcManager orcManager;
@@ -51,12 +57,12 @@ public class GameWorld {
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
 		
-		int numberOfTilesVertically = 64;
+		int numberOfTilesVertically = 40;
 		int numberOfTilesHorizontally;
 		
 		float tileSize = screenHeight/numberOfTilesVertically;
 		final float tileWH = 16;
-		float tileScale = tileSize/tileWH;
+		float tileScale = tileWH / tileSize;
 		map.setTileScale(tileScale);
 		map.setTileHeight(tileSize);
 		map.setTileWidth(tileSize);
@@ -64,23 +70,128 @@ public class GameWorld {
 		
 		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar, numberOfTilesHorizontally, numberOfTilesVertically);
 		map.setTiles(generatedWorld.tiles);
+		map.setPixelsPerSecond(tileSize * 3);
 		
 		astar.setSize(map.getWidth(), map.getHeight());
 		
 		for (int i = 0; i < generatedWorld.centers.length; i += 1) {
 			final Road road = (Road) generatedWorld.centers[i];
 			
-			Log.trace(this, road.getWidth(), assets.city.getRegionWidth());
+			TextureRegion region = null;
+			switch (road.getType()) {
+				case WOOD:
+					region = assets.woodCity;
+					break;
+				case IRON:
+					region = assets.ironCity;
+					break;
+				case FOOD:
+					region = assets.foodCity;
+					break;
+				default:
+					break;
+			}
+			
+			final float cityWidth = region.getRegionWidth() * map.getTileScale();
+			final float cityHeight = region.getRegionHeight() * map.getTileScale();
+			
 			City city = new City (
 					this,
-					assets.city, 
-					road.getX() + road.getWidth() / 2f - assets.city.getRegionWidth() / 2f, 
-					road.getY() + road.getHeight() / 2f - assets.city.getRegionHeight() / 2f, 
-					road.getCenter(),
+					region, 
+					road.getX() + road.getWidth() / 2f - cityWidth / 2f, 
+					road.getY() + road.getHeight() / 2f - cityHeight / 2f, 
+					road.getType(),
 					generatedWorld.centers[i]);
 			
 			cities.add(city);
+			city.scale(map.getTileScale());
+			
+			final Tile center = generatedWorld.centers[i];
+			final int centerX = (int)(map.getWidth() * (center.getX() / (map.getWidth() * map.getTileWidth())));
+			final int centerY = (int)(map.getHeight() * (center.getY() / (map.getHeight() * map.getTileHeight())));
+			
+			final float cityX = city.getX();
+			final float cityY = city.getY();
+			final float cityTop = cityY + city.getHeight();
+			final float cityRight = cityX + city.getWidth();
+			
+			final int mapWidth = map.getWidth();
+			final int mapHeight = map.getHeight();
+			
+			// Find top tile
+			int iter = centerY + 1;
+			int topTileY = iter;
+			for (; iter < mapHeight; iter += 1) {
+				final Tile tile = map.getTile(centerX, iter);
+				if (tile.getY() > cityTop) {
+					topTileY = iter;
+					break;
+				}
+			}			
+			
+			// Find bottom tile
+			iter = centerY - 1;
+			int bottomTileY = iter;
+			for (; iter >= 0; iter -= 1) {
+				final Tile tile = map.getTile(centerX, iter);
+				if (tile.getY() < cityY) {
+					bottomTileY = iter;
+					break;
+				}
+			}	
+			
+			// Find right tile
+			iter = centerX + 1;
+			int rightTileX = iter;
+			for (; iter < mapWidth; iter += 1) {
+				final Tile tile = map.getTile(iter, centerY);
+				if (tile.getX() > cityRight) {
+					rightTileX = iter;
+					break;
+				}
+			}
+			
+			// Find left tile
+			iter = centerX - 1;
+			int leftTileX = iter;
+			for (; iter >= 0; iter -= 1) {
+				final Tile tile = map.getTile(iter, centerY);
+				if (tile.getX() < cityX) {
+					leftTileX = iter;
+					break;
+				}
+			}
+			
+			final Array<Tile> citySurroundingTiles = new Array<Tile>();
+			for (int ii = leftTileX; ii <= rightTileX; ii += 1) {
+				Tile tile = map.getTile(ii, bottomTileY);
+				if (!(tile instanceof Water) && !(tile instanceof Rock) && !(tile instanceof Tree)) {
+					citySurroundingTiles.add(tile);
+				}
+				tile = map.getTile(ii, topTileY);
+				if (!(tile instanceof Water) && !(tile instanceof Rock) && !(tile instanceof Tree)) {
+					citySurroundingTiles.add(tile);
+				}
+			}
+			for (int ii = bottomTileY + 1, nn = topTileY - 1; ii <= nn; ii += 1) {
+				Tile tile = map.getTile(leftTileX, ii);
+				if (!(tile instanceof Water) && !(tile instanceof Rock) && !(tile instanceof Tree)) {
+					citySurroundingTiles.add(tile);
+				}
+				tile = map.getTile(rightTileX, ii);
+				if (!(tile instanceof Water) && !(tile instanceof Rock) && !(tile instanceof Tree)) {
+					citySurroundingTiles.add(tile);
+				}
+			}
+			
+			if (citySurroundingTiles.size == 0) {
+				throw new RuntimeException("No tiles found");
+			}
+			
+			city.setCitySurroundingTiles(citySurroundingTiles);
 		}
+		
+		Log.trace(this, "Ended generation");
 		
 		generatedWorld.getRoadFromFoodToIron();
 		generatedWorld.getRoadFromIronToWood();
@@ -94,6 +205,27 @@ public class GameWorld {
 	}
 	
 	public void update(float delta) {
+		final Tile[][] tiles = map.getTiles();
+		for(int x = 0; x < tiles.length; x++) {
+			for(int y = 0; y < tiles[0].length; y++) {
+				tiles[x][y].update(delta);
+			}
+		}
+		
+		for (int i = 0; i < groundDecals.size; i += 1) {
+			if (groundDecals.get(i).update(delta)) {
+				groundDecals.removeIndex(i);
+				--i;
+			}
+		}
+		
+		for (int i = 0; i < decals.size; i += 1) {
+			if (decals.get(i).update(delta)) {
+				decals.removeIndex(i);
+				--i;
+			}
+		}
+		
 		orcManager.update(delta);
 		movableManager.update(delta);
 		
@@ -156,6 +288,13 @@ public class GameWorld {
 
 	public OrcManager getOrcManager() {
 		return orcManager;
+	}
+
+	public Array<Decal> getDecals () {
+		return decals;
+	}
+	public Array<Decal> getGroundDecals() {
+		return groundDecals;
 	}
 
 }

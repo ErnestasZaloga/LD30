@@ -1,9 +1,6 @@
 package com.ld30.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -12,16 +9,6 @@ public class Assets {
 	
 	public final Skin UISkin;
 
-	/*private final Texture tileTexture;
-	private final Texture cityTexture;
-	private final Texture moveableTexture;
-	private final Texture waterTexture;
-	private final Texture shallowWaterTexture;
-	private final Texture roadTexture;
-	private final Texture rockTexture;
-	private final Texture treeTexture;
-	private final Texture blockadeTexture;
-	private final Texture soldierTexture;*/
 	private final TextureAtlas atlas;
 	
 	public final TextureRegion blockade;
@@ -31,10 +18,16 @@ public class Assets {
 	public final TextureRegion rock;
 	public final TextureRegion tree;
 	public final TextureRegion road;
-	public final TextureRegion moveable;
-	public final TextureRegion city;
+	public final TextureRegion worker;
+	public final TextureRegion bruteOrc;
+	public final TextureRegion blockadeOrc;
+	public final TextureRegion troop;
+	public final TextureRegion ironCity;
+	public final TextureRegion foodCity;
+	public final TextureRegion woodCity;
 	public final TextureRegion black;
-	public final TextureRegion soldier;
+	public final TextureRegion hit;
+	public final TextureRegion blood;
 	
 	public final TextureRegion foodIcon;
 	public final TextureRegion metalIcon;
@@ -49,19 +42,24 @@ public class Assets {
 		
 		atlas = new TextureAtlas(Gdx.files.internal("textures/xhdpi/atlas/atlas.pack"));
 		
-		
 		//game graphycs
-		grass = new TextureRegion(atlas.findRegion("Zole"));
-		city = new TextureRegion(atlas.findRegion("PilisMedine"));
-		moveable = new TextureRegion(atlas.findRegion("Darbininkas"));
-		water = new TextureRegion(atlas.findRegion("VanduoTamsus"));
-		shallowWater = new TextureRegion(atlas.findRegion("VanduoSviesus"));
-		road = new TextureRegion(atlas.findRegion("Kelias"));
-		rock = new TextureRegion(atlas.findRegion("Akmuo"));
-		tree = new TextureRegion(atlas.findRegion("Medis"));
-		black = new TextureRegion(atlas.findRegion("Black"));
-		blockade = new TextureRegion(atlas.findRegion("Black"));
-		soldier = new TextureRegion(atlas.findRegion("Karys"));
+		grass = atlas.findRegion("Zole");
+		woodCity = atlas.findRegion("PilisMedine");
+		ironCity = atlas.findRegion("PilisAkmenine");
+		foodCity = atlas.findRegion("PilisGyvuliu");
+		worker = atlas.findRegion("Darbininkas");
+		water = atlas.findRegion("VanduoTamsus");
+		shallowWater = atlas.findRegion("VanduoSviesus");
+		road = atlas.findRegion("Kelias");
+		rock = atlas.findRegion("Akmuo");
+		tree = atlas.findRegion("Medis");
+		black = atlas.findRegion("Black");
+		blockade = atlas.findRegion("OrkasBarikada");
+		troop = atlas.findRegion("Karys");
+		bruteOrc = atlas.findRegion("Orkas");
+		blockadeOrc = atlas.findRegion("OrkasNesasi");
+		hit = atlas.findRegion("Trenkia");
+		blood = atlas.findRegion("Kraujas");
 		
 		//game resource ui icons
 		foodIcon = new TextureRegion(atlas.findRegion("MaistasIkona"));

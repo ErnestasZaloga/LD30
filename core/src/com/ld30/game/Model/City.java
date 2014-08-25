@@ -1,9 +1,10 @@
 package com.ld30.game.Model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Model.Tiles.Tile;
+import com.ld30.game.Model.moveable.BruteOrc;
 import com.ld30.game.Model.moveable.Humanoid;
 import com.ld30.game.Model.moveable.PlayerHumanoid;
 import com.ld30.game.Model.moveable.Troop;
@@ -35,10 +36,13 @@ public class City extends Entity {
 	private final GameWorld.ResourceType type;
 	
 	private int food, metal, wood;
-	private int soldierCount = 10, workerCount = 10;
+	private int workerCount = 10;
 	
 	private Tile centerTile;
 	private GameWorld gameWorld;
+	
+	private Array<Tile> citySurroundingTiles;
+	private Array<Troop> ownedTroops = new Array<Troop>();
 	
 	public City(GameWorld gameWorld, TextureRegion region, float x, float y, GameWorld.ResourceType type, Tile centralTile) {
 
@@ -53,8 +57,19 @@ public class City extends Entity {
 		setWidth(region.getRegionWidth());
 		setHeight(region.getRegionHeight());
 		
+		for (int i = 0; i < 200; i += 1) {
+			ownedTroops.insert(0, createTroop());
+		}
 	}
-	
+
+	public Array<Tile> getCitySurroundingTiles() {
+		return citySurroundingTiles;
+	}
+
+	public void setCitySurroundingTiles(Array<Tile> citySurroundingTiles) {
+		this.citySurroundingTiles = citySurroundingTiles;
+	}
+
 	public void upgradeCity() {
 		if(canBuy(cityFoodCost, cityMetalCost, cityWoodCost)) {
 			maxPopulation *= 2;
@@ -71,7 +86,7 @@ public class City extends Entity {
 	
 	public void makeWorker() {
 		Log.trace(type);
-		if(workerCount + soldierCount < maxPopulation 
+		if(workerCount + ownedTroops.size < maxPopulation 
 		   && canBuy(WORKER_FOOD_COST, WORKER_METAL_COST, WORKER_WOOD_COST)) {
 			workerCount++;
 			food -= WORKER_FOOD_COST;
@@ -80,10 +95,57 @@ public class City extends Entity {
 		}
 	}
 	
+	public void defendFrom (final BruteOrc orc) {
+		if (ownedTroops.size == 0) {
+			return;
+		}
+		
+		final Troop troop = ownedTroops.pop();
+		
+		for (int ii = 0; ii < gameWorld.getCities().size; ii += 1) {
+			if (gameWorld.getCities().get(ii) == this) {
+				troop.setSourceCity(ii);
+				troop.setDestinationCity(ii);
+			}
+		}
+
+		troop.setState(Humanoid.State.IDLE);
+		
+		troop.setX(orc.getX() + orc.getWidth());
+		troop.setY(orc.getY());
+		
+		troop.setSecondaryTarget(orc);
+		
+		gameWorld.getEntities().add(troop);
+		
+		orc.setSecondaryTarget(troop);
+	}
+	
+	public void hit (final BruteOrc orc) {
+		defendFrom(orc);
+		
+		final Decal decal = new Decal();
+		decal.setTexture(gameWorld.getAssets().hit);
+		decal.setWidth(gameWorld.getMap().getTileWidth());
+		decal.setHeight(gameWorld.getMap().getTileHeight());
+		decal.setX(MathUtils.random(getX(), getX() + getWidth() - decal.getWidth()));
+		decal.setY(MathUtils.random(getY(), getY() + getHeight() - decal.getHeight()));
+		decal.setSpeed(0.3f);
+		gameWorld.getDecals().add(decal);
+		
+		if (workerCount == 0) {
+			return;
+		}
+		
+		workerCount -= 1;
+	}
+	
 	public void sendWorkersTo(GameWorld gameWorld, City city, int count, boolean withResources) {
 		if (city == this) {
 			return;
 		}
+		
+		this.setWorkerCount(getWorkerCount() - count);
 		
 		final Map map = gameWorld.getMap();
 		final int cityX = (int)(map.getWidth() * (centerTile.getX() / (map.getWidth() * map.getTileWidth())));
@@ -93,9 +155,11 @@ public class City extends Entity {
 		
 		for (int i = 0; i < count; i += 1) {
 			final Worker worker = new Worker();
-			worker.setTexture(gameWorld.getAssets().moveable);
-			worker.setPixelsPerSecond(64); // TODO: Hardcoded
-			worker.setResourcesCarried(0);
+			worker.setTexture(gameWorld.getAssets().worker);
+			worker.setWidth(map.getTileWidth());
+			worker.setHeight(map.getTileHeight());
+			worker.setPixelsPerSecond(map.getPixelsPerSecond());
+			worker.setResourcesCarried(withResources ? RESOURCE_PER_WORKER : 0);
 			worker.setType(type);
 			
 			for (int ii = 0; ii < gameWorld.getCities().size; ii += 1) {
@@ -116,17 +180,48 @@ public class City extends Entity {
 			gameWorld.getMovableManager().setupRoadMovement(worker, cityX, cityY, dstX, dstY);
 			pendingHumanoids.add(worker);
 		}
+		
+		if (withResources) {
+			switch (type) {
+			case WOOD:
+				wood -= count * RESOURCE_PER_WORKER;
+				break;
+			case IRON:
+				metal -= count * RESOURCE_PER_WORKER;
+				break;
+			case FOOD:
+				food -= count * RESOURCE_PER_WORKER;
+				break;
+			default:
+				break;
+			}
+		}
 
 	}
 	
+	private Troop createTroop () {
+		final Troop troop = new Troop();
+		troop.setTexture(gameWorld.getAssets().troop);
+		troop.setWidth(gameWorld.getMap().getTileWidth());
+		troop.setHeight(gameWorld.getMap().getTileHeight());
+		troop.setState(Humanoid.State.IDLE);
+		
+		return troop;
+	}
+	
 	public void makeSoldier() {
-		if(workerCount + soldierCount < maxPopulation 
+		if(workerCount + ownedTroops.size < maxPopulation 
 		   && canBuy(SOLDIER_FOOD_COST, SOLDIER_METAL_COST, SOLDIER_WOOD_COST)) {
-			soldierCount++;
 			food -= SOLDIER_FOOD_COST;
 			metal -= SOLDIER_METAL_COST;
 			wood -= SOLDIER_WOOD_COST;
+			
+			ownedTroops.insert(0, createTroop());
 		}
+	}
+	
+	public void addTroop (final Troop troop) {
+		ownedTroops.add(troop);
 	}
 	
 	public void sendSoldiersTo(GameWorld gameWorld, City city, int count) {
@@ -141,9 +236,8 @@ public class City extends Entity {
 		final int dstY = (int)(map.getHeight() * (city.getCentralTile().getY() / (map.getHeight() * map.getTileHeight())));
 		
 		for (int i = 0; i < count; i += 1) {
-			final Troop troop = new Troop();
-			troop.setTexture(gameWorld.getAssets().soldier);
-			troop.setPixelsPerSecond(64); // TODO: Hardcoded
+			final Troop troop = ownedTroops.pop();
+			troop.setPixelsPerSecond(map.getPixelsPerSecond());
 			
 			for (int ii = 0; ii < gameWorld.getCities().size; ii += 1) {
 				if (gameWorld.getCities().get(ii) == this) {
@@ -180,13 +274,15 @@ public class City extends Entity {
 	private float resourceTime;
 	private float foodTime;
 	private float spawnTime;
+	private float nextSpawnTime = MathUtils.random(0.2f, 0.4f);
 	
 	public void update(float delta) {
 		resourceTime += delta;
 		spawnTime += delta;
 		
-		if (spawnTime >= 0.1f) {
+		if (spawnTime >= nextSpawnTime) {
 			spawnTime = 0;
+			nextSpawnTime = MathUtils.random(0.2f, 0.4f);
 			
 			if (pendingHumanoids.size > 0) {
 				final PlayerHumanoid player = pendingHumanoids.first();
@@ -258,11 +354,7 @@ public class City extends Entity {
 	}
 
 	public int getSoldierCount() {
-		return soldierCount;
-	}
-
-	public void setSoldierCount(int soldierCount) {
-		this.soldierCount = soldierCount;
+		return ownedTroops.size;
 	}
 
 	public int getWorkerCount() {

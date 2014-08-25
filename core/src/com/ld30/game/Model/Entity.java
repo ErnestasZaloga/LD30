@@ -19,6 +19,12 @@ public abstract class Entity {
 
 	public void setTexture(TextureRegion texture) {
 		this.texture = texture;
+		if (width == 0) {
+			width = texture.getRegionWidth();
+		}
+		if (height == 0) {
+			height = texture.getRegionHeight();
+		}
 	}
 
 	public float getX() {
@@ -38,7 +44,7 @@ public abstract class Entity {
 	}
 	
 	public float getWidth() {
-		return texture.getRegionWidth();
+		return width;
 	}
 
 	public void setWidth(float width) {
@@ -46,12 +52,15 @@ public abstract class Entity {
 	}
 
 	public float getHeight() {
-		return texture.getRegionHeight();
+		return height;
 	}
 
 	public void setHeight(float height) {
 		this.height = height;
 	}
 
-	
+	public void scale (final float scale) {
+		width = width * scale;
+		height = height * scale;
+	}
 }

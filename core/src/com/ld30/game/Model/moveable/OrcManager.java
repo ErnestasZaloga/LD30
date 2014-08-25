@@ -25,7 +25,6 @@ public class OrcManager {
 
 	private float stateTime;
 	private final GameWorld gameWorld;
-	private final Array<Blockade> pendingBlockades = new Array<Blockade> ();
 	private final Array<Blockade> inactiveBlockades = new Array<Blockade> ();
 	private final IntArray tmpPath = new IntArray();
 
@@ -62,10 +61,6 @@ public class OrcManager {
 	
 	public OrcManager (final GameWorld gameWorld) {
 		this.gameWorld = gameWorld;
-	}
-	
-	public void removePendingBlockade (final Blockade blockade) {
-		pendingBlockades.removeValue(blockade, true);
 	}
 	
 	private final PositionResult tmpPositionResult = new PositionResult ();
@@ -211,14 +206,14 @@ public class OrcManager {
 	public void update (final float delta) {
 		stateTime += delta;
 		
-		if (stateTime > 0.1f) {
+		if (stateTime > 2f) {
 			stateTime = 0f;
 			
 			inactiveBlockades.clear();
 			
 			final Blockade[] blockades = gameWorld.getBlockades();
 			for (int i = 0; i < blockades.length; i += 1) {
-				if (!blockades[i].isActive() && !pendingBlockades.contains(blockades[i], true)) {
+				if (!blockades[i].isActive() && blockades[i].getOwner() == null) {
 					inactiveBlockades.add(blockades[i]);
 				}
 			}
@@ -238,7 +233,6 @@ public class OrcManager {
 				final int blockadeTileY = (int)(map.getHeight() * (blockadeY / (map.getHeight() * map.getTileHeight())));
 
 				PositionResult pos = findPosition(blockadeTileX, blockadeTileY, blockadeX, blockadeY, false, blockadeOrcMovementValidator);
-				
 				if (pos.path.size != 0) {
 					final BlockadeOrc orc = new BlockadeOrc();
 					orc.setBlockade(blockade);
@@ -252,68 +246,50 @@ public class OrcManager {
 					orc.setState(Humanoid.State.WALKING);
 
 					orc.setMovementValidator(blockadeOrcMovementValidator);
-					orc.setPixelsPerSecond(64);
-					orc.setTexture(gameWorld.getAssets().moveable);
-	
+					orc.setPixelsPerSecond(map.getPixelsPerSecond());
+					orc.setTexture(gameWorld.getAssets().blockadeOrc);
+					orc.setWidth(map.getTileWidth());
+					orc.setHeight(map.getTileHeight());
+					
 					gameWorld.getEntities().add(orc);
 					
-					pendingBlockades.add(blockade);
+					blockade.setOwner(orc);
 				}
 				else {
 				}
 			}
 			else {
 				final City city = gameWorld.getCities().random();
+				Tile cityTile;
+				float cityX;
+				float cityY;
+				int cityTileX;
+				int cityTileY;
+				PositionResult pos;
 				
-				final float cityX = city.getCentralTile().getX();
-				final float cityY = city.getCentralTile().getY();
+				while(true) {
+					cityTile = city.getCitySurroundingTiles().random();
+					
+					cityX = cityTile.getX();
+					cityY = cityTile.getY();
+					
+					cityTileX = (int)(map.getWidth() * (cityX / (map.getWidth() * map.getTileWidth())));
+					cityTileY = (int)(map.getHeight() * (cityY / (map.getHeight() * map.getTileHeight())));
 				
-				int cityTileX = (int)(map.getWidth() * (cityX / (map.getWidth() * map.getTileWidth())));
-				int cityTileY = (int)(map.getHeight() * (cityY / (map.getHeight() * map.getTileHeight())));
-			
-				PositionResult pos = findPosition(cityTileX, cityTileY, cityX, cityY, true, orcMovementValidator);
+					pos = findPosition(cityTileX, cityTileY, cityX, cityY, true, orcMovementValidator);
+					
+					if (pos.path.size != 0) {
+						break;
+					}
+					
+					pos.path.clear();
+				}
+				
 				if (pos.path.size != 0) {
-					
-					int dstX = cityTileX;
-					int dstY = cityTileY;
-					
-					if (pos.path.size > 2) {
-						while(true) {
-							dstX = pos.path.get(0);
-							dstY = pos.path.get(1);
-							final float stepX = dstX * map.getTileWidth();
-							final float stepY = dstY * map.getTileHeight();
-							
-							if (stepX < city.getX() || stepX > city.getX() + city.getWidth() ||
-								stepY < city.getY() || stepY > city.getY() + city.getHeight()) {
-								
-								break;
-							}
-							else {
-								pos.path.removeIndex(0);
-								pos.path.removeIndex(0);
-								
-								if (pos.path.size == 2) {
-									break;
-								}
-							}
-						}
-					}
-					
-					final int lastX = pos.path.get(0) + MathUtils.random(-2, 2);
-					final int lastY = pos.path.get(1) + MathUtils.random(-2, 2);
-					
-					if (lastX >= 0 || lastX < map.getWidth()) {
-						pos.path.set(0, lastX);
-					}
-					
-					if (lastY >= 0 || lastY < map.getHeight()) {
-						pos.path.set(1, lastY);
-					}
-					
-					final OrcBrute orc = new OrcBrute();
+					final BruteOrc orc = new BruteOrc();
 					orc.setTarget(city);
-					orc.setDestination(dstX, dstY);
+					orc.setDestination(cityTileX, cityTileY);
+					//Log.trace(this, "dstx", cityTileX, cityTileY);
 					orc.getWalkPath().addAll(pos.path);
 					orc.setLastPosition(pos.x, pos.y);
 					
@@ -323,9 +299,11 @@ public class OrcManager {
 					orc.setState(Humanoid.State.WALKING);
 
 					orc.setMovementValidator(blockadeOrcMovementValidator);
-					orc.setPixelsPerSecond(64);
-					orc.setTexture(gameWorld.getAssets().moveable);
-	
+					orc.setPixelsPerSecond(map.getPixelsPerSecond());
+					orc.setTexture(gameWorld.getAssets().bruteOrc);
+					orc.setWidth(map.getTileWidth());
+					orc.setHeight(map.getTileHeight());
+					
 					gameWorld.getEntities().add(orc);
 				}
 			}

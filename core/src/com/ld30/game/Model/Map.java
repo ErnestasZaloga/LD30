@@ -10,7 +10,16 @@ public class Map {
 	private int width;
 	private int height;
 	private Tile[][] tiles;
-	
+	private float pixelsPerSecond;
+
+	public float getPixelsPerSecond() {
+		return pixelsPerSecond;
+	}
+
+	public void setPixelsPerSecond(float pixelsPerSecond) {
+		this.pixelsPerSecond = pixelsPerSecond;
+	}
+
 	public void setTiles (final Tile[][] tiles) {
 		this.tiles = tiles;
 		width = tiles.length;

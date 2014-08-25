@@ -11,6 +11,8 @@ public class Humanoid extends MoveableEntity {
 		WALKING;
 	}
 	
+	private float stateTime;
+	private boolean goingUp = true;
 	private AStar.Validator movementValidator;
 	private int lastPositionX;
 	private int lastPositionY;
@@ -19,6 +21,14 @@ public class Humanoid extends MoveableEntity {
 	private int destinationY;
 	private final IntArray walkPath = new IntArray();
 	
+	public boolean isGoingUp() {
+		return goingUp;
+	}
+
+	public void setGoingUp(boolean goingUp) {
+		this.goingUp = goingUp;
+	}
+
 	public AStar.Validator getMovementValidator() {
 		return movementValidator;
 	}
