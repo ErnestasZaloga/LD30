@@ -130,7 +130,7 @@ public class GameUI {
 				if(unitCount < 0) {
 					unitCount = 0;
 				}
-				countChanger.setText("Count: " + unitCount);
+				countChanger.setText("Count: " + unitCount + " (Mwheel to change)");
 				countChanger.pack();
 			}
 		};
