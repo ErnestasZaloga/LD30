@@ -277,7 +277,7 @@ public class MovableManager {
 							
 							switch (resourceType) {
 								case WOOD: {
-									city.setFoodCount(city.getFoodCount() + resourcesCarried);
+									city.setWoodCount(city.getWoodCount() + resourcesCarried);
 									break;
 								}
 								case IRON: {

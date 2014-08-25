@@ -201,7 +201,7 @@ public class WorldGenerator {
 			addShallowWater(tiles, river, assets, tWH);
 		}
 		//Transform cities' surroundings according to their type
-		transformCitiesSurroundings(tiles, centers, cityNames, assets, tWH);
+		transformCitiesSurroundings(tiles, centers, cityNames, assets, tWH);  //TODO lessen the amount of objects added
 		
 		return generatedWorld;
 	}
