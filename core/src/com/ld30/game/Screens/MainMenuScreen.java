@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -69,6 +71,24 @@ public class MainMenuScreen implements Screen {
 		rightTable.setHeight(Gdx.graphics.getHeight());
 		rightTable.setX(midTable.getX()+midTable.getWidth());
 		
+		/*
+		 * Left table
+		 */
+		leftTable.add(new Image(resources.getDrawable("PilisGyvuliu")));
+		leftTable.add(new Label(" - This is a castle of animal herders.\nThey provide food.", skin));
+		leftTable.row();
+		
+		leftTable.add(new Image(resources.getDrawable("PilisAkmenine")));
+		leftTable.add(new Label(" - This is a castle of miners.\nThey provide metals.", skin));
+		leftTable.row();
+		
+		leftTable.add(new Image(resources.getDrawable("PilisMedine")));
+		leftTable.add(new Label(" - This is a castle of woodcutters.\nThey provide wood.", skin));
+		leftTable.row();
+		
+		/*
+		 * Middle table
+		 */
 		playBtn = new TextButton("Play", skin);
 		playBtn.setX(midTable.getWidth()/2-playBtn.getWidth()/2);
 		playBtn.setY(midTable.getHeight()/2+playBtn.getHeight()/2);
@@ -81,7 +101,11 @@ public class MainMenuScreen implements Screen {
 			}
 		});
 		midTable.addActor(playBtn);
-		//stage.addActor(playBtn);
+		
+		/*
+		 * Right table
+		 */
+		//TODO
 	}
 
 	@Override

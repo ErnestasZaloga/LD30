@@ -45,6 +45,8 @@ public class GameUI {
 	
 	final Array<City> cities;
 	
+	//private final Timer timer;
+	
 	public GameUI(final GameWorld gameWorld) {
 		state = State.NORMAL;
 		
@@ -68,7 +70,7 @@ public class GameUI {
 				
 				if(state == State.GAME_OVER && !gameOverUI.hasParent()) {
 					gameOverUI.update();
-					//stage.addActor(gameOverUI);
+					stage.addActor(gameOverUI);
 				} else if(gameOverUI.hasParent() && state != State.GAME_OVER) {
 					gameOverUI.remove();
 				}
@@ -137,7 +139,7 @@ public class GameUI {
 			public boolean scrolled (InputEvent event, float x, float y, int amount) {
 				if(countChanger.hasParent())
 				unitCount -= amount;
-				//state = State.GAME_OVER;//FIXME  debug
+				state = State.GAME_OVER;//FIXME  debug
 				
 				return true;
 			}
@@ -237,6 +239,8 @@ public class GameUI {
 		
 		gameOverUI = new GameOverUI(assets, cities);
 		gameOverUI.setSize(screenW, screenH);
+		
+		
 	}
 	
 	public void positionCities() {
