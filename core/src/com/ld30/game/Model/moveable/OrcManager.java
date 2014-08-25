@@ -14,6 +14,7 @@ import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.utils.AStar;
+import com.ld30.game.utils.Log;
 
 public class OrcManager {
 	
@@ -262,6 +263,7 @@ public class OrcManager {
 			}
 			
 			stateTime = 0f;
+			Log.trace(this, "Next state time", nextStateTime);
 			
 			inactiveBlockades.clear();
 			

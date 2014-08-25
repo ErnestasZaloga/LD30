@@ -57,7 +57,7 @@ public class City extends Entity {
 		setWidth(region.getRegionWidth());
 		setHeight(region.getRegionHeight());
 		
-		for (int i = 0; i < 100; i += 1) {
+		for (int i = 0; i < 10; i += 1) {
 			ownedTroops.insert(0, createTroop());
 		}
 	}

@@ -79,8 +79,8 @@ public final class CityUI extends Group {
 		int soldierCount = city.getSoldierCount();
 		int workerCount = city.getWorkerCount();
 		
-		int t = 100 * decimalMod;
-		int t2 = 100 * oldDecimalMod;
+		int t = 10 * decimalMod;
+		int t2 = 10 * oldDecimalMod;
 		
 		if(foodCount >= t || metalCount >= t || woodCount >= t || soldierCount >= t || workerCount >= t) {
 			oldDecimalMod = decimalMod;
