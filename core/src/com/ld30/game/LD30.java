@@ -5,13 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.ld30.game.Screens.GameScreen;
+import com.ld30.game.Screens.MainMenuScreen;
 
 public class LD30 extends Game {
 	
 	private SpriteBatch batch;
 	private Assets assets;
-	private GameScreen gameScreen;
 	
 	@Override
 	public void create () {
@@ -19,8 +18,7 @@ public class LD30 extends Game {
 		batch = new SpriteBatch(1000);
 		assets = new Assets();
 
-		gameScreen = new GameScreen(batch, assets);
-		setScreen(gameScreen);
+		setScreen(new MainMenuScreen(this, batch, assets));
 	}
 
 	@Override
