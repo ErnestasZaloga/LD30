@@ -87,11 +87,13 @@ public class MainMenuScreen implements Screen {
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("Darbininkas")));
-		leftTable.add(new Label(" - This is a worker. He will work in the city he is in,\nthus generating resources\nof the same type the city is.", skin));
+		leftTable.add(new Label(" - This is a worker. He will work in the city he is in,\nthus generating resources\nof the same type the city is."
+				+ "\nWorker costs 2 units of each resource.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("Karys")));
-		leftTable.add(new Label(" - This is a soldier. He will defend the city\nin which he currently is.", skin));
+		leftTable.add(new Label(" - This is a soldier. He will defend the city\nin which he currently is."
+				+ "\nSoldier costs 4 units of each resource.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("Orkas")));
