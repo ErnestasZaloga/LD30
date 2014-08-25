@@ -40,14 +40,14 @@ public class Assets {
 	public final Music music;
 	
 	public final Sound sirena;
-	public final Sound troopDead;
+	public final Sound troopDead; //
 	public final Sound resourcesLost;
 	public final Sound blipSelect;
 	public final Sound click;
 	public final Sound cityDestroyed;
-	public final Sound workerPathFinished;
-	public final Sound troopPathFinished;
-	public final Sound resourcePathFinished;
+	public final Sound workerPathFinished; //
+	public final Sound troopPathFinished; //
+	public final Sound resourcePathFinished; //
 	
 	private final int tileWH = 8;
 	

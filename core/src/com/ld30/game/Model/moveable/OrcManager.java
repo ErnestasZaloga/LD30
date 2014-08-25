@@ -252,7 +252,7 @@ public class OrcManager {
 	public void update (final float delta) {
 		stateTime += delta;
 		
-		if (stateTime > 0.05f) {
+		if (stateTime > 2f) {
 			stateTime = 0f;
 			
 			inactiveBlockades.clear();

@@ -90,6 +90,7 @@ public class MovableManager {
 					else if (humanoid instanceof Troop) {
 						final Troop troop = (Troop) humanoid;
 						if (troop.getHealth() <= 0f) {
+							
 							if (troop.getSecondaryTarget() != null) {
 								troop.getSecondaryTarget().setSecondaryTarget(null);
 								final City sourceCity = gameWorld.getCities().get(troop.getSourceCity());
@@ -150,6 +151,11 @@ public class MovableManager {
 										Worker worker = (Worker) humanoid;
 										final int sourceCity = worker.getSourceCity();
 										final City city = gameWorld.getCities().get(sourceCity);
+										
+										if (worker.getResourcesCarried() != 0) {
+											gameWorld.getAssets().resourcesLost.play();
+										}
+										
 										worker.setResourcesCarried(0);
 										worker.setDestinationCity(sourceCity);
 										
@@ -162,6 +168,8 @@ public class MovableManager {
 										proceedMovement = false;
 									}
 									else {
+										gameWorld.getAssets().troopDead.play();
+										
 										final BlockadeOrc orc = blockades[ii].getOwner();
 										Decal decal = new Decal();
 										decal.setTexture(gameWorld.getAssets().blood);
@@ -237,26 +245,6 @@ public class MovableManager {
 						humanoid.setStateTime(0f);
 						humanoid.setGoingUp(!humanoid.isGoingUp());
 					}
-					
-					/*float amount = (delta * (humanoid.getHeight() * 1f)) / 0.5f;
-					
-					if (!humanoid.isGoingUp()) {
-						amount *= -1;
-					}
-					
-					humanoid.setUp(humanoid.getUp() + amount);
-					if (humanoid.isGoingUp()) {
-						if (humanoid.getUp() >= humanoid.getHeight() * 1f) {
-							humanoid.setGoingUp(false);
-							humanoid.setUp(humanoid.getHeight() * 1f);
-						}
-					}
-					else {
-						if (humanoid.getUp() <= 0f) {
-							humanoid.setGoingUp(false);
-							humanoid.setUp(0);
-						}
-					}*/
 				}
 				else {
 					finish = true;
@@ -274,6 +262,13 @@ public class MovableManager {
 							final Worker worker = (Worker) playerHumanoid;
 							final ResourceType resourceType = worker.getType();
 							final int resourcesCarried = worker.getResourcesCarried();
+							
+							if (resourcesCarried > 0) {
+								gameWorld.getAssets().resourcePathFinished.play();
+							}
+							else {
+								gameWorld.getAssets().workerPathFinished.play();
+							}
 							
 							switch (resourceType) {
 								case WOOD: {
@@ -297,6 +292,7 @@ public class MovableManager {
 						}
 						else if (humanoid instanceof Troop) {
 							city.addTroop((Troop) humanoid);
+							gameWorld.getAssets().troopPathFinished.play();
 						}
 						
 						movables.removeIndex(i);
