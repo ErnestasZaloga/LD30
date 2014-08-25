@@ -14,20 +14,20 @@ import com.ld30.game.utils.Log;
 public class City extends Entity {
 	public static final int RESOURCE_PER_WORKER = 2;
 	
-	private static final float PEOPLE_DIE_TIME = 3f;
-	private static final float RESOURCE_TICK_TIME = 1f;
+	public static final float PEOPLE_DIE_TIME = 3f;
+	public static final float RESOURCE_TICK_TIME = 1f;
 	
-	private static final int WORKER_FOOD_COST = 2;
-	private static final int WORKER_METAL_COST = 2;
-	private static final int WORKER_WOOD_COST = 2;
+	public static final int WORKER_FOOD_COST = 2;
+	public static final int WORKER_METAL_COST = 2;
+	public static final int WORKER_WOOD_COST = 2;
 	
-	private static final int SOLDIER_FOOD_COST = 4;
-	private static final int SOLDIER_METAL_COST = 4;
-	private static final int SOLDIER_WOOD_COST = 4;
+	public static final int SOLDIER_FOOD_COST = 4;
+	public static final int SOLDIER_METAL_COST = 4;
+	public static final int SOLDIER_WOOD_COST = 4;
 	
-	private int cityFoodCost = 120;
-	private int cityWoodCost = 230;
-	private int cityMetalCost = 70;
+	public int cityFoodCost = 120;
+	public int cityWoodCost = 230;
+	public int cityMetalCost = 70;
 
 	private final Array<PlayerHumanoid> pendingHumanoids = new Array<PlayerHumanoid>();
 	
@@ -43,6 +43,9 @@ public class City extends Entity {
 	
 	private Array<Tile> citySurroundingTiles;
 	private Array<Troop> ownedTroops = new Array<Troop>();
+	
+	private int hitsReceived = 0;
+	private int pendingWorkers = 0;
 	
 	public City(GameWorld gameWorld, TextureRegion region, float x, float y, GameWorld.ResourceType type, Tile centralTile) {
 
@@ -60,6 +63,18 @@ public class City extends Entity {
 		for (int i = 0; i < 10; i += 1) {
 			ownedTroops.insert(0, createTroop());
 		}
+	}
+	
+	public void setPendingWorkers (final int pendingWorkers) {
+		this.pendingWorkers = pendingWorkers;
+	}
+	
+	public int getPendingWorkers () {
+		return pendingWorkers;
+	}
+	
+	public int getPendingSpawns () {
+		return pendingHumanoids.size;
 	}
 
 	public Array<Tile> getCitySurroundingTiles() {
@@ -123,7 +138,7 @@ public class City extends Entity {
 	
 	public void hit (final BruteOrc orc) {
 		defendFrom(orc);
-		
+
 		final Decal decal = new Decal();
 		decal.setTexture(gameWorld.getAssets().hit);
 		decal.setWidth(gameWorld.getMap().getTileWidth());
@@ -132,12 +147,16 @@ public class City extends Entity {
 		decal.setY(MathUtils.random(getY(), getY() + getHeight() - decal.getHeight()));
 		decal.setSpeed(0.3f);
 		gameWorld.getDecals().add(decal);
-		
-		if (workerCount == 0) {
-			return;
+
+		hitsReceived += 1;
+		if (hitsReceived == 3) {
+			hitsReceived = 0;
+			if (workerCount == 0) {
+				return;
+			}
+			
+			workerCount -= 1;
 		}
-		
-		workerCount -= 1;
 	}
 	
 	public void sendWorkersTo(GameWorld gameWorld, City city, int count, boolean withResources) {
@@ -196,7 +215,8 @@ public class City extends Entity {
 				break;
 			}
 		}
-
+		
+		city.setPendingWorkers(city.getPendingWorkers() + count);
 	}
 	
 	private Troop createTroop () {

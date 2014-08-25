@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ld30.game.Assets;
 import com.ld30.game.Model.City;
 import com.ld30.game.Model.GameWorld;
+import com.ld30.game.Model.Tiles.Road;
+import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.utils.Log;
 
 public class GameUI {
@@ -45,9 +47,12 @@ public class GameUI {
 	
 	final Array<City> cities;
 	
+	private final GameWorld gameWorld;
+	
 	//private final Timer timer;
 	
 	public GameUI(final GameWorld gameWorld) {
+		this.gameWorld = gameWorld;
 		state = State.NORMAL;
 		
 		//this.gameWorld = gameWorld;
@@ -243,6 +248,10 @@ public class GameUI {
 		
 	}
 	
+	public void setToGameOver () {
+		state = State.GAME_OVER;
+	}
+	
 	public void positionCities() {
 		City topCity = null;
 		float top = 0;
@@ -287,6 +296,14 @@ public class GameUI {
 	
 	public boolean clearSendState() {
 		Log.trace(this);
+		
+		Array<Tile> road = gameWorld.getGeneratedWorld().getRoadFromFoodToIron();
+		for (final Tile tile : road) {
+			if (tile instanceof Road) {
+				
+			}
+		}
+		
 		unitCount = 0;
 		countChanger.setText("Count: " + unitCount);
 		countChanger.pack();

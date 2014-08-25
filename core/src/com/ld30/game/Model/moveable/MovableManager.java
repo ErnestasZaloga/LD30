@@ -259,6 +259,8 @@ public class MovableManager {
 						final City city = gameWorld.getCities().get(destinationCity);
 						
 						if (humanoid instanceof Worker) {
+							city.setPendingWorkers(city.getPendingWorkers() - 1);
+							
 							final Worker worker = (Worker) playerHumanoid;
 							final ResourceType resourceType = worker.getType();
 							final int resourcesCarried = worker.getResourcesCarried();

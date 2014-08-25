@@ -11,7 +11,8 @@ public class Timer extends Label{
 
 	public Timer(CharSequence text, Skin skin) {
 		super(text, skin);
-		
+		setFontScale(2f);
+		pack();
 	}
 	
 	public void start() {

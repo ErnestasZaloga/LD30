@@ -7,8 +7,8 @@ import com.ld30.game.Model.GameWorld;
 public class Road extends Tile {
 	
 	private GameWorld.ResourceType type;
-	private boolean waiting;
 	private float originalDarken;
+	private boolean animating;
 	
 	public Road(TextureRegion texture, float x, float y) {
 		super(0.5f);
@@ -17,11 +17,23 @@ public class Road extends Tile {
 		setY(y);
 		setTexture(texture);
 		setDarkenPercent(MathUtils.random(0f, 0.15f));
-		setTemporalAnimation(true);
 		
 		originalDarken = getDarkenPercent();
 	}
 	
+	public void startAnimation () {
+		animating = true;
+	}
+	
+	public void stopAnimation () {
+		animating = false;
+		setDarkenPercent(originalDarken);
+	}
+	
+	public float getOriginalDarken() {
+		return originalDarken;
+	}
+
 	public void setType(GameWorld.ResourceType type) {
 		this.type = type;
 	}
@@ -32,20 +44,12 @@ public class Road extends Tile {
 	
 	@Override
 	public void hit () {
-		super.hit();
-		waiting = true;
 	}
 	
 	@Override
 	public void update(final float delta) {
-		if (waiting) {
+		if (animating) {
 			super.update(delta);
-			final float percent = getPercent();
-			setDarkenPercent(percent * 0.15f + originalDarken);
-			
-			if (percent == 0f) {
-				waiting = false;
-			}
 		}
 	}
 	

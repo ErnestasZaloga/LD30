@@ -258,12 +258,11 @@ public class OrcManager {
 		if (stateTime > nextStateTime) {
 			nextStateTime -= 0.025f;
 			
-			if (nextStateTime < 1f) {
-				nextStateTime = 1f;
+			if (nextStateTime < 0.6f) {
+				nextStateTime = 0.6f;
 			}
 			
 			stateTime = 0f;
-			Log.trace(this, "Next state time", nextStateTime);
 			
 			inactiveBlockades.clear();
 			

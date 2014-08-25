@@ -37,6 +37,9 @@ public class GameWorld {
 	private AStar astar = new AStar();
 	private MovableManager movableManager;
 	private OrcManager orcManager;
+	private GeneratedWorld generatedWorld;
+	
+	private boolean gameEnded = false;
 	
 	private GameUI gameUI;
 	
@@ -68,7 +71,7 @@ public class GameWorld {
 		map.setTileWidth(tileSize);
 		numberOfTilesHorizontally = (int) Math.ceil(screenWidth/tileSize);
 		
-		GeneratedWorld generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar, numberOfTilesHorizontally, numberOfTilesVertically);
+		generatedWorld = WorldGenerator.generateMap(assets, map.getTileWidth(), astar, numberOfTilesHorizontally, numberOfTilesVertically);
 		map.setTiles(generatedWorld.tiles);
 		map.setPixelsPerSecond(tileSize * 3);
 		
@@ -225,12 +228,30 @@ public class GameWorld {
 				--i;
 			}
 		}
+
+		if (gameEnded) {
+			return;
+		}
 		
 		orcManager.update(delta);
 		movableManager.update(delta);
 		
+		int totalWorkers = 0;
+		int canBuildWorkersCount = 0;
+		
 		for (int i = 0; i < cities.size; i += 1) {
-			cities.get(i).update(delta);
+			final City city = cities.get(i);
+			city.update(delta);
+			
+			totalWorkers += city.getWorkerCount() + city.getPendingWorkers() + city.getPendingSpawns();
+			canBuildWorkersCount += (city.getWoodCount() >= City.WORKER_WOOD_COST && 
+									 city.getMetalCount() >= City.WORKER_METAL_COST &&
+									 city.getMetalCount() >= City.WORKER_FOOD_COST) ? 1 : 0;
+		}
+		
+		if (totalWorkers == 0 && canBuildWorkersCount == 0) {
+			gameEnded = true;
+			gameUI.setToGameOver();
 		}
 	}
 
@@ -295,6 +316,10 @@ public class GameWorld {
 	}
 	public Array<Decal> getGroundDecals() {
 		return groundDecals;
+	}
+
+	public GeneratedWorld getGeneratedWorld() {
+		return generatedWorld;
 	}
 
 }
