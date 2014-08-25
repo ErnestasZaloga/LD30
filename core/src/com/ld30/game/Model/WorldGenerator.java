@@ -208,7 +208,7 @@ public class WorldGenerator {
 	
 	private static void transformCitiesSurroundings(Tile[][] tiles, Tile[] centers, Array<String> cityNames, Assets assets, float tWH) {
 		//XXX: variables with warnings are needed for gradient generation, which is now turned off
-		float radiusInTiles = 14;
+		float radiusInTiles = 10;
 		float percentageIncrement = (float) Math.ceil(100/radiusInTiles);
 		float chance = 0;
 		float objectSpawnChance = 0.1f;
@@ -230,16 +230,22 @@ public class WorldGenerator {
 					
 					if(center.getType() == GameWorld.ResourceType.FOOD) {
 						if(tiles[x][y] instanceof Tree || tiles[x][y] instanceof Rock) {
-							float foodRadiusInTiles = radiusInTiles + radiusInTiles/3;
+							float foodRadiusInTiles = radiusInTiles + radiusInTiles/5;
 							float foodPercentageIncrement = (float) Math.ceil(100/foodRadiusInTiles);
 							if(dist <= foodRadiusInTiles) {
 								//roll, and see if swap is possible
 								//XXX: comment out theese comments to turn on gradient
-								//chance = (float) Math.random()*100;
-								//if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
+								chance = (float)Math.random()*100;
+								//chance = (dist <= foodRadiusInTiles/2) ? (float)(Math.random()*100)+100 : (float)Math.random()*100;
+								//System.out.println("Chance: " + chance + " when distance is: " + dist);
+								if(chance >= dist*foodPercentageIncrement-foodPercentageIncrement) {
 									Tile t = new Grass(assets.grass, x*tWH, y*tWH);
 									tiles[x][y] = t;
-								//}
+								}
+								if(dist <= foodRadiusInTiles/2) {
+									Tile t = new Grass(assets.grass, x*tWH, y*tWH);
+									tiles[x][y] = t;
+								}
 							}
 						}
 					} else if(center.getType() == GameWorld.ResourceType.IRON) {
