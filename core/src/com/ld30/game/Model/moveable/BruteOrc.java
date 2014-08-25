@@ -10,7 +10,7 @@ public class BruteOrc extends Orc {
 	private float attackStateTime = MathUtils.random(0f, 1f);
 	private City target;
 	private Troop secondaryTarget;
-	private float health = 1f;
+	private float health = 0.6f;
 
 	public Troop getSecondaryTarget() {
 		return secondaryTarget;
