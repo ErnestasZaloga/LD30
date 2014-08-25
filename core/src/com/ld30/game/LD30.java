@@ -14,7 +14,7 @@ public class LD30 extends Game {
 	
 	@Override
 	public void create () {
-		//Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode());
+		Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode());
 		batch = new SpriteBatch(1000);
 		assets = new Assets();
 

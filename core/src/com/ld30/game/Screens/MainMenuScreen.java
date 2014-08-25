@@ -88,7 +88,9 @@ public class MainMenuScreen implements Screen {
 		
 		leftTable.add(new Image(resources.getDrawable("Darbininkas")));
 		leftTable.add(new Label(" - This is a worker. He will work in the city he is in,\nthus generating resources\nof the same type the city is."
-				+ "\nWorker costs 2 units of each resource.", skin));
+				+ "\nWorker costs 2 units of each resource\n"
+				+ "and can carry 2 units of single type resource.\n"
+				+ "Type depends on workers current city.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("Karys")));
