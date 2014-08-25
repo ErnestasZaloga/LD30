@@ -39,7 +39,7 @@ public final class TopUI extends Group {
 		skin = assets.UISkin;
 		
 		UIBackground = new Image(assets.black);
-		//UIBackground.setc
+		UIBackground.getColor().a = 0.5f;
 		addActor(UIBackground);
 		
 		food = new Image(assets.foodIcon);
@@ -111,7 +111,7 @@ public final class TopUI extends Group {
 			Image im = icons[i];
 			
 			im.setX(pointX - im.getWidth() / 2);
-			im.setY(height - im.getHeight());
+			im.setY(height - im.getHeight() - 5);
 			
 		}
 		

@@ -19,9 +19,4 @@ public class Label extends com.badlogic.gdx.scenes.scene2d.ui.Label {
 		pack();
 	}
 	
-	@Override
-	public void setPosition(float x, float y) {
-		super.setPosition(x, y - 5);
-	}
-	
 }

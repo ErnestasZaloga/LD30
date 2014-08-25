@@ -57,7 +57,7 @@ public class City extends Entity {
 		setWidth(region.getRegionWidth());
 		setHeight(region.getRegionHeight());
 		
-		for (int i = 0; i < 200; i += 1) {
+		for (int i = 0; i < 100; i += 1) {
 			ownedTroops.insert(0, createTroop());
 		}
 	}
@@ -303,11 +303,11 @@ public class City extends Entity {
 				wood--;
 			
 			if(type == GameWorld.ResourceType.FOOD) {
-				food += workerCount;
+				food += workerCount * 100;
 			} else if(type == GameWorld.ResourceType.IRON) {
-				metal += workerCount;
+				metal += workerCount * 100;
 			} else if(type == GameWorld.ResourceType.WOOD){
-				wood += workerCount;
+				wood += workerCount * 100; //FIXME revert
 			}
 		}
 		/*if(food <= 0) {

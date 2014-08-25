@@ -41,17 +41,30 @@ public class GameUI {
 	private City unitSenderCity;
 	private City recieverCity;
 	
+	final Array<City> cities;
+	
 	public GameUI(final GameWorld gameWorld) {
 		state = State.NORMAL;
 		
 		//this.gameWorld = gameWorld;
-		final Array<City> cities = gameWorld.getCities();
+		cities = gameWorld.getCities();
 		final Assets assets = gameWorld.getAssets();
 		
 		screenW = Gdx.graphics.getWidth();
 		screenH = Gdx.graphics.getHeight();
 		
-		stage = new Stage(new StretchViewport(screenW, screenH), batch);
+		stage = new Stage(new StretchViewport(screenW, screenH), batch) {
+			@Override
+			public void act(float delta) {
+				super.act(delta);
+				
+				for(CityUI c : cityUIs) {
+					if(c.sizeChanged) {
+						positionCities();
+					}
+				}
+			}
+		};
 		Gdx.input.setInputProcessor(stage);
 		Actor r = new Actor();
 		r.setSize(screenW, screenH);
@@ -74,13 +87,7 @@ public class GameUI {
 				float y = Gdx.graphics.getHeight() - Gdx.input.getY();
 				
 				countChanger.setPosition(x + 10, y - countChanger.getHeight() - 20); //FIXME dirty
-			}
-		};
-		stage.addListener(new InputListener() {
-			@Override
-			public boolean scrolled (InputEvent event, float x, float y, int amount) {
-				if(countChanger.hasParent())
-				unitCount -= amount;
+				
 				if(state == State.SENDING_WORKERS) {
 					if(unitCount > unitSenderCity.getWorkerCount()) {
 						unitCount = unitSenderCity.getWorkerCount();
@@ -114,6 +121,14 @@ public class GameUI {
 				}
 				countChanger.setText("Count: " + unitCount);
 				countChanger.pack();
+			}
+		};
+		stage.addListener(new InputListener() {
+			@Override
+			public boolean scrolled (InputEvent event, float x, float y, int amount) {
+				if(countChanger.hasParent())
+				unitCount -= amount;
+				
 				
 				return true;
 			}
@@ -131,17 +146,14 @@ public class GameUI {
 			final City city = cities.get(i);
 			CityUI cityUI = new CityUI(city, assets);
 			cityUI.setTransform(false);
-			cityUI.setSize(180, 30);//FIXME hardcode
+			cityUI.setSize(180, 40);//FIXME hardcode
 			cityUIs.add(cityUI);
 			stage.addActor(cityUI);
-			cityUI.setPosition((city.getWidth() - cityUI.getWidth()) / 2 + city.getX(),
-							   city.getY() <= (screenH - city.getHeight()) / 2 ? 
-									   city.getY() - cityUI.getHeight() : city.getY() + city.getHeight());
 			
 			final CityButtonGroup bg = new CityButtonGroup(city, assets);
 			buttonGroups.add(bg);
 			
-			bg.setSize(100, 248);//FIXME hardcode again
+			bg.setSize(100, 278);//FIXME hardcode again
 			bg.setPosition((city.getWidth() - bg.getWidth()) / 2 + city.getX(), 
 							(city.getHeight() - bg.getHeight()) / 2 + city.getY());
 			
@@ -205,6 +217,17 @@ public class GameUI {
 			cityMouseOverRecievers.add(cityMouseOverReciever);
 			stage.addActor(cityMouseOverReciever);
 		}
+		
+		topUI = new TopUI(cities, assets);
+		topUI.setTransform(false);
+		stage.addActor(topUI);
+		topUI.setSize(500, 43);
+		topUI.setPosition((screenW - topUI.getWidth()) / 2, screenH - topUI.getHeight());
+		
+		positionCities();
+	}
+	
+	public void positionCities() {
 		City topCity = null;
 		float top = 0;
 		int ii = 0;
@@ -218,16 +241,19 @@ public class GameUI {
 			a++;
 		}
 		
-		topUI = new TopUI(cities, assets);
-		topUI.setTransform(false);
-		stage.addActor(topUI);
-		topUI.setSize(500, 36);
-		topUI.setPosition((screenW - topUI.getWidth()) / 2, screenH - topUI.getHeight());
-		
 		cityUIs.get(ii).setY(topCity.getY() + topCity.getHeight());
 		for(int i = 0, n = cities.size; i < n; i++) {
 			final CityUI ui = cityUIs.get(i);
 			final City city = cities.get(i);
+			
+			ui.setX((city.getWidth() - ui.getWidth()) / 2 + city.getX());
+			
+			ui.setY(city.getY() <= (screenH - city.getHeight()) / 2 ? 
+							   city.getY() - ui.getHeight() : city.getY() + city.getHeight());
+			
+			if(city == topCity) {
+				ui.setY(city.getY() + city.getHeight());
+			}
 			
 			if(ui.getX() < 0) 			
 				ui.setX(0);
@@ -241,8 +267,6 @@ public class GameUI {
 			if(ui.getTop() > topUI.getY()) 	
 				ui.setY(city.getY() - ui.getHeight());
 		}
-		
-		
 	}
 	
 	public boolean clearSendState() {
@@ -349,11 +373,16 @@ public class GameUI {
 			
 			UIBackground.setSize(width, height);
 			
-			trainSoldier.setPosition(0, 0);
-			sendSoldier.setPosition(0, height / 5f);
-			transportResources.setPosition(0, height * 2 / 5f);
-			sendWorker.setPosition(0, height * 3 / 5f);
-			trainWorker.setPosition(0, height * 4 / 5f);
+			transportResources.setPosition(0, 0);
+			
+			trainSoldier.setPosition(0, height - trainSoldier.getHeight());
+			trainWorker.setPosition(0, trainSoldier.getY() - trainWorker.getHeight());
+			
+			float p = (transportResources.getTop() + trainWorker.getY()) / 2;
+			
+			sendWorker.setPosition(0, p - sendWorker.getHeight());
+			sendSoldier.setPosition(0, p);
+			
 			
 			sendSoldier.setWidth(transportResources.getWidth());
 			trainSoldier.setWidth(transportResources.getWidth());
