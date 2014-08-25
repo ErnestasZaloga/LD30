@@ -60,14 +60,14 @@ public class MainMenuScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 				
 		stage.addActor(leftTable);
-		leftTable.setWidth(Gdx.graphics.getWidth()/3);
+		leftTable.setWidth(Gdx.graphics.getWidth()/100*40);
 		leftTable.setHeight(Gdx.graphics.getHeight());
 		stage.addActor(midTable);
-		midTable.setWidth(Gdx.graphics.getWidth()/3);
+		midTable.setWidth(Gdx.graphics.getWidth()/100*20);
 		midTable.setX(leftTable.getX()+leftTable.getWidth());
 		midTable.setHeight(Gdx.graphics.getHeight());
 		stage.addActor(rightTable);
-		rightTable.setWidth(Gdx.graphics.getWidth()/3);
+		rightTable.setWidth(Gdx.graphics.getWidth()/100*40);
 		rightTable.setHeight(Gdx.graphics.getHeight());
 		rightTable.setX(midTable.getX()+midTable.getWidth());
 		
@@ -84,6 +84,22 @@ public class MainMenuScreen implements Screen {
 		
 		leftTable.add(new Image(resources.getDrawable("PilisMedine")));
 		leftTable.add(new Label(" - This is a castle of woodcutters.\nThey provide wood.", skin));
+		leftTable.row();
+		
+		leftTable.add(new Image(resources.getDrawable("Darbininkas")));
+		leftTable.add(new Label(" - This is a worker. He will work in the city he is in,\nthus generating resources\nof the same type the city is.", skin));
+		leftTable.row();
+		
+		leftTable.add(new Image(resources.getDrawable("Karys")));
+		leftTable.add(new Label(" - This is a soldier. He will defend the city\nin which he currently is.", skin));
+		leftTable.row();
+		
+		leftTable.add(new Image(resources.getDrawable("Orkas")));
+		leftTable.add(new Label(" - This is an orc. Packs of them come to\nkill people of your cities.", skin));
+		leftTable.row();
+		
+		leftTable.add(new Image(resources.getDrawable("OrkasBarikada")));
+		leftTable.add(new Label(" - This is an orc which will barricade the road.\nIf worker is carrying resources and hits the barricade,\nhe will loose all resources.", skin));
 		leftTable.row();
 		
 		/*
@@ -105,7 +121,29 @@ public class MainMenuScreen implements Screen {
 		/*
 		 * Right table
 		 */
-		//TODO
+		Label l = new Label("", skin);
+		//l.setWidth(rightTable.getWidth());
+		
+		l.setText("You play as a ruler of three diferent cities.\n"
+				+ "All those cities are connected with\n"
+				+ "roads, through which your\nsoldiers and workers can pass.\n"
+				+ "Each city generates one of the following resources:\n"
+				+ "food, wood and iron. But the city does so\nonly if it has "
+				+ "at least one worker residing in it.\n"
+				+ "The goal of the game is to survive\n"
+				+ "continuous orc raids for as long as you can\n"
+				+ "by managing your human and non-human\n"
+				+ "resources wisely. Orcs either attack\n"
+				+ "your city directly or build barricades.\n"
+				+ "If orc attacks a city, it first fights\n"
+				+ "residing soldiers and if there are none\n"
+				+ "he then looks for workers (which do not\n"
+				+ "fight back). If orc builds a barricade,\n"
+				+ "workers will not be able to pass through\n"
+				+ "and have their resources stolen.\n"
+				+ "In order to break the barricade down,\n"
+				+ "you should send a troop to it.");
+		rightTable.add(l);
 	}
 
 	@Override
