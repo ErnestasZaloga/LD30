@@ -75,20 +75,22 @@ public class MainMenuScreen implements Screen {
 		 * Left table
 		 */
 		leftTable.add(new Image(resources.getDrawable("PilisGyvuliu")));
-		leftTable.add(new Label(" - This is a castle of animal herders.\nThey provide food.", skin));
+		leftTable.add(new Label(" - This is a castle of animal herders.\nThey provide food and live in grassy plains.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("PilisAkmenine")));
-		leftTable.add(new Label(" - This is a castle of miners.\nThey provide metals.", skin));
+		leftTable.add(new Label(" - This is a castle of miners.\nThey provide metals and live in rocky places.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("PilisMedine")));
-		leftTable.add(new Label(" - This is a castle of woodcutters.\nThey provide wood.", skin));
+		leftTable.add(new Label(" - This is a castle of woodcutters.\nThey provide wood and live in the woods.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("Darbininkas")));
 		leftTable.add(new Label(" - This is a worker. He will work in the city he is in,\nthus generating resources\nof the same type the city is."
-				+ "\nWorker costs 2 units of each resource.", skin));
+				+ "\nWorker costs 2 units of each resource\n"
+				+ "and can carry 2 units of single type resource.\n"
+				+ "Type depends on workers current city.", skin));
 		leftTable.row();
 		
 		leftTable.add(new Image(resources.getDrawable("Karys")));
@@ -107,6 +109,11 @@ public class MainMenuScreen implements Screen {
 		/*
 		 * Middle table
 		 */
+		Label title = new Label("Dangerous trade routes", skin);
+		title.setX(midTable.getWidth()/2-title.getWidth()/2);
+		title.setY(midTable.getHeight()-title.getHeight()-10);
+		midTable.addActor(title);
+		
 		playBtn = new TextButton("Play", skin);
 		playBtn.setX(midTable.getWidth()/2-playBtn.getWidth()/2);
 		playBtn.setY(midTable.getHeight()/2+playBtn.getHeight()/2);
@@ -124,8 +131,6 @@ public class MainMenuScreen implements Screen {
 		 * Right table
 		 */
 		Label l = new Label("", skin);
-		//l.setWidth(rightTable.getWidth());
-		
 		l.setText("You play as a ruler of three diferent cities.\n"
 				+ "All those cities are connected with\n"
 				+ "roads, through which your\nsoldiers and workers can pass.\n"
@@ -146,6 +151,11 @@ public class MainMenuScreen implements Screen {
 				+ "In order to break the barricade down,\n"
 				+ "you should send a troop to it.");
 		rightTable.add(l);
+		rightTable.row();
+		
+		rightTable.add(new Label("Game made as a LudumDare30 jam entry.\n"
+				+ "Theme: Connected worlds. Game made by:\n"
+				+ " Paulius, Ernyz, Vytautas, Vadimas", skin));
 	}
 
 	@Override
