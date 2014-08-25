@@ -68,7 +68,7 @@ public class GameUI {
 				
 				if(state == State.GAME_OVER && !gameOverUI.hasParent()) {
 					gameOverUI.update();
-					//stage.addActor(gameOverUI);
+					stage.addActor(gameOverUI);
 				} else if(gameOverUI.hasParent() && state != State.GAME_OVER) {
 					gameOverUI.remove();
 				}
@@ -137,7 +137,7 @@ public class GameUI {
 			public boolean scrolled (InputEvent event, float x, float y, int amount) {
 				if(countChanger.hasParent())
 				unitCount -= amount;
-				//state = State.GAME_OVER;//FIXME  debug
+				state = State.GAME_OVER;//FIXME  debug
 				
 				return true;
 			}
