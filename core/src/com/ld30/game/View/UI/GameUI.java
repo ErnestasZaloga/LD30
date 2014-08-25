@@ -19,9 +19,11 @@ import com.ld30.game.utils.Log;
 
 public class GameUI {
 	private enum State {
-		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL, WAITING_RE_MOUSE_OVER, SENDING_RESOURCES;
+		SENDING_WORKERS, SENDING_SOLDIERS, NORMAL, WAITING_RE_MOUSE_OVER, SENDING_RESOURCES,
+		GAME_OVER;
 	}
 	private State state;
+	private GameOverUI gameOverUI;
 	
 	private SpriteBatch batch;
 	private final Stage stage;
@@ -62,6 +64,13 @@ public class GameUI {
 					if(c.sizeChanged) {
 						positionCities();
 					}
+				}
+				
+				if(state == State.GAME_OVER && !gameOverUI.hasParent()) {
+					gameOverUI.update();
+					//stage.addActor(gameOverUI);
+				} else if(gameOverUI.hasParent() && state != State.GAME_OVER) {
+					gameOverUI.remove();
 				}
 			}
 		};
@@ -128,7 +137,7 @@ public class GameUI {
 			public boolean scrolled (InputEvent event, float x, float y, int amount) {
 				if(countChanger.hasParent())
 				unitCount -= amount;
-				
+				//state = State.GAME_OVER;//FIXME  debug
 				
 				return true;
 			}
@@ -225,6 +234,9 @@ public class GameUI {
 		topUI.setPosition((screenW - topUI.getWidth()) / 2, screenH - topUI.getHeight());
 		
 		positionCities();
+		
+		gameOverUI = new GameOverUI(assets, cities);
+		gameOverUI.setSize(screenW, screenH);
 	}
 	
 	public void positionCities() {

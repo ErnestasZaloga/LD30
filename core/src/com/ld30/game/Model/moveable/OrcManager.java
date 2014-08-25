@@ -2,6 +2,7 @@ package com.ld30.game.Model.moveable;
 
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.ld30.game.Model.Blockade;
@@ -13,13 +14,18 @@ import com.ld30.game.Model.Tiles.Tile;
 import com.ld30.game.Model.Tiles.Tree;
 import com.ld30.game.Model.Tiles.Water;
 import com.ld30.game.utils.AStar;
-import com.ld30.game.utils.Log;
 
 public class OrcManager {
+	
+	private interface PositionFetcher {
+		public void fetchPosition (Vector2 resultContainer);
+	}
 	
 	private class PositionResult {
 		public int x;
 		public int y;
+		public int dstX;
+		public int dstY;
 		public IntArray path;
 	}
 
@@ -27,7 +33,8 @@ public class OrcManager {
 	private final GameWorld gameWorld;
 	private final Array<Blockade> inactiveBlockades = new Array<Blockade> ();
 	private final IntArray tmpPath = new IntArray();
-
+	private final Vector2 tmp = new Vector2();
+	
 	private final AStar.Validator blockadeOrcMovementValidator = new AStar.Validator() {
 		@Override
 		public boolean isValid(int x, int y) {
@@ -64,10 +71,7 @@ public class OrcManager {
 	}
 	
 	private final PositionResult tmpPositionResult = new PositionResult ();
-	private PositionResult findPosition (final int targetTileX, 
-										 final int targetTileY,
-										 final float targetX,
-										 final float targetY,
+	private PositionResult findPosition (final PositionFetcher positionFetcher,
 										 final boolean reverse,
 										 final AStar.Validator validator) {
 		
@@ -80,6 +84,12 @@ public class OrcManager {
 		int posX = 0;
 		int posY = 0;
 		
+		positionFetcher.fetchPosition(tmp);
+		float targetX = tmp.x;
+		float targetY = tmp.y;
+		int targetTileX = (int)(map.getWidth() * (targetX / (map.getWidth() * map.getTileWidth())));
+		int targetTileY = (int)(map.getHeight() * (targetY / (map.getHeight() * map.getTileHeight())));
+		
 		boolean bottom = targetY <= centerY;
 		boolean left = targetX <= centerX;
 		
@@ -87,6 +97,8 @@ public class OrcManager {
 			bottom = !bottom;
 			left = !left;
 		}
+
+		int retryCount = 0;
 		
 		if (bottom && left) {
 			final int x = 0;
@@ -112,6 +124,14 @@ public class OrcManager {
 					if (tmpPath.size != 0) {
 						break;
 					}
+				}
+				
+				retryCount += 1;
+				if (retryCount == 100) {
+					retryCount = 0;
+					positionFetcher.fetchPosition(tmp);
+					targetTileX = (int)(map.getWidth() * (tmp.x / (map.getWidth() * map.getTileWidth())));
+					targetTileY = (int)(map.getHeight() * (tmp.y / (map.getHeight() * map.getTileHeight())));
 				}
 			}
 		}
@@ -140,6 +160,14 @@ public class OrcManager {
 						break;
 					}
 				}
+				
+				retryCount += 1;
+				if (retryCount == 100) {
+					retryCount = 0;
+					positionFetcher.fetchPosition(tmp);
+					targetTileX = (int)(map.getWidth() * (tmp.x / (map.getWidth() * map.getTileWidth())));
+					targetTileY = (int)(map.getHeight() * (tmp.y / (map.getHeight() * map.getTileHeight())));
+				}
 			}
 		}
 		else if (!left && bottom) {
@@ -166,6 +194,14 @@ public class OrcManager {
 					if (tmpPath.size != 0) {
 						break;
 					}
+				}
+				
+				retryCount += 1;
+				if (retryCount == 100) {
+					retryCount = 0;
+					positionFetcher.fetchPosition(tmp);
+					targetTileX = (int)(map.getWidth() * (tmp.x / (map.getWidth() * map.getTileWidth())));
+					targetTileY = (int)(map.getHeight() * (tmp.y / (map.getHeight() * map.getTileHeight())));
 				}
 			}
 		}
@@ -194,9 +230,19 @@ public class OrcManager {
 						break;
 					}
 				}
+				
+				retryCount += 1;
+				if (retryCount == 100) {
+					retryCount = 0;
+					positionFetcher.fetchPosition(tmp);
+					targetTileX = (int)(map.getWidth() * (tmp.x / (map.getWidth() * map.getTileWidth())));
+					targetTileY = (int)(map.getHeight() * (tmp.y / (map.getHeight() * map.getTileHeight())));
+				}
 			}
 		}
 		
+		tmpPositionResult.dstX = targetTileX;
+		tmpPositionResult.dstY = targetTileY;
 		tmpPositionResult.x = posX;
 		tmpPositionResult.y = posY;
 		
@@ -206,7 +252,7 @@ public class OrcManager {
 	public void update (final float delta) {
 		stateTime += delta;
 		
-		if (stateTime > 2f) {
+		if (stateTime > 0.05f) {
 			stateTime = 0f;
 			
 			inactiveBlockades.clear();
@@ -229,14 +275,20 @@ public class OrcManager {
 				final float blockadeX = blockade.getTile().getX();
 				final float blockadeY = blockade.getTile().getY();
 				
-				final int blockadeTileX = (int)(map.getWidth() * (blockadeX / (map.getWidth() * map.getTileWidth())));
-				final int blockadeTileY = (int)(map.getHeight() * (blockadeY / (map.getHeight() * map.getTileHeight())));
+				//final int blockadeTileX = (int)(map.getWidth() * (blockadeX / (map.getWidth() * map.getTileWidth())));
+				//final int blockadeTileY = (int)(map.getHeight() * (blockadeY / (map.getHeight() * map.getTileHeight())));
 
-				PositionResult pos = findPosition(blockadeTileX, blockadeTileY, blockadeX, blockadeY, false, blockadeOrcMovementValidator);
+				PositionResult pos = findPosition(new OrcManager.PositionFetcher() {
+					@Override
+					public void fetchPosition(Vector2 resultContainer) {
+						resultContainer.x = blockadeX;
+						resultContainer.y = blockadeY;
+					}
+				}, false, blockadeOrcMovementValidator);
 				if (pos.path.size != 0) {
 					final BlockadeOrc orc = new BlockadeOrc();
 					orc.setBlockade(blockade);
-					orc.setDestination(blockadeTileX, blockadeTileY);
+					orc.setDestination(pos.dstX, pos.dstY);
 					orc.getWalkPath().addAll(pos.path);
 					orc.setLastPosition(pos.x, pos.y);
 					
@@ -260,23 +312,24 @@ public class OrcManager {
 			}
 			else {
 				final City city = gameWorld.getCities().random();
-				Tile cityTile;
-				float cityX;
-				float cityY;
-				int cityTileX;
-				int cityTileY;
 				PositionResult pos;
 				
 				while(true) {
-					cityTile = city.getCitySurroundingTiles().random();
 					
-					cityX = cityTile.getX();
-					cityY = cityTile.getY();
+					//cityX = cityTile.getX();
+					//cityY = cityTile.getY();
 					
-					cityTileX = (int)(map.getWidth() * (cityX / (map.getWidth() * map.getTileWidth())));
-					cityTileY = (int)(map.getHeight() * (cityY / (map.getHeight() * map.getTileHeight())));
+					//cityTileX = (int)(map.getWidth() * (cityX / (map.getWidth() * map.getTileWidth())));
+					//cityTileY = (int)(map.getHeight() * (cityY / (map.getHeight() * map.getTileHeight())));
 				
-					pos = findPosition(cityTileX, cityTileY, cityX, cityY, true, orcMovementValidator);
+					pos = findPosition(new OrcManager.PositionFetcher() {
+						@Override
+						public void fetchPosition(Vector2 resultContainer) {
+							final Tile cityTile = city.getCitySurroundingTiles().random();
+							resultContainer.x = cityTile.getX();
+							resultContainer.y = cityTile.getY();
+						}
+					}, true, orcMovementValidator);
 					
 					if (pos.path.size != 0) {
 						break;
@@ -288,7 +341,7 @@ public class OrcManager {
 				if (pos.path.size != 0) {
 					final BruteOrc orc = new BruteOrc();
 					orc.setTarget(city);
-					orc.setDestination(cityTileX, cityTileY);
+					orc.setDestination(pos.dstX, pos.dstY);
 					//Log.trace(this, "dstx", cityTileX, cityTileY);
 					orc.getWalkPath().addAll(pos.path);
 					orc.setLastPosition(pos.x, pos.y);
