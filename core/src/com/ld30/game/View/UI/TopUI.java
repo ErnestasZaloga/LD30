@@ -24,6 +24,7 @@ public final class TopUI extends Group {
 	private final Label soldierNumber;
 	private final Label workerNumber;
 	private final Skin skin;
+	private final Timer timer;
 	
 	private int foodCount;
 	private int metalCount;
@@ -67,6 +68,11 @@ public final class TopUI extends Group {
 		addActor(woodNumber);
 		addActor(soldierNumber);
 		addActor(workerNumber);
+		
+		timer = new Timer("", assets.UISkin);
+		addActor(timer);
+		
+		timer.start();
 	}
 	
 	@Override
@@ -98,6 +104,8 @@ public final class TopUI extends Group {
 		woodNumber.setPosition(wood.getX() + (wood.getWidth() - woodNumber.getWidth()) / 2, 0);
 		soldierNumber.setPosition(soldiers.getX() + (soldiers.getWidth() - soldierNumber.getWidth()) / 2, 0);
 		workerNumber.setPosition(workers.getX() + (workers.getWidth() - workerNumber.getWidth()) / 2, 0);
+		timer.setPosition(workers.getX() / 2 + (getRight() - workers.getRight() - timer.getWidth()) / 2, 
+				0);
 	}
 	
 	@Override
@@ -107,7 +115,7 @@ public final class TopUI extends Group {
 		//food.set
 		float pointX = 0;
 		for(int i = 0; i < 5; i++) {
-			pointX += width / 6;
+			pointX += width / 7;
 			Image im = icons[i];
 			
 			im.setX(pointX - im.getWidth() / 2);

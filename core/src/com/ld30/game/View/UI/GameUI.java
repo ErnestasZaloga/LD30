@@ -45,6 +45,8 @@ public class GameUI {
 	
 	final Array<City> cities;
 	
+	//private final Timer timer;
+	
 	public GameUI(final GameWorld gameWorld) {
 		state = State.NORMAL;
 		
@@ -237,6 +239,8 @@ public class GameUI {
 		
 		gameOverUI = new GameOverUI(assets, cities);
 		gameOverUI.setSize(screenW, screenH);
+		
+		
 	}
 	
 	public void positionCities() {
