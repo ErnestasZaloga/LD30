@@ -249,10 +249,18 @@ public class OrcManager {
 		return tmpPositionResult;
 	}
 	
+	private float nextStateTime = 3f;
+	
 	public void update (final float delta) {
 		stateTime += delta;
 		
-		if (stateTime > 2f) {
+		if (stateTime > nextStateTime) {
+			nextStateTime -= 0.025f;
+			
+			if (nextStateTime < 1f) {
+				nextStateTime = 1f;
+			}
+			
 			stateTime = 0f;
 			
 			inactiveBlockades.clear();
@@ -264,7 +272,7 @@ public class OrcManager {
 				}
 			}
 			
-			boolean isBlockade = MathUtils.randomBoolean(inactiveBlockades.size == 0 ? 0f : 0.5f);
+			boolean isBlockade = MathUtils.randomBoolean(inactiveBlockades.size == 0 ? 0f : 0.05f);
 			
 			final Map map = gameWorld.getMap();
 			tmpPath.clear();

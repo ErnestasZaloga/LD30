@@ -12,18 +12,18 @@ import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.utils.Log;
 
 public class City extends Entity {
-	public static final int RESOURCE_PER_WORKER = 5;
+	public static final int RESOURCE_PER_WORKER = 2;
 	
 	private static final float PEOPLE_DIE_TIME = 3f;
 	private static final float RESOURCE_TICK_TIME = 1f;
 	
-	private static final int WORKER_FOOD_COST = 20;
-	private static final int WORKER_METAL_COST = 5;
-	private static final int WORKER_WOOD_COST = 10;
+	private static final int WORKER_FOOD_COST = 2;
+	private static final int WORKER_METAL_COST = 2;
+	private static final int WORKER_WOOD_COST = 2;
 	
-	private static final int SOLDIER_FOOD_COST = 25;
-	private static final int SOLDIER_METAL_COST = 40;
-	private static final int SOLDIER_WOOD_COST = 15;
+	private static final int SOLDIER_FOOD_COST = 4;
+	private static final int SOLDIER_METAL_COST = 4;
+	private static final int SOLDIER_WOOD_COST = 4;
 	
 	private int cityFoodCost = 120;
 	private int cityWoodCost = 230;
@@ -31,7 +31,7 @@ public class City extends Entity {
 
 	private final Array<PlayerHumanoid> pendingHumanoids = new Array<PlayerHumanoid>();
 	
-	private int maxPopulation = 10;
+	private int maxPopulation = 1000;
 
 	private final GameWorld.ResourceType type;
 	
@@ -292,22 +292,22 @@ public class City extends Entity {
 			}
 		}
 		
-		if(resourceTime >= RESOURCE_TICK_TIME) {
+		if(resourceTime >= 1f / workerCount * 10) {
 			resourceTime = 0;
 			
 			/*if(food > 0)
 				food--;
 			if(metal > 0)
-				metal--;*/
-			/*if(wood > 0)
+				metal--;
+			if(wood > 0)
 				wood--;*/
 			
 			if(type == GameWorld.ResourceType.FOOD) {
-				food += workerCount * 100;
+				food += 1;//workerCount * 1;
 			} else if(type == GameWorld.ResourceType.IRON) {
-				metal += workerCount * 100;
+				metal += 1;//workerCount * 1;
 			} else if(type == GameWorld.ResourceType.WOOD){
-				wood += workerCount * 100; //FIXME revert
+				wood += 1;//workerCount * 1;
 			}
 		}
 		/*if(food <= 0) {
