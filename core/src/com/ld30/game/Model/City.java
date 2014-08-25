@@ -299,8 +299,8 @@ public class City extends Entity {
 				food--;
 			if(metal > 0)
 				metal--;*/
-			if(wood > 0)
-				wood--;
+			/*if(wood > 0)
+				wood--;*/
 			
 			if(type == GameWorld.ResourceType.FOOD) {
 				food += workerCount * 100;
