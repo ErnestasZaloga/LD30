@@ -3,6 +3,7 @@ package com.ld30.game.Model.Tiles;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.ld30.game.Model.GameWorld;
+import com.ld30.game.utils.Log;
 
 public class Road extends Tile {
 	
@@ -50,6 +51,7 @@ public class Road extends Tile {
 	public void update(final float delta) {
 		if (animating) {
 			super.update(delta);
+			setDarkenPercent(getPercent() * 0.5f);
 		}
 	}
 	

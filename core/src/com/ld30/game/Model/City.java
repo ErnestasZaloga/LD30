@@ -31,7 +31,7 @@ public class City extends Entity {
 
 	private final Array<PlayerHumanoid> pendingHumanoids = new Array<PlayerHumanoid>();
 	
-	private int maxPopulation = 1000;
+	private int maxPopulation = 1000000;
 
 	private final GameWorld.ResourceType type;
 	
@@ -107,6 +107,11 @@ public class City extends Entity {
 			food -= WORKER_FOOD_COST;
 			metal -= WORKER_METAL_COST;
 			wood -= WORKER_WOOD_COST;
+			
+			gameWorld.getAssets().click.play();
+		}
+		else {
+			gameWorld.getAssets().blipSelect.play();
 		}
 	}
 	
@@ -232,11 +237,16 @@ public class City extends Entity {
 	public void makeSoldier() {
 		if(workerCount + ownedTroops.size < maxPopulation 
 		   && canBuy(SOLDIER_FOOD_COST, SOLDIER_METAL_COST, SOLDIER_WOOD_COST)) {
+			
 			food -= SOLDIER_FOOD_COST;
 			metal -= SOLDIER_METAL_COST;
 			wood -= SOLDIER_WOOD_COST;
 			
 			ownedTroops.insert(0, createTroop());
+			gameWorld.getAssets().click.play();
+		}
+		else {
+			gameWorld.getAssets().blipSelect.play();
 		}
 	}
 	

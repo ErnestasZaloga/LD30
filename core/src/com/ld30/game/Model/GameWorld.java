@@ -252,6 +252,7 @@ public class GameWorld {
 		if (totalWorkers == 0 && canBuildWorkersCount == 0) {
 			gameEnded = true;
 			gameUI.setToGameOver();
+			gameUI.getTopUI().getTimer().stop();
 		}
 	}
 

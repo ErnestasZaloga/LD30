@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Scaling;
 import com.ld30.game.Assets;
 import com.ld30.game.LD30;
 
@@ -39,7 +40,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		stage.act(Gdx.graphics.getDeltaTime());
@@ -71,40 +72,57 @@ public class MainMenuScreen implements Screen {
 		rightTable.setHeight(Gdx.graphics.getHeight());
 		rightTable.setX(midTable.getX()+midTable.getWidth());
 		
+		Image tmp;
+		
+		float space = 20f;
+		
 		/*
 		 * Left table
 		 */
 		leftTable.add(new Image(resources.getDrawable("PilisGyvuliu")));
 		leftTable.add(new Label(" - This is a castle of animal herders.\nThey provide food and live in grassy plains.", skin));
-		leftTable.row();
+		leftTable.row().spaceTop(space);
 		
 		leftTable.add(new Image(resources.getDrawable("PilisAkmenine")));
 		leftTable.add(new Label(" - This is a castle of miners.\nThey provide metals and live in rocky places.", skin));
-		leftTable.row();
+		leftTable.row().spaceTop(space);
 		
 		leftTable.add(new Image(resources.getDrawable("PilisMedine")));
 		leftTable.add(new Label(" - This is a castle of woodcutters.\nThey provide wood and live in the woods.", skin));
-		leftTable.row();
+		leftTable.row().spaceTop(space);
 		
-		leftTable.add(new Image(resources.getDrawable("Darbininkas")));
+		tmp = new Image(resources.getDrawable("Darbininkas"));
+		tmp.setScale(2f);
+		tmp.setOrigin(tmp.getWidth() / 2f, tmp.getHeight() / 2f);
+		leftTable.add(tmp);
 		leftTable.add(new Label(" - This is a worker. He will work in the city he is in,\nthus generating resources\nof the same type the city is."
 				+ "\nWorker costs 2 units of each resource\n"
 				+ "and can carry 2 units of single type resource.\n"
 				+ "Type depends on workers current city.", skin));
-		leftTable.row();
 		
-		leftTable.add(new Image(resources.getDrawable("Karys")));
+		leftTable.row().spaceTop(space);
+		
+		tmp = new Image(resources.getDrawable("Karys"));
+		tmp.setScale(2f);
+		tmp.setOrigin(tmp.getWidth() / 2f, tmp.getHeight() / 2f);
+		leftTable.add(tmp);
 		leftTable.add(new Label(" - This is a soldier. He will defend the city\nin which he currently is."
 				+ "\nSoldier costs 4 units of each resource.", skin));
-		leftTable.row();
+		leftTable.row().spaceTop(space);
 		
-		leftTable.add(new Image(resources.getDrawable("Orkas")));
+		tmp = new Image(resources.getDrawable("Orkas"));
+		tmp.setScale(2f);
+		tmp.setOrigin(tmp.getWidth() / 2f, tmp.getHeight() / 2f);
+		leftTable.add(tmp);
 		leftTable.add(new Label(" - This is an orc. Packs of them come to\nkill people of your cities.", skin));
-		leftTable.row();
+		leftTable.row().spaceTop(space);
 		
-		leftTable.add(new Image(resources.getDrawable("OrkasBarikada")));
+		tmp = new Image(resources.getDrawable("OrkasBarikada"));
+		tmp.setScale(2f);
+		tmp.setOrigin(tmp.getWidth() / 2f, tmp.getHeight() / 2f);
+		leftTable.add(tmp);
 		leftTable.add(new Label(" - This is an orc which will barricade the road.\nIf worker is carrying resources and hits the barricade,\nhe will loose all resources.", skin));
-		leftTable.row();
+		leftTable.row().spaceTop(space);
 		
 		/*
 		 * Middle table

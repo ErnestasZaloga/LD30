@@ -85,6 +85,7 @@ public class WorldRenderer {
 		}
 		
 		batch.end();
+		
 		gameWorld.getUI().updateAndRender(batch);
 	}
 	

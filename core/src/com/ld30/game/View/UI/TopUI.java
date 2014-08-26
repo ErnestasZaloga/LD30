@@ -125,4 +125,9 @@ public final class TopUI extends Group {
 		
 		UIBackground.setSize(width, height);
 	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+	
 }
