@@ -12,6 +12,8 @@ import com.ld30.game.Model.moveable.Worker;
 import com.ld30.game.utils.Log;
 
 public class City extends Entity {
+	public static int PENDING_WORKERS = 0;
+	
 	public static final int RESOURCE_PER_WORKER = 2;
 	
 	public static final float PEOPLE_DIE_TIME = 3f;
@@ -45,7 +47,6 @@ public class City extends Entity {
 	private Array<Troop> ownedTroops = new Array<Troop>();
 	
 	private int hitsReceived = 0;
-	private int pendingWorkers = 0;
 	
 	public City(GameWorld gameWorld, TextureRegion region, float x, float y, GameWorld.ResourceType type, Tile centralTile) {
 
@@ -66,11 +67,11 @@ public class City extends Entity {
 	}
 	
 	public void setPendingWorkers (final int pendingWorkers) {
-		this.pendingWorkers = pendingWorkers;
+		PENDING_WORKERS = pendingWorkers;
 	}
 	
 	public int getPendingWorkers () {
-		return pendingWorkers;
+		return PENDING_WORKERS;
 	}
 	
 	public int getPendingSpawns () {

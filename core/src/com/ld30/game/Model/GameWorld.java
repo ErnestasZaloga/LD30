@@ -246,11 +246,12 @@ public class GameWorld {
 			totalWorkers += city.getWorkerCount() + city.getPendingWorkers() + city.getPendingSpawns();
 			canBuildWorkersCount += (city.getWoodCount() >= City.WORKER_WOOD_COST && 
 									 city.getMetalCount() >= City.WORKER_METAL_COST &&
-									 city.getMetalCount() >= City.WORKER_FOOD_COST) ? 1 : 0;
+									 city.getFoodCount() >= City.WORKER_FOOD_COST) ? 1 : 0;
 		}
 		
 		if (totalWorkers == 0 && canBuildWorkersCount == 0) {
 			gameEnded = true;
+			City.PENDING_WORKERS = 0;
 			gameUI.setToGameOver();
 			gameUI.getTopUI().getTimer().stop();
 		}
